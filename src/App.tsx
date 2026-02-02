@@ -658,7 +658,7 @@ function App() {
                           ))}
                         </Pie>
                         <Tooltip 
-                          formatter={(value: number) => `Rs. ${value.toLocaleString(undefined, {maximumFractionDigits: 0})}`}
+                          formatter={(value: number | undefined) => `Rs. ${(value || 0).toLocaleString(undefined, {maximumFractionDigits: 0})}`}
                           contentStyle={{backgroundColor: '#2d2d2d', borderRadius: '12px', border: '1px solid #3c4043', color: '#e3e3e3'}} 
                         />
                       </RePieChart>
