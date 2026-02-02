@@ -437,6 +437,24 @@ function App() {
             </div>
 
             <div className="bg-[#2d2d2d] p-6 rounded-2xl border border-[#3c4043] mb-6">
+              <h3 className="text-sm font-bold mb-6 text-[#b4b4b4] uppercase tracking-widest flex items-center gap-2">
+                <BarChart3 className="w-4 h-4 text-blue-400" />
+                Historical Cash Dividend
+              </h3>
+              <div className="h-[300px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={yearlyData}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#3c4043" />
+                    <XAxis dataKey="Key" axisLine={false} tickLine={false} tick={{fill: '#b4b4b4', fontSize: 10}} />
+                    <YAxis axisLine={false} tickLine={false} tick={{fill: '#b4b4b4', fontSize: 10}} />
+                    <Tooltip contentStyle={{backgroundColor: '#2d2d2d', borderRadius: '12px', border: '1px solid #3c4043'}} cursor={{fill: '#3c4043'}} />
+                    <Bar dataKey="Total Dividend" fill="#8ab4f8" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div className="bg-[#2d2d2d] p-6 rounded-2xl border border-[#3c4043] mb-6">
               <div className="flex items-center justify-between">
                 <div>
                   <div className="flex items-center gap-2 text-[#b4b4b4] mb-1">
@@ -463,7 +481,7 @@ function App() {
             <div className="bg-[#2d2d2d] rounded-2xl border border-[#3c4043] overflow-hidden">
               <div className="p-6 border-b border-[#3c4043]">
                 <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                  Detailed Dividend History
+                  Detailed cash Dividend History
                 </h3>
               </div>
               <div className="overflow-x-auto">
