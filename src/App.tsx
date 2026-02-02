@@ -3,7 +3,7 @@ import axios from 'axios';
 import Papa from 'papaparse';
 import { Upload, FileText, CheckCircle2, AlertCircle, BarChart3, PieChart, LayoutDashboard, TrendingUp, Wallet, ArrowUpRight, ArrowDownRight, Trash2, Loader2, RefreshCw, FileJson, ArrowLeft, Search, ArrowUpDown, ArrowUp, ArrowDown, Home, Briefcase, Coins } from 'lucide-react';
 import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart as RePieChart, Pie, Cell 
 } from 'recharts';
 
@@ -199,7 +199,10 @@ function App() {
       });
     }
 
-    // Default sort by value descending
+    // Default sort by value descending if no user sort is active, otherwise keep user sort
+    // Actually, sorting logic is applied in render, so here we just set the raw list.
+    // But initially, let's set a default sort if none exists? 
+    // The previous code sorted here. Let's sort by value descending as a default "base" state.
     calculatedHoldings.sort((a, b) => b.currentValue - a.currentValue);
     setHoldings(calculatedHoldings);
     setPortfolioSummary({
@@ -644,7 +647,7 @@ function App() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-[#3c4043]">
-                        {scripData.map((item, idx) => (
+                        {scripData.map((item: any, idx: number) => (
                           <tr key={idx} className="hover:bg-[#353535] transition-colors">
                             <td className="px-6 py-4 font-bold text-[#8ab4f8]">{item.Key}</td>
                             <td className="px-6 py-4 text-right font-mono text-white">
