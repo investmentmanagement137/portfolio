@@ -3,18 +3,12 @@ import axios from 'axios';
 import Papa from 'papaparse';
 import { Upload, FileText, CheckCircle2, AlertCircle, BarChart3, PieChart, LayoutDashboard, TrendingUp, Wallet, ArrowUpRight, ArrowDownRight, Trash2, Loader2, RefreshCw, FileJson, ArrowLeft, Search, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart as RePieChart, Pie, Cell 
 } from 'recharts';
 
 const WEBHOOK_URL = 'https://n8np.puribijay.com.np/webhook/51bef67d-e017-4fc8-92ca-896d8b6c329aa';
 const LTP_URL = 'https://raw.githubusercontent.com/investmentmanagement137/jsons/main/ss_companylist.json';
-
-interface DividendData {
-  Type: string;
-  Key: string;
-  "Total Dividend": number;
-}
 
 interface DividendEvent {
   Scrip: string;
@@ -676,7 +670,7 @@ function App() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#3c4043]">
-                    {scripData.map((item, idx) => (
+                    {scripData.map((item: any, idx: number) => (
                       <tr key={idx} className="hover:bg-[#353535] transition-colors">
                         <td className="px-6 py-4 font-bold text-[#8ab4f8]">{item.Key}</td>
                         <td className="px-6 py-4 text-right font-mono text-white">
