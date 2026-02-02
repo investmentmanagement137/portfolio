@@ -74,6 +74,7 @@ function App() {
   
   const [searchTerm, setSearchTerm] = useState('');
   const [sortConfig, setSortConfig] = useState<{ key: keyof DividendEvent; direction: 'asc' | 'desc' } | null>(null);
+  const [holdingsSortConfig, setHoldingsSortConfig] = useState<{ key: keyof Holding; direction: 'asc' | 'desc' } | null>(null);
 
   // Load saved data from LocalStorage
   useEffect(() => {
@@ -198,6 +199,7 @@ function App() {
       });
     }
 
+    // Default sort by value descending
     calculatedHoldings.sort((a, b) => b.currentValue - a.currentValue);
     setHoldings(calculatedHoldings);
     setPortfolioSummary({
@@ -282,6 +284,14 @@ function App() {
     setSortConfig({ key, direction });
   };
 
+  const requestHoldingsSort = (key: keyof Holding) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (holdingsSortConfig && holdingsSortConfig.key === key && holdingsSortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setHoldingsSortConfig({ key, direction });
+  };
+
   const dividendSummary = data?.[0]?.["Divident Summary"];
   const dividendDetails = data?.[1]?.["Divident Calculation"] as DividendEvent[] || [];
   
@@ -307,11 +317,24 @@ function App() {
     return 0;
   });
 
+  const sortedHoldings = [...holdings].sort((a, b) => {
+    if (!holdingsSortConfig) return 0;
+    const { key, direction } = holdingsSortConfig;
+    if (a[key] < b[key]) return direction === 'asc' ? -1 : 1;
+    if (a[key] > b[key]) return direction === 'asc' ? 1 : -1;
+    return 0;
+  });
+
   const totalCashDividend = sortedDetails.reduce((sum, item) => sum + (item["Dividend Amount"] || 0), 0);
 
   const SortIcon = ({ columnKey }: { columnKey: keyof DividendEvent }) => {
     if (sortConfig?.key !== columnKey) return <ArrowUpDown className="w-3 h-3 text-[#3c4043] opacity-0 group-hover:opacity-100 transition-opacity" />;
     return sortConfig.direction === 'asc' ? <ArrowUp className="w-3 h-3 text-[#8ab4f8]" /> : <ArrowDown className="w-3 h-3 text-[#8ab4f8]" />;
+  };
+
+  const HoldingsSortIcon = ({ columnKey }: { columnKey: keyof Holding }) => {
+    if (holdingsSortConfig?.key !== columnKey) return <ArrowUpDown className="w-3 h-3 text-[#3c4043] opacity-0 group-hover:opacity-100 transition-opacity" />;
+    return holdingsSortConfig.direction === 'asc' ? <ArrowUp className="w-3 h-3 text-[#8ab4f8]" /> : <ArrowDown className="w-3 h-3 text-[#8ab4f8]" />;
   };
 
   const NavItem = ({ tab, icon: Icon, label }: { tab: 'home' | 'portfolio' | 'dividends' | 'import', icon: any, label: string }) => (
@@ -494,29 +517,77 @@ function App() {
                 <h3 className="text-lg font-bold flex items-center gap-2">
                   <LayoutDashboard className="w-5 h-5 text-[#8ab4f8]" />
                   My Portfolio
-                  {data?.[3]?.["current holdings in meroshare"] && <span className="text-[10px] font-bold text-blue-400 bg-blue-900/30 px-2 py-0.5 rounded border border-blue-800/50 ml-2 uppercase tracking-widest">REMOTE_SYNC</span>}
                 </h3>
               </div>
               <div className="overflow-x-auto max-h-[600px]">
                 <table className="w-full text-left relative">
                   <thead className="bg-[#353535] sticky top-0 z-10 text-[#b4b4b4]">
                     <tr>
-                      <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest">Asset</th>
-                      <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-right">Units</th>
-                      <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-right">WACC</th>
-                      <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-right">LTP</th>
-                      <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-right">Valuation</th>
-                      <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-right">P/L</th>
+                      <th 
+                        className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest cursor-pointer hover:text-white group transition-colors"
+                        onClick={() => requestHoldingsSort('scrip')}
+                      >
+                        <div className="flex items-center gap-1">
+                          Asset
+                          <HoldingsSortIcon columnKey="scrip" />
+                        </div>
+                      </th>
+                      <th 
+                        className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-right cursor-pointer hover:text-white group transition-colors"
+                        onClick={() => requestHoldingsSort('quantity')}
+                      >
+                        <div className="flex items-center justify-end gap-1">
+                          Units
+                          <HoldingsSortIcon columnKey="quantity" />
+                        </div>
+                      </th>
+                      <th 
+                        className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-right cursor-pointer hover:text-white group transition-colors"
+                        onClick={() => requestHoldingsSort('wacc')}
+                      >
+                        <div className="flex items-center justify-end gap-1">
+                          WACC
+                          <HoldingsSortIcon columnKey="wacc" />
+                        </div>
+                      </th>
+                      <th 
+                        className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-right cursor-pointer hover:text-white group transition-colors"
+                        onClick={() => requestHoldingsSort('ltp')}
+                      >
+                        <div className="flex items-center justify-end gap-1">
+                          LTP
+                          <HoldingsSortIcon columnKey="ltp" />
+                        </div>
+                      </th>
+                      <th 
+                        className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-right cursor-pointer hover:text-white group transition-colors"
+                        onClick={() => requestHoldingsSort('currentValue')}
+                      >
+                        <div className="flex items-center justify-end gap-1">
+                          Valuation
+                          <HoldingsSortIcon columnKey="currentValue" />
+                        </div>
+                      </th>
+                      <th 
+                        className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-right cursor-pointer hover:text-white group transition-colors"
+                        onClick={() => requestHoldingsSort('pl')}
+                      >
+                        <div className="flex items-center justify-end gap-1">
+                          P/L
+                          <HoldingsSortIcon columnKey="pl" />
+                        </div>
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#3c4043]">
-                    {holdings.map((item, idx) => (
+                    {sortedHoldings.map((item, idx) => (
                       <tr key={idx} className="hover:bg-[#353535] transition-colors group">
                         <td className="px-6 py-4 font-bold text-[#8ab4f8]">
                           {item.scrip}
                           <div className="text-[10px] text-[#b4b4b4] font-normal mt-0.5">WACC: {item.wacc.toFixed(1)}</div>
                         </td>
                         <td className="px-6 py-4 text-right font-mono text-[#e3e3e3]">{item.quantity}</td>
+                        <td className="px-6 py-4 text-right font-mono text-[#b4b4b4]">{item.wacc.toFixed(2)}</td>
                         <td className="px-6 py-4 text-right font-mono text-[#b4b4b4]">{item.ltp.toLocaleString()}</td>
                         <td className="px-6 py-4 text-right font-mono font-bold text-white">{item.currentValue.toLocaleString()}</td>
                         <td className={`px-6 py-4 text-right font-mono font-bold ${item.pl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
