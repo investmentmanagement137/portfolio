@@ -598,7 +598,7 @@ function App() {
               <div className="p-6 border-b border-[#3c4043] flex justify-between items-center bg-[#252525]">
                 <h3 className="text-lg font-bold flex items-center gap-2">
                   <LayoutDashboard className="w-5 h-5 text-[#8ab4f8]" />
-                  Active Asset Table
+                  My Portfolio
                   {data?.[3]?.["current holdings in meroshare"] && <span className="text-[10px] font-bold text-blue-400 bg-blue-900/30 px-2 py-0.5 rounded border border-blue-800/50 ml-2 uppercase tracking-widest">REMOTE_SYNC</span>}
                 </h3>
               </div>
@@ -633,20 +633,54 @@ function App() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="bg-[#2d2d2d] p-6 rounded-2xl border border-[#3c4043]">
+              <div className="bg-[#2d2d2d] p-6 rounded-2xl border border-[#3c4043] flex flex-col">
                 <h3 className="text-sm font-bold mb-6 text-[#b4b4b4] uppercase tracking-widest flex items-center gap-2">
                   <PieChart className="w-4 h-4 text-indigo-400" />
-                  Asset Distribution
+                  Asset Distribution (Top 10)
                 </h3>
-                <div className="h-[300px] w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <RePieChart>
-                      <Pie data={allocationData} cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={5} dataKey="value" nameKey="name" stroke="none">
-                        {allocationData.map((_, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
-                      </Pie>
-                      <Tooltip contentStyle={{backgroundColor: '#2d2d2d', borderRadius: '12px', border: '1px solid #3c4043', color: '#e3e3e3'}} />
-                    </RePieChart>
-                  </ResponsiveContainer>
+                <div className="flex-1 flex flex-col items-center">
+                  <div className="h-[250px] w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <RePieChart>
+                        <Pie 
+                          data={allocationData} 
+                          cx="50%" 
+                          cy="50%" 
+                          innerRadius={60} 
+                          outerRadius={80} 
+                          paddingAngle={5} 
+                          dataKey="value" 
+                          nameKey="name" 
+                          stroke="none"
+                        >
+                          {allocationData.map((_, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip 
+                          formatter={(value: number) => `Rs. ${value.toLocaleString(undefined, {maximumFractionDigits: 0})}`}
+                          contentStyle={{backgroundColor: '#2d2d2d', borderRadius: '12px', border: '1px solid #3c4043', color: '#e3e3e3'}} 
+                        />
+                      </RePieChart>
+                    </ResponsiveContainer>
+                  </div>
+                  
+                  <div className="w-full mt-4 space-y-3">
+                    {allocationData.map((item, index) => (
+                      <div key={index} className="flex items-center justify-between text-xs border-b border-[#3c4043]/50 pb-2 last:border-0 last:pb-0">
+                        <div className="flex items-center gap-2">
+                          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }}></div>
+                          <span className="font-medium text-[#e3e3e3]">{item.name}</span>
+                        </div>
+                        <div className="flex items-center gap-4">
+                          <span className="font-mono text-[#b4b4b4]">Rs. {item.value.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
+                          <span className="font-mono font-bold text-[#8ab4f8] w-12 text-right">
+                            {((item.value / portfolioSummary.value) * 100).toFixed(1)}%
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
 
