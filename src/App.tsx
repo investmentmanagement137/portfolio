@@ -421,22 +421,56 @@ function App() {
                   </div>
                 </div>
 
-                <div className="flex flex-col items-center justify-center p-8 bg-[#2d2d2d] rounded-2xl border border-[#3c4043] text-center space-y-4">
-                  <div className="bg-[#8ab4f8]/10 p-4 rounded-full">
-                    <Upload className="w-8 h-8 text-[#8ab4f8]" />
+                {/* Asset Distribution Chart moved to Home */}
+                <div className="bg-[#2d2d2d] p-6 rounded-2xl border border-[#3c4043] flex flex-col md:max-w-2xl md:mx-auto">
+                  <h3 className="text-sm font-bold mb-6 text-[#b4b4b4] uppercase tracking-widest flex items-center gap-2">
+                    <PieChart className="w-4 h-4 text-indigo-400" />
+                    Asset Distribution (Top 10)
+                  </h3>
+                  <div className="flex-1 flex flex-col items-center">
+                    <div className="h-[250px] w-full">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <RePieChart>
+                          <Pie 
+                            data={allocationData} 
+                            cx="50%" 
+                            cy="50%" 
+                            innerRadius={60} 
+                            outerRadius={80} 
+                            paddingAngle={5} 
+                            dataKey="value" 
+                            nameKey="name" 
+                            stroke="none"
+                          >
+                            {allocationData.map((_, index) => (
+                              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            ))}
+                          </Pie>
+                          <Tooltip 
+                            formatter={(value: number | undefined) => `Rs. ${(value || 0).toLocaleString(undefined, {maximumFractionDigits: 0})}`}
+                            contentStyle={{backgroundColor: '#2d2d2d', borderRadius: '12px', border: '1px solid #3c4043', color: '#e3e3e3'}} 
+                          />
+                        </RePieChart>
+                      </ResponsiveContainer>
+                    </div>
+                    
+                    <div className="w-full mt-4 space-y-3">
+                      {allocationData.map((item, index) => (
+                        <div key={index} className="flex items-center justify-between text-xs border-b border-[#3c4043]/50 pb-2 last:border-0 last:pb-0">
+                          <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }}></div>
+                            <span className="font-medium text-[#e3e3e3]">{item.name}</span>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <span className="font-mono text-[#b4b4b4]">Rs. {item.value.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
+                            <span className="font-mono font-bold text-[#8ab4f8] w-12 text-right">
+                              {((item.value / portfolioSummary.value) * 100).toFixed(1)}%
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-white">Data Sync</h3>
-                    <p className="text-[#b4b4b4] text-sm max-w-md mx-auto mt-1">
-                      Your portfolio data is currently loaded. To analyze a new set of files or update your transaction history, please import new data.
-                    </p>
-                  </div>
-                  <button 
-                    onClick={() => setActiveTab('import')}
-                    className="bg-[#8ab4f8] text-[#1e1e1e] font-bold py-2 px-6 rounded-lg hover:bg-[#aecbfa] transition-transform active:scale-95"
-                  >
-                    Update Portfolio Data
-                  </button>
                 </div>
               </>
             ) : (
@@ -462,58 +496,6 @@ function App() {
         {/* --- PORTFOLIO TAB --- */}
         {activeTab === 'portfolio' && (
           <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-300">
-            {/* Asset Distribution (Full width on mobile) */}
-            <div className="bg-[#2d2d2d] p-6 rounded-2xl border border-[#3c4043] flex flex-col">
-              <h3 className="text-sm font-bold mb-6 text-[#b4b4b4] uppercase tracking-widest flex items-center gap-2">
-                <PieChart className="w-4 h-4 text-indigo-400" />
-                Asset Distribution (Top 10)
-              </h3>
-              <div className="flex-1 flex flex-col items-center">
-                <div className="h-[250px] w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <RePieChart>
-                      <Pie 
-                        data={allocationData} 
-                        cx="50%" 
-                        cy="50%" 
-                        innerRadius={60} 
-                        outerRadius={80} 
-                        paddingAngle={5} 
-                        dataKey="value" 
-                        nameKey="name" 
-                        stroke="none"
-                      >
-                        {allocationData.map((_, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip 
-                        formatter={(value: number | undefined) => `Rs. ${(value || 0).toLocaleString(undefined, {maximumFractionDigits: 0})}`}
-                        contentStyle={{backgroundColor: '#2d2d2d', borderRadius: '12px', border: '1px solid #3c4043', color: '#e3e3e3'}} 
-                      />
-                    </RePieChart>
-                  </ResponsiveContainer>
-                </div>
-                
-                <div className="w-full mt-4 space-y-3">
-                  {allocationData.map((item, index) => (
-                    <div key={index} className="flex items-center justify-between text-xs border-b border-[#3c4043]/50 pb-2 last:border-0 last:pb-0">
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }}></div>
-                        <span className="font-medium text-[#e3e3e3]">{item.name}</span>
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <span className="font-mono text-[#b4b4b4]">Rs. {item.value.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
-                        <span className="font-mono font-bold text-[#8ab4f8] w-12 text-right">
-                          {((item.value / portfolioSummary.value) * 100).toFixed(1)}%
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
             {/* My Portfolio Table */}
             <div className="bg-[#2d2d2d] rounded-2xl border border-[#3c4043] overflow-hidden">
               <div className="p-6 border-b border-[#3c4043] flex justify-between items-center bg-[#252525]">
