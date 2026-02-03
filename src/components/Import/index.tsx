@@ -37,7 +37,7 @@ export function ImportData({ onSuccess }: ImportDataProps) {
         <Card className="max-w-4xl mx-auto shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-300">
             <CardContent className="p-8">
                 <div className="mb-8">
-                    <h2 className="text-xl font-bold text-foreground mb-2">Import Portfolio Data</h2>
+                    <h2 className="text-xl font-bold text-foreground mb-2">Import meroshare Data</h2>
                     <p className="text-muted-foreground text-sm">Upload your Meroshare exports to update your portfolio analysis.</p>
                 </div>
 
@@ -50,19 +50,19 @@ export function ImportData({ onSuccess }: ImportDataProps) {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <FileDropZone
-                        label="1. WACC Report (CSV)"
-                        file={waccFile}
-                        onFileSelect={setWaccFile}
-                        accept={CSV_ACCEPT}
-                    />
-                    <FileDropZone
-                        label="2. History (CSV)"
+                        label="1. Transaction History"
                         file={historyFile}
                         onFileSelect={setHistoryFile}
                         accept={CSV_ACCEPT}
                     />
                     <FileDropZone
-                        label="3. Holdings (JSON) [Optional]"
+                        label="2. My Wacc Report"
+                        file={waccFile}
+                        onFileSelect={setWaccFile}
+                        accept={CSV_ACCEPT}
+                    />
+                    <FileDropZone
+                        label="3. My Shares"
                         file={holdingsFile}
                         onFileSelect={setHoldingsFile}
                         accept=".json"

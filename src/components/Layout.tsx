@@ -1,5 +1,5 @@
-import React from 'react';
-import { LayoutDashboard, Wallet, PieChart, RefreshCw, Trash2, Settings, type LucideIcon } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { LayoutDashboard, Wallet, PieChart, RefreshCw, Trash2, Settings, Sun, Moon, CheckCircle2, type LucideIcon } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { usePortfolio } from '../context/PortfolioContext';
 
@@ -31,22 +31,67 @@ interface LayoutProps {
     children: React.ReactNode;
     activeTab: string;
     onTabChange: (tab: any) => void;
+    // We could lift theme state up, but for now we manage classList here for simplicity
 }
 
 export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
     const { state, actions } = usePortfolio();
+    const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+    const [showSyncToast, setShowSyncToast] = useState(false);
+
+    // Initialize Theme
+    useEffect(() => {
+        const savedTheme = localStorage.getItem('theme') as 'dark' | 'light' | null;
+        const systemTheme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        const initialTheme = savedTheme || systemTheme;
+
+        setTheme(initialTheme);
+        document.documentElement.classList.toggle('light', initialTheme === 'light');
+    }, []);
+
+    const toggleTheme = () => {
+        const newTheme = theme === 'dark' ? 'light' : 'dark';
+        setTheme(newTheme);
+        localStorage.setItem('theme', newTheme);
+        document.documentElement.classList.toggle('light', newTheme === 'light');
+    };
+
+    const handleSync = async () => {
+        setShowSyncToast(true);
+        setTimeout(() => setShowSyncToast(false), 3000); // Hide after 3s
+        await actions.refreshLtp();
+    };
 
     return (
-        <div className="min-h-screen bg-background text-foreground font-sans pb-24 md:pb-28">
-            <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-md border-b border-border px-6 py-4 flex justify-between items-center">
+        <div className="min-h-screen bg-background text-foreground font-sans pb-24 md:pb-28 transition-colors duration-300">
+            {/* Sync Toast Notification */}
+            {showSyncToast && (
+                <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-top-5 fade-in duration-300">
+                    <div className="bg-primary text-primary-foreground px-4 py-2 rounded-full shadow-lg flex items-center gap-2 text-sm font-medium">
+                        <CheckCircle2 className="w-4 h-4" />
+                        Syncing latest prices...
+                    </div>
+                </div>
+            )}
+
+            <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-md border-b border-border px-6 py-4 flex justify-between items-center transition-colors duration-300">
                 <div>
-                    <h1 className="text-xl font-bold tracking-tight text-white">Portfolio Analyzer</h1>
+                    <h1 className="text-xl font-bold tracking-tight text-foreground/90">Portfolio Analyzer</h1>
                 </div>
 
                 <div className="flex items-center gap-3">
+                    {/* Theme Toggle */}
+                    <button
+                        onClick={toggleTheme}
+                        className="p-2 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                        title="Toggle Theme"
+                    >
+                        {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                    </button>
+
                     {state.rawAnalysisData && (
                         <button
-                            onClick={actions.refreshLtp}
+                            onClick={handleSync}
                             disabled={state.loading}
                             className={cn(
                                 "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium border transition-all active:scale-95",
@@ -78,7 +123,7 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
                 {children}
             </main>
 
-            <nav className="fixed bottom-0 left-0 w-full bg-card/90 backdrop-blur-lg border-t border-border z-50 safe-area-bottom">
+            <nav className="fixed bottom-0 left-0 w-full bg-card/90 backdrop-blur-lg border-t border-border z-50 safe-area-bottom transition-colors duration-300">
                 <div className="flex items-center justify-around p-2 max-w-md mx-auto">
                     <NavItem
                         icon={LayoutDashboard}

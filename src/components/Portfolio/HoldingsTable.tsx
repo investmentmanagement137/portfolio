@@ -48,11 +48,7 @@ export function HoldingsTable() {
         <div className="space-y-6">
             <Card className="overflow-hidden border-none bg-gradient-to-br from-primary/5 via-card to-background shadow-xl">
                 <CardContent className="p-0">
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 divide-x divide-y md:divide-y-0 border-border/50">
-                        <div className="p-4 flex flex-col justify-center transition-colors hover:bg-muted/30">
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Scrips</span>
-                            <div className="text-xl font-mono font-bold text-foreground">{scripCount}</div>
-                        </div>
+                    <div className="grid grid-cols-2 md:grid-cols-5 divide-x divide-y md:divide-y-0 border-border/50">
                         <div className="p-4 flex flex-col justify-center transition-colors hover:bg-muted/30">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Portfolio Cost</span>
                             <div className="text-xl font-mono font-bold text-foreground">{formatCurrency(investment)}</div>
@@ -86,7 +82,7 @@ export function HoldingsTable() {
             <div className="flex items-center justify-between">
                 <h3 className="text-lg font-bold flex items-center gap-2">
                     <LayoutDashboard className="w-5 h-5 text-primary" />
-                    My Portfolio
+                    My Portfolio ({scripCount})
                 </h3>
 
                 <div className="relative">
