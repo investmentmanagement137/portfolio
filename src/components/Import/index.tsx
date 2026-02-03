@@ -62,10 +62,10 @@ export function ImportData({ onSuccess }: ImportDataProps) {
                         accept={CSV_ACCEPT}
                     />
                     <FileDropZone
-                        label="3. My Shares"
+                        label="3. My Shares Values"
                         file={holdingsFile}
                         onFileSelect={setHoldingsFile}
-                        accept=".json"
+                        accept={CSV_ACCEPT}
                     />
                 </div>
 

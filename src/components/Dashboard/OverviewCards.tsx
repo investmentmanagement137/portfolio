@@ -64,7 +64,7 @@ export function OverviewCards() {
                             <div className="text-2xl font-mono text-amber-500 font-bold tracking-tight">
                                 Rs. {formatCurrency(activeDividendTotal)}
                             </div>
-                            <div className="text-[10px] text-muted-foreground uppercase font-medium">Portfolio Dividends</div>
+                            <div className="text-[10px] text-muted-foreground uppercase font-medium">Portfolio Cash Dividends</div>
                         </div>
                     </div>
                 </div>

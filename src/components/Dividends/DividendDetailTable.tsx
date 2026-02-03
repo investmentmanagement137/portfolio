@@ -2,21 +2,46 @@ import { useState, useMemo } from 'react';
 import { usePortfolio } from '../../context/PortfolioContext';
 import { Card, CardContent } from '../ui/Card';
 import { formatCurrency, cn } from '../../lib/utils';
-import { Calendar, Tag, Banknote, Filter, History, LayoutGrid } from 'lucide-react';
+import { Calendar, Tag, Banknote, Filter, History, LayoutGrid, ArrowUpDown } from 'lucide-react';
+import type { DividendEvent } from '../../types';
+
+type SortKey = 'Book Closure Date' | 'Dividend Amount' | 'Scrip';
+type SortDirection = 'asc' | 'desc';
+
+interface SortConfig {
+    key: SortKey;
+    direction: SortDirection;
+}
 
 export function DividendDetailTable() {
     const { state: { dividendDetails, activeDividends } } = usePortfolio();
     const [useActiveOnly, setUseActiveOnly] = useState(true);
+    const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'Book Closure Date', direction: 'desc' });
 
     const baseData = useActiveOnly ? activeDividends : dividendDetails;
 
     const sortedData = useMemo(() => {
+        const { key, direction } = sortConfig;
+
         return [...baseData].sort((a, b) => {
-            const dateA = new Date(a["Book Closure Date"]).getTime();
-            const dateB = new Date(b["Book Closure Date"]).getTime();
-            return dateB - dateA;
+            let valA: any = a[key as keyof DividendEvent] ?? 0;
+            let valB: any = b[key as keyof DividendEvent] ?? 0;
+
+            if (key === 'Book Closure Date') {
+                valA = new Date(valA).getTime();
+                valB = new Date(valB).getTime();
+            }
+
+            if (valA < valB) return direction === 'asc' ? -1 : 1;
+            if (valA > valB) return direction === 'asc' ? 1 : -1;
+            return 0;
         });
-    }, [baseData]);
+    }, [baseData, sortConfig]);
+
+    const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const [key, direction] = e.target.value.split(':') as [SortKey, SortDirection];
+        setSortConfig({ key, direction });
+    };
 
     if (!baseData || baseData.length === 0) {
         return (
@@ -24,7 +49,7 @@ export function DividendDetailTable() {
                 <div className="flex items-center justify-between mb-2">
                     <h3 className="text-lg font-bold flex items-center gap-2">
                         <History className="w-5 h-5 text-primary" />
-                        Dividend History
+                        Cash Dividend History
                     </h3>
                     <div className="flex p-1 bg-muted rounded-lg border border-border">
                         <button
@@ -48,22 +73,38 @@ export function DividendDetailTable() {
 
     return (
         <div className="space-y-4 pb-8">
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
                 <h3 className="text-lg font-bold flex items-center gap-2">
                     <History className="w-5 h-5 text-primary" />
-                    Dividend History
+                    Cash Dividend History
                 </h3>
-                <div className="flex p-1 bg-muted rounded-lg border border-border shrink-0">
-                    <button
-                        onClick={() => setUseActiveOnly(true)}
-                        className={cn("px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-md transition-all whitespace-nowrap",
-                            useActiveOnly ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-foreground")}
-                    >Active</button>
-                    <button
-                        onClick={() => setUseActiveOnly(false)}
-                        className={cn("px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-md transition-all whitespace-nowrap",
-                            !useActiveOnly ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-foreground")}
-                    >History</button>
+                <div className="flex items-center gap-3">
+                    <div className="relative">
+                        <ArrowUpDown className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+                        <select
+                            className="bg-card border border-border rounded-lg pl-9 pr-6 py-2 text-xs text-foreground focus:outline-none focus:border-primary appearance-none cursor-pointer hover:bg-muted/50 transition-colors"
+                            onChange={handleSortChange}
+                            value={`${sortConfig.key}:${sortConfig.direction}`}
+                        >
+                            <option value="Book Closure Date:desc">Recent (Newest)</option>
+                            <option value="Book Closure Date:asc">Date (Oldest)</option>
+                            <option value="Dividend Amount:desc">Amount (High to Low)</option>
+                            <option value="Dividend Amount:asc">Amount (Low to High)</option>
+                            <option value="Scrip:asc">Scrip (A-Z)</option>
+                        </select>
+                    </div>
+                    <div className="flex p-1 bg-muted rounded-lg border border-border shrink-0">
+                        <button
+                            onClick={() => setUseActiveOnly(true)}
+                            className={cn("px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-md transition-all whitespace-nowrap",
+                                useActiveOnly ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-foreground")}
+                        >Active</button>
+                        <button
+                            onClick={() => setUseActiveOnly(false)}
+                            className={cn("px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-md transition-all whitespace-nowrap",
+                                !useActiveOnly ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-foreground")}
+                        >History</button>
+                    </div>
                 </div>
             </div>
 
