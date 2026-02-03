@@ -5,6 +5,7 @@ import { Dashboard } from './components/Dashboard';
 import { Portfolio } from './components/Portfolio';
 import { Dividends } from './components/Dividends';
 import { Settings } from './components/Settings';
+import { PWAInstallPrompt } from './components/PWAInstallPrompt';
 
 function AppContent() {
   const [activeTab, setActiveTab] = useState('home');
@@ -30,6 +31,7 @@ function App() {
   return (
     <PortfolioProvider>
       <AppContent />
+      <PWAInstallPrompt />
     </PortfolioProvider>
   );
 }
