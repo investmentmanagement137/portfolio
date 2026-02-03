@@ -4,18 +4,18 @@ import { Layout } from './components/Layout';
 import { Dashboard } from './components/Dashboard';
 import { Portfolio } from './components/Portfolio';
 import { Dividends } from './components/Dividends';
-import { ImportData } from './components/Import';
+import { Settings } from './components/Settings';
 
 function AppContent() {
   const [activeTab, setActiveTab] = useState('home');
 
   const renderContent = useMemo(() => {
     switch (activeTab) {
-      case 'home': return <Dashboard onNavigateToImport={() => setActiveTab('import')} />;
+      case 'home': return <Dashboard onNavigateToImport={() => setActiveTab('settings')} />;
       case 'portfolio': return <Portfolio />;
       case 'dividends': return <Dividends />;
-      case 'import': return <ImportData onSuccess={() => setActiveTab('home')} />;
-      default: return <Dashboard onNavigateToImport={() => setActiveTab('import')} />;
+      case 'settings': return <Settings onImportSuccess={() => setActiveTab('home')} />;
+      default: return <Dashboard onNavigateToImport={() => setActiveTab('settings')} />;
     }
   }, [activeTab]);
 

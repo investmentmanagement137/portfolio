@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, Wallet, PieChart, UploadCloud, RefreshCw, Trash2, type LucideIcon } from 'lucide-react';
+import { LayoutDashboard, Wallet, PieChart, RefreshCw, Trash2, Settings, type LucideIcon } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { usePortfolio } from '../context/PortfolioContext';
 
@@ -99,10 +99,10 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
                         onClick={() => onTabChange('dividends')}
                     />
                     <NavItem
-                        icon={UploadCloud}
-                        label="Import"
-                        isActive={activeTab === 'import'}
-                        onClick={() => onTabChange('import')}
+                        icon={Settings}
+                        label="Settings"
+                        isActive={activeTab === 'settings'}
+                        onClick={() => onTabChange('settings')}
                     />
                 </div>
             </nav>

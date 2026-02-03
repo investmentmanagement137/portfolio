@@ -1,4 +1,4 @@
-import { UploadCloud, Sparkles, ShieldCheck, Zap } from 'lucide-react';
+import { UploadCloud, ShieldCheck, Zap } from 'lucide-react';
 import { Card, CardContent } from '../ui/Card';
 
 interface WelcomeStateProps {
@@ -9,10 +9,6 @@ export function WelcomeState({ onImportClick }: WelcomeStateProps) {
     return (
         <div className="max-w-4xl mx-auto py-12 px-6">
             <div className="text-center mb-12 animate-in fade-in slide-in-from-top-4 duration-700">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold mb-4 border border-primary/20">
-                    <Sparkles className="w-3 h-3" />
-                    New Refactored Version
-                </div>
                 <h2 className="text-4xl font-extrabold text-foreground mb-4 tracking-tight">
                     Smart Portfolio <span className="text-primary">Analyzer</span>
                 </h2>
