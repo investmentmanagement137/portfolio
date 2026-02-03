@@ -58,15 +58,15 @@ export function HoldingsTable() {
                             <div className="text-xl font-mono font-bold text-foreground">{formatCurrency(value)}</div>
                         </div>
                         <div className="p-4 flex flex-col justify-center transition-colors hover:bg-muted/30">
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Cash Dividends</span>
-                            <div className="text-xl font-mono font-bold text-amber-500">{formatCurrency(activeDividendTotal)}</div>
-                        </div>
-                        <div className="p-4 flex flex-col justify-center transition-colors hover:bg-muted/30">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Total Returns</span>
                             <div className={cn("text-xl font-mono font-bold", isProfit ? "text-green-500" : "text-red-500")}>
                                 {isProfit ? '+' : ''}{formatCurrency(pl)}
                                 <div className="text-[10px] opacity-70 font-bold">{plPercent.toFixed(2)}%</div>
                             </div>
+                        </div>
+                        <div className="p-4 flex flex-col justify-center transition-colors hover:bg-muted/30">
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Cash Dividends</span>
+                            <div className="text-xl font-mono font-bold text-amber-500">{formatCurrency(activeDividendTotal)}</div>
                         </div>
                         <div className="p-4 flex flex-col justify-center transition-colors hover:bg-muted/30 bg-primary/5">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-primary mb-1">Returns + Cashflow</span>
