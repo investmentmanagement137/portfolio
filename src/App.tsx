@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { PortfolioProvider } from './context/PortfolioContext';
 import { Layout } from './components/Layout';
 import { Dashboard } from './components/Dashboard';
@@ -8,7 +8,14 @@ import { Settings } from './components/Settings';
 import { PWAInstallPrompt } from './components/PWAInstallPrompt';
 
 function AppContent() {
-  const [activeTab, setActiveTab] = useState('home');
+  const [activeTab, setActiveTab] = useState(() => {
+    return localStorage.getItem('activeTab') || 'home';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('activeTab', activeTab);
+    window.history.replaceState(null, '', `?tab=${activeTab}`);
+  }, [activeTab]);
 
   const renderContent = useMemo(() => {
     switch (activeTab) {
