@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { LayoutDashboard, Wallet, PieChart, RefreshCw, Trash2, Settings, Sun, Moon, CheckCircle2, type LucideIcon } from 'lucide-react';
+import { LayoutDashboard, Wallet, PieChart, RefreshCw, Settings, Sun, Moon, CheckCircle2, type LucideIcon } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { usePortfolio } from '../context/PortfolioContext';
 
@@ -109,17 +109,7 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
             </header>
 
             <main className="p-4 md:p-6 max-w-5xl mx-auto animate-in fade-in zoom-in-95 duration-500">
-                <div className="flex justify-end mb-4">
-                    {state.rawAnalysisData && (
-                        <button
-                            onClick={() => { if (confirm("Clear all data?")) actions.clearData(); }}
-                            className="text-red-400 hover:bg-red-500/10 text-xs flex items-center gap-1 px-3 py-1.5 rounded-lg transition-colors border border-transparent hover:border-red-500/20"
-                        >
-                            <Trash2 className="w-4 h-4" />
-                            Clear Data
-                        </button>
-                    )}
-                </div>
+
                 {children}
             </main>
 

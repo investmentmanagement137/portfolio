@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { ImportData } from '../Import';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/Card';
-import { Shield, FileText, Database, ChevronRight, ArrowLeft } from 'lucide-react';
+import { Shield, FileText, Database, ChevronRight, ArrowLeft, Trash2 } from 'lucide-react';
+import { usePortfolio } from '../../context/PortfolioContext';
 import { cn } from '../../lib/utils';
 
 interface SettingsProps {
@@ -9,6 +10,7 @@ interface SettingsProps {
 }
 
 export function Settings({ onImportSuccess }: SettingsProps) {
+    const { actions } = usePortfolio();
     const [activeSection, setActiveSection] = useState<'data' | 'privacy' | 'terms' | null>('data');
 
     // Initialize default for desktop if needed, though 'data' is fine. 
@@ -83,6 +85,18 @@ export function Settings({ onImportSuccess }: SettingsProps) {
                                 <p className="text-muted-foreground">Import your latest portfolio data from Meroshare.</p>
                             </div>
                             <ImportData onSuccess={onImportSuccess} />
+
+                            <div className="pt-8 border-t border-border">
+                                <h3 className="text-lg font-bold text-red-500 mb-2">Danger Zone</h3>
+                                <p className="text-sm text-muted-foreground mb-4">Once you clear your data, there is no going back. Please be certain.</p>
+                                <button
+                                    onClick={() => { if (confirm("Clear all application data? This cannot be undone.")) actions.clearData(); }}
+                                    className="bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 border border-red-500/20"
+                                >
+                                    <Trash2 className="w-4 h-4" />
+                                    Clear Application Data
+                                </button>
+                            </div>
                         </div>
                     )}
 

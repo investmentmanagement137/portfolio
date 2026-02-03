@@ -45,7 +45,7 @@ export function DividendDetailTable() {
 
     if (!baseData || baseData.length === 0) {
         return (
-            <div className="space-y-4">
+            <div className="space-y-4 text-foreground">
                 <div className="flex items-center justify-between mb-2">
                     <h3 className="text-lg font-bold flex items-center gap-2">
                         <History className="w-5 h-5 text-primary" />
@@ -71,8 +71,36 @@ export function DividendDetailTable() {
         );
     }
 
+    const totalHistorical = dividendDetails.reduce((acc, curr) => acc + (curr["Dividend Amount"] || 0), 0);
+    const totalCurrent = activeDividends.reduce((acc, curr) => acc + (curr["Dividend Amount"] || 0), 0);
+
     return (
-        <div className="space-y-4 pb-8">
+        <div className="space-y-4 pb-8 text-foreground">
+            <Card className="overflow-hidden border-none bg-gradient-to-br from-amber-500/10 via-card to-background shadow-xl">
+                <CardContent className="p-0">
+                    <div className="grid grid-cols-2 lg:grid-cols-2 divide-x divide-y md:divide-y-0 border-border/50">
+                        <div className="p-6 transition-colors hover:bg-muted/30">
+                            <div className="flex items-center gap-2 mb-2 text-muted-foreground">
+                                <Banknote className="w-4 h-4 text-amber-500" />
+                                <span className="text-[10px] font-bold uppercase tracking-widest">Active Dividends</span>
+                            </div>
+                            <div className="text-2xl font-mono font-bold text-foreground">
+                                Rs. {formatCurrency(totalCurrent)}
+                            </div>
+                        </div>
+                        <div className="p-6 transition-colors hover:bg-muted/30">
+                            <div className="flex items-center gap-2 mb-2 text-muted-foreground">
+                                <History className="w-4 h-4 text-primary" />
+                                <span className="text-[10px] font-bold uppercase tracking-widest">Historical Total</span>
+                            </div>
+                            <div className="text-2xl font-mono font-bold text-foreground">
+                                Rs. {formatCurrency(totalHistorical)}
+                            </div>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
                 <h3 className="text-lg font-bold flex items-center gap-2">
                     <History className="w-5 h-5 text-primary" />
