@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['vite.svg'],
+      includeAssets: ['pwa-icon-192.png', 'pwa-icon-512.png'],
       manifest: {
         name: 'Portfolio Analytics',
         short_name: 'Portfolio',
