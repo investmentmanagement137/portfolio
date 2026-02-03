@@ -4,7 +4,7 @@ import Papa from 'papaparse';
 import type { PortfolioContextValue, PortfolioState, Holding, WebhookHolding } from '../types';
 
 const WEBHOOK_URL = 'https://n8np.puribijay.com.np/webhook/51bef67d-e017-4fc8-92ca-896d8b6c329aa';
-const LTP_URL = 'https://raw.githubusercontent.com/investmentmanagement137/jsons/main/ss_companylist.json';
+const LTP_URL = 'https://raw.githubusercontent.com/investmentmanagement137/jsons/main/recentltp.json';
 
 const PortfolioContext = createContext<PortfolioContextValue | null>(null);
 
@@ -62,9 +62,13 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
         try {
             const res = await axios.get(LTP_URL);
             const map: Record<string, number> = {};
-            res.data.forEach((item: any) => {
-                const price = parseFloat(item.LTP.replace(/,/g, ''));
-                map[item.Symbol] = isNaN(price) ? 0 : price;
+            const data = res.data["all recent price"] || [];
+
+            data.forEach((item: any) => {
+                const price = typeof item.Price === 'string'
+                    ? parseFloat(item.Price.replace(/,/g, ''))
+                    : item.Price;
+                map[item.Script] = isNaN(price) ? 0 : price;
             });
             setState(prev => ({ ...prev, ltpData: map, loading: false }));
         } catch (error) {
