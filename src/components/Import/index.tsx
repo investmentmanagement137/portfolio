@@ -15,6 +15,9 @@ export function ImportData({ onSuccess }: ImportDataProps) {
     const [holdingsFile, setHoldingsFile] = useState<File | null>(null);
     const [localError, setLocalError] = useState<string | null>(null);
 
+    // Android often struggles with just .csv, so we include common MIME types
+    const CSV_ACCEPT = ".csv,text/csv,application/vnd.ms-excel,application/csv,text/x-csv,application/x-csv,text/comma-separated-values,text/x-comma-separated-values";
+
     const handleUpload = async () => {
         if (!waccFile || !historyFile) {
             setLocalError("Please select WACC and History CSV files for analysis.");
@@ -50,11 +53,13 @@ export function ImportData({ onSuccess }: ImportDataProps) {
                         label="1. WACC Report (CSV)"
                         file={waccFile}
                         onFileSelect={setWaccFile}
+                        accept={CSV_ACCEPT}
                     />
                     <FileDropZone
                         label="2. History (CSV)"
                         file={historyFile}
                         onFileSelect={setHistoryFile}
+                        accept={CSV_ACCEPT}
                     />
                     <FileDropZone
                         label="3. Holdings (JSON) [Optional]"
