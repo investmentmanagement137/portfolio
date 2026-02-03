@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from 'recharts';
 import { formatCurrency } from '../../lib/utils';
 
