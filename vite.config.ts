@@ -16,8 +16,8 @@ export default defineConfig({
         theme_color: '#0f172a',
         background_color: '#020617',
         display: 'standalone',
-        scope: '/portfolio/',
-        start_url: '/portfolio/',
+        scope: '/',
+        start_url: '/',
         icons: [
           {
             src: 'pwa-icon-192.png',
@@ -39,5 +39,5 @@ export default defineConfig({
       }
     })
   ],
-  base: '/portfolio/',
+  base: '/',
 })
