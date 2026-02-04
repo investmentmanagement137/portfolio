@@ -34,12 +34,16 @@ function AppContent() {
   );
 }
 
+import { ThemeProvider } from './context/ThemeContext';
+
 function App() {
   return (
-    <PortfolioProvider>
-      <AppContent />
-      <PWAInstallPrompt />
-    </PortfolioProvider>
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <PortfolioProvider>
+        <AppContent />
+        <PWAInstallPrompt />
+      </PortfolioProvider>
+    </ThemeProvider>
   );
 }
 

@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { LayoutDashboard, Wallet, PieChart, RefreshCw, Settings, Sun, Moon, CheckCircle2, type LucideIcon } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { usePortfolio } from '../context/PortfolioContext';
+import { useTheme } from '../context/ThemeContext';
 
 interface NavItemProps {
     icon: LucideIcon;
@@ -36,24 +37,11 @@ interface LayoutProps {
 
 export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
     const { state, actions } = usePortfolio();
-    const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+    const { theme, setTheme } = useTheme();
     const [showSyncToast, setShowSyncToast] = useState(false);
 
-    // Initialize Theme
-    useEffect(() => {
-        const savedTheme = localStorage.getItem('theme') as 'dark' | 'light' | null;
-        const systemTheme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-        const initialTheme = savedTheme || systemTheme;
-
-        setTheme(initialTheme);
-        document.documentElement.classList.toggle('light', initialTheme === 'light');
-    }, []);
-
     const toggleTheme = () => {
-        const newTheme = theme === 'dark' ? 'light' : 'dark';
-        setTheme(newTheme);
-        localStorage.setItem('theme', newTheme);
-        document.documentElement.classList.toggle('light', newTheme === 'light');
+        setTheme(theme === 'dark' ? 'light' : 'dark');
     };
 
     const handleSync = async () => {
