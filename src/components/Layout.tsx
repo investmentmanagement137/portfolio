@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LayoutDashboard, Wallet, PieChart, RefreshCw, Settings, Sun, Moon, CheckCircle2, type LucideIcon } from 'lucide-react';
+import { Home, Wallet, PieChart, RefreshCw, Settings, Sun, Moon, CheckCircle2, type LucideIcon } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { usePortfolio } from '../context/PortfolioContext';
 import { useTheme } from '../context/ThemeContext';
@@ -104,7 +104,7 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
             <nav className="fixed bottom-0 left-0 w-full bg-card/90 backdrop-blur-lg border-t border-border z-50 safe-area-bottom transition-colors duration-300">
                 <div className="flex items-center justify-around p-2 max-w-md mx-auto">
                     <NavItem
-                        icon={LayoutDashboard}
+                        icon={Home}
                         label="Home"
                         isActive={activeTab === 'home'}
                         onClick={() => onTabChange('home')}
