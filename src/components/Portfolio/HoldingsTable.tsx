@@ -141,19 +141,19 @@ export function HoldingsTable() {
                 />
             </div>
 
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <h3 className="text-lg font-bold flex items-center gap-2">
                     <LayoutDashboard className="w-5 h-5 text-primary" />
                     My Portfolio ({scripCount})
                 </h3>
 
-                <div className="flex items-center gap-3">
-                    <div className="relative">
+                <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+                    <div className="relative flex-grow sm:flex-grow-0">
                         <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
                         <input
                             type="text"
                             placeholder="Search scrip..."
-                            className="bg-card border border-border rounded-lg pl-9 pr-4 py-2 text-xs font-medium text-foreground focus:outline-none focus:border-primary w-32 sm:w-48 placeholder:text-muted-foreground transition-all focus:w-48 sm:focus:w-56 shadow-sm"
+                            className="bg-card border border-border rounded-lg pl-9 pr-4 py-2 text-xs font-medium text-foreground focus:outline-none focus:border-primary w-full sm:w-48 placeholder:text-muted-foreground transition-all focus:w-full sm:focus:w-56 shadow-sm"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />

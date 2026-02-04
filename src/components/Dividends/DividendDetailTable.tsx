@@ -117,13 +117,13 @@ export function DividendDetailTable() {
                     <History className="w-5 h-5 text-primary" />
                     Cash Dividend History
                 </h3>
-                <div className="flex items-center gap-3">
-                    <div className="relative">
+                <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+                    <div className="relative flex-grow sm:flex-grow-0">
                         <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
                         <input
                             type="text"
                             placeholder="Search scrip..."
-                            className="bg-card border border-border rounded-lg pl-9 pr-4 py-2 text-xs font-medium text-foreground focus:outline-none focus:border-primary w-28 sm:w-40 placeholder:text-muted-foreground transition-all focus:w-40 sm:focus:w-48 shadow-sm"
+                            className="bg-card border border-border rounded-lg pl-9 pr-4 py-2 text-xs font-medium text-foreground focus:outline-none focus:border-primary w-full sm:w-40 placeholder:text-muted-foreground transition-all focus:w-full sm:focus:w-48 shadow-sm"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />

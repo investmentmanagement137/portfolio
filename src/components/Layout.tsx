@@ -63,7 +63,7 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
     };
 
     return (
-        <div className="min-h-screen bg-background text-foreground font-sans pb-24 md:pb-28 transition-colors duration-300">
+        <div className="min-h-screen bg-background text-foreground font-sans pb-32 md:pb-36 transition-colors duration-300">
             {/* Sync Toast Notification */}
             {showSyncToast && (
                 <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-top-5 fade-in duration-300">
