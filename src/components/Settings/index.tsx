@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ImportData } from '../Import';
-import { Timeline } from '../Timeline';
+// Timeline import removed
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/Card';
 import { Shield, FileText, Database, ChevronRight, ArrowLeft, Trash2, RefreshCw, Sun, Moon, ExternalLink, History } from 'lucide-react';
 import { usePortfolio } from '../../context/PortfolioContext';
@@ -9,9 +9,10 @@ import { cn } from '../../lib/utils';
 
 interface SettingsProps {
     onImportSuccess?: () => void;
+    onNavigateToTimeline?: () => void;
 }
 
-export function Settings({ onImportSuccess }: SettingsProps) {
+export function Settings({ onImportSuccess, onNavigateToTimeline }: SettingsProps) {
     const { actions, state } = usePortfolio();
     const { theme, setTheme } = useTheme();
     // activeSection null means "Main Menu"
@@ -231,7 +232,7 @@ export function Settings({ onImportSuccess }: SettingsProps) {
                         </CardHeader>
                         <CardContent className="space-y-1">
                             <button
-                                onClick={() => setActiveSection('timeline')}
+                                onClick={() => onNavigateToTimeline?.()}
                                 className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 transition-colors text-left"
                             >
                                 <div className="flex items-center gap-3">
@@ -297,9 +298,8 @@ export function Settings({ onImportSuccess }: SettingsProps) {
     // Sub-Pages
     return (
         <div className="space-y-6 animate-in slide-in-from-right-4 duration-300 max-w-3xl mx-auto">
-            {activeSection === 'timeline' ? (
-                <Timeline onBack={() => setActiveSection(null)} />
-            ) : (
+            {/* Timeline section removed */}
+            {activeSection !== 'timeline' && (
                 <>
                     <button
                         onClick={() => setActiveSection(null)}

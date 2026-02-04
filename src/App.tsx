@@ -25,7 +25,7 @@ function AppContent() {
       case 'portfolio': return <Portfolio />;
       case 'timeline': return <Timeline />;
       case 'dividends': return <Dividends />;
-      case 'settings': return <Settings onImportSuccess={() => setActiveTab('home')} />;
+      case 'settings': return <Settings onImportSuccess={() => setActiveTab('home')} onNavigateToTimeline={() => setActiveTab('timeline')} />;
       default: return <Dashboard onNavigateToImport={() => setActiveTab('settings')} />;
     }
   }, [activeTab]);
