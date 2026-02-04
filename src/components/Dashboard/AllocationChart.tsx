@@ -30,6 +30,7 @@ export function AllocationChart() {
                     colors={CHART_COLORS}
                     centerLabel="Total Value"
                     centerValue={portfolioSummary.value}
+                    detailedData={chartData}
                 />
             </CardContent>
         </Card>

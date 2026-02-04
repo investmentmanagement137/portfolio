@@ -34,6 +34,7 @@ export function SectorDistribution() {
                     dataKey="value"
                     nameKey="name"
                     colors={SECTOR_COLORS}
+                    detailedData={sectorData}
                 />
             </CardContent>
         </Card>

@@ -1,6 +1,8 @@
 // @ts-nocheck
+import { useState } from 'react';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from 'recharts';
 import { formatCurrency } from '../../lib/utils';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 interface DonutChartProps {
     data: any[];
@@ -9,9 +11,12 @@ interface DonutChartProps {
     colors: string[];
     centerLabel?: string;
     centerValue?: number;
+    detailedData?: any[];
 }
 
-export function DonutChart({ data, dataKey, nameKey, colors, centerLabel, centerValue }: DonutChartProps) {
+export function DonutChart({ data, dataKey, nameKey, colors, centerLabel, centerValue, detailedData }: DonutChartProps) {
+    const [showAll, setShowAll] = useState(false);
+
     const renderCustomLabel = (props: any) => {
         const { cx, cy, midAngle, innerRadius, outerRadius, percent, name } = props;
         if (percent < 0.08) return null;
@@ -33,6 +38,17 @@ export function DonutChart({ data, dataKey, nameKey, colors, centerLabel, center
             </text>
         );
     };
+
+    const hasMoreData = detailedData && detailedData.length > data.length;
+    const listData = showAll && detailedData ? detailedData : data;
+
+    // We need total value to calculate percentages correctly
+    // If showing detailed data, total should still be based on the full dataset usually, 
+    // but here 'data' might be aggregated (Top 5 + Others). 
+    // 'Others' value is sum of rest. So sum of 'data' is total.
+    // Sum of 'detailedData' should also be total.
+    // So we can compute total from 'data'.
+    const totalValue = data.reduce((sum, d) => sum + d[dataKey], 0);
 
     return (
         <div className="space-y-6">
@@ -80,15 +96,17 @@ export function DonutChart({ data, dataKey, nameKey, colors, centerLabel, center
 
             {/* Legend List */}
             <div className="grid grid-cols-1 gap-2 pt-2">
-                {data.map((item, index) => {
-                    const total = data.reduce((sum, d) => sum + d[dataKey], 0);
-                    const percent = ((item[dataKey] / total) * 100).toFixed(1);
+                {listData.map((item, index) => {
+                    const percent = ((item[dataKey] / totalValue) * 100).toFixed(1);
+                    // Use modulo for colors. If showing all, simply cycle through colors.
+                    const color = colors[index % colors.length];
+
                     return (
                         <div key={index} className="flex items-center justify-between group px-2 py-1.5 rounded-lg hover:bg-muted/50 transition-colors">
                             <div className="flex items-center gap-3 overflow-hidden">
                                 <div
                                     className="w-2.5 h-2.5 rounded-full shrink-0"
-                                    style={{ backgroundColor: colors[index % colors.length] }}
+                                    style={{ backgroundColor: color }}
                                 />
                                 <span className="text-xs font-bold truncate text-foreground/80 group-hover:text-foreground">
                                     {item[nameKey]}
@@ -105,6 +123,19 @@ export function DonutChart({ data, dataKey, nameKey, colors, centerLabel, center
                         </div>
                     );
                 })}
+
+                {hasMoreData && (
+                    <button
+                        onClick={() => setShowAll(!showAll)}
+                        className="flex items-center justify-center gap-2 w-full py-2 mt-2 text-xs font-bold text-primary hover:bg-primary/5 rounded-lg transition-colors border border-dashed border-primary/20"
+                    >
+                        {showAll ? (
+                            <>Show Less <ChevronUp className="w-3 h-3" /></>
+                        ) : (
+                            <>Show All ({detailedData!.length}) <ChevronDown className="w-3 h-3" /></>
+                        )}
+                    </button>
+                )}
             </div>
         </div>
     );
