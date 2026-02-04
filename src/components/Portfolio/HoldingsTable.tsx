@@ -4,7 +4,6 @@ import { usePortfolio } from '../../context/PortfolioContext';
 import type { Holding } from '../../types';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
 import { cn, formatCurrency, formatNumber } from '../../lib/utils';
-import { RatioCard } from './RatioCard';
 
 type SortKey = keyof Holding;
 type SortDirection = 'asc' | 'desc';
@@ -15,7 +14,7 @@ interface SortConfig {
 }
 
 export function HoldingsTable() {
-    const { state: { holdings, portfolioSummary } } = usePortfolio();
+    const { state, state: { holdings, portfolioSummary } } = usePortfolio();
     const { investment, value, pl, plPercent, activeDividendTotal, scripCount, plWithCashflow, plWithCashflowPercent } = portfolioSummary;
     const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'currentValue', direction: 'desc' });
     const [searchQuery, setSearchQuery] = useState('');
@@ -77,10 +76,14 @@ export function HoldingsTable() {
                             <div className="text-xl font-mono font-bold text-foreground">{formatCurrency(value)}</div>
                         </div>
                         <div className="p-4 flex flex-col justify-center transition-colors hover:bg-muted/30">
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Total Returns</span>
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">
+                                {state.roiType === 'annualized' ? 'Annualized Return' : 'Total Returns'}
+                            </span>
                             <div className={cn("text-xl font-mono font-bold", isProfit ? "text-green-500" : "text-red-500")}>
                                 {isProfit ? '+' : ''}{formatCurrency(pl)}
-                                <div className="text-[10px] opacity-70 font-bold">{plPercent.toFixed(2)}%</div>
+                                <div className="text-[10px] opacity-70 font-bold">
+                                    {plPercent.toFixed(2)}%
+                                </div>
                             </div>
                         </div>
                         <div className="p-4 flex flex-col justify-center transition-colors hover:bg-muted/30">
@@ -97,43 +100,6 @@ export function HoldingsTable() {
                     </div>
                 </CardContent>
             </Card>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <RatioCard
-                    title="Fundamental Ratios"
-                    items={[
-                        {
-                            label: "Price to Earning",
-                            value: "15.4",
-                            description: "The Price-to-Earnings (P/E) ratio measures the company's current share price relative to its per-share earnings. A weighted average accounts for the size of each holding in your portfolio.",
-                            valueColor: "text-blue-500"
-                        },
-                        {
-                            label: "Price to BookValue",
-                            value: "2.1",
-                            description: "The Price-to-Book (P/B) ratio compares the company's market value to its book value (assets minus liabilities). It tells you how much you are paying for every rupee of assets.",
-                            valueColor: "text-purple-500"
-                        }
-                    ]}
-                />
-                <RatioCard
-                    title="Technical Ratios"
-                    items={[
-                        {
-                            label: "Alpha",
-                            value: "1.2",
-                            description: "Alpha measures the performance of an investment against a market index or benchmark. A positive alpha of 1.2 means the portfolio has outperformed the benchmark by 1.2%.",
-                            valueColor: "text-green-500"
-                        },
-                        {
-                            label: "Beta",
-                            value: "0.85",
-                            description: "Beta measures the volatility of a stock in relation to the overall market. A beta of 0.85 means the portfolio is theoretically 15% less volatile than the market.",
-                            valueColor: "text-orange-500"
-                        }
-                    ]}
-                />
-            </div>
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <h3 className="text-lg font-bold flex items-center gap-2">
@@ -201,7 +167,9 @@ export function HoldingsTable() {
                             </div>
 
                             <div className="pt-3 border-t border-border flex justify-between items-center">
-                                <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Profit/Loss</span>
+                                <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
+                                    {state.roiType === 'annualized' ? 'Ann. Return' : 'Profit/Loss'}
+                                </span>
                                 <div className={cn("font-mono font-bold text-sm flex items-center gap-1", item.pl >= 0 ? 'text-green-500' : 'text-red-500')}>
                                     {item.pl >= 0 ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
                                     {formatCurrency(Math.abs(item.pl))}

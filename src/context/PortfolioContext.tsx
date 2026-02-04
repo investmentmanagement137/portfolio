@@ -33,6 +33,7 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
         lastUpdated: null,
         rawAnalysisData: null,
         brokerNo: null,
+        roiType: 'simple',
     });
 
     const [waccRawData, setWaccRawData] = useState<any[]>([]);
@@ -55,6 +56,10 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
             if (storedHoldings) setHoldingsRawData(JSON.parse(storedHoldings));
             if (storedLastUpdated) setState(prev => ({ ...prev, lastUpdated: new Date(storedLastUpdated) }));
             if (storedBrokerNo) setState(prev => ({ ...prev, brokerNo: parseInt(storedBrokerNo) }));
+            const storedRoiType = localStorage.getItem('portfolioRoiType');
+            if (storedRoiType === 'annualized' || storedRoiType === 'simple') {
+                setState(prev => ({ ...prev, roiType: storedRoiType }));
+            }
         } catch (e) {
             console.error("Failed to load local storage data", e);
         }
@@ -301,6 +306,11 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
         setState(prev => ({ ...prev, brokerNo: no }));
     };
 
+    const updateRoiType = (type: 'simple' | 'annualized') => {
+        localStorage.setItem('portfolioRoiType', type);
+        setState(prev => ({ ...prev, roiType: type }));
+    };
+
     const clearData = () => {
         localStorage.removeItem('portfolioAnalysis');
         localStorage.removeItem('portfolioWaccRaw');
@@ -321,13 +331,14 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
             lastUpdated: null,
             rawAnalysisData: null,
             brokerNo: null,
+            roiType: 'simple',
         });
         setWaccRawData([]);
         setHoldingsRawData([]);
     };
 
     return (
-        <PortfolioContext.Provider value={{ state, actions: { uploadData, reanalysePortfolio, clearData, refreshLtp, updateBrokerNo } }}>
+        <PortfolioContext.Provider value={{ state, actions: { uploadData, reanalysePortfolio, clearData, refreshLtp, updateBrokerNo, updateRoiType } }}>
             {children}
         </PortfolioContext.Provider>
     );

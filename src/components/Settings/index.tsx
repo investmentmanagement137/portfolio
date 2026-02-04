@@ -50,12 +50,13 @@ export function Settings({ onImportSuccess }: SettingsProps) {
                 </div>
 
                 <div className="grid gap-6">
-                    {/* Appearance */}
+                    {/* Appearance & Preferences */}
                     <Card>
                         <CardHeader className="pb-3">
-                            <CardTitle className="text-base font-medium text-muted-foreground uppercase tracking-wider">Appearance</CardTitle>
+                            <CardTitle className="text-base font-medium text-muted-foreground uppercase tracking-wider">Appearance & Preferences</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-1">
+                            {/* Theme Toggle */}
                             <div className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 transition-colors">
                                 <div className="flex items-center gap-3">
                                     {theme === 'dark' ? <Moon className="w-5 h-5 text-primary" /> : <Sun className="w-5 h-5 text-orange-500" />}
@@ -75,6 +76,31 @@ export function Settings({ onImportSuccess }: SettingsProps) {
                                         className={cn(
                                             "inline-block h-4 w-4 transform rounded-full bg-white shadow-md ring-1 ring-black/5 transition-transform duration-200",
                                             theme === 'dark' ? "translate-x-6" : "translate-x-1"
+                                        )}
+                                    />
+                                </button>
+                            </div>
+
+                            {/* ROI Toggle */}
+                            <div className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 transition-colors">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-5 h-5 flex items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-bold text-[10px]">%</div>
+                                    <div className="flex flex-col">
+                                        <span className="font-medium">ROI Display</span>
+                                        <span className="text-xs text-muted-foreground">{state.roiType === 'annualized' ? 'Annualized Return' : 'Simple Return'}</span>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => actions.updateRoiType(state.roiType === 'simple' ? 'annualized' : 'simple')}
+                                    className={cn(
+                                        "relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                                        state.roiType === 'annualized' ? "bg-primary" : "bg-zinc-200 border border-zinc-300"
+                                    )}
+                                >
+                                    <span
+                                        className={cn(
+                                            "inline-block h-4 w-4 transform rounded-full bg-white shadow-md ring-1 ring-black/5 transition-transform duration-200",
+                                            state.roiType === 'annualized' ? "translate-x-6" : "translate-x-1"
                                         )}
                                     />
                                 </button>

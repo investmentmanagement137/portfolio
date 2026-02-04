@@ -8,6 +8,7 @@ export interface RatioItem {
     value: string | number;
     description: string;
     valueColor?: string;
+    icon?: React.ReactNode;
 }
 
 interface RatioCardProps {
@@ -36,9 +37,12 @@ export function RatioCard({ title, items, className }: RatioCardProps) {
                                 className="flex justify-between items-center group cursor-pointer hover:bg-muted/50 p-2 rounded-lg transition-colors"
                                 onClick={() => setSelectedItem(item)}
                             >
-                                <span className="text-sm font-medium text-foreground/80 group-hover:text-primary transition-colors">
-                                    {item.label}
-                                </span>
+                                <div className="flex items-center gap-3">
+                                    {item.icon && <div className="text-muted-foreground group-hover:text-primary transition-colors">{item.icon}</div>}
+                                    <span className="text-sm font-medium text-foreground/80 group-hover:text-primary transition-colors">
+                                        {item.label}
+                                    </span>
+                                </div>
                                 <span className={cn("font-mono font-bold text-lg", item.valueColor || "text-foreground")}>
                                     {item.value}
                                 </span>

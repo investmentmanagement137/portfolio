@@ -64,6 +64,7 @@ export interface PortfolioState {
     lastUpdated: Date | null;
     rawAnalysisData: any[] | null;
     brokerNo: number | null;
+    roiType: 'simple' | 'annualized';
 }
 
 export interface PortfolioActions {
@@ -72,6 +73,7 @@ export interface PortfolioActions {
     clearData: () => void;
     refreshLtp: () => Promise<void>;
     updateBrokerNo: (no: number | null) => void;
+    updateRoiType: (type: 'simple' | 'annualized') => void;
 }
 
 export interface PortfolioContextValue {
