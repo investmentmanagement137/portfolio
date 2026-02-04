@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { usePortfolio } from '../../context/PortfolioContext';
 import { Card, CardContent } from '../ui/Card';
 import { formatCurrency, cn } from '../../lib/utils';
-import { Calendar, Tag, Banknote, Filter, History, LayoutGrid, ArrowUpDown } from 'lucide-react';
+import { Calendar, Tag, Banknote, Filter, History, LayoutGrid, ArrowUpDown, Search } from 'lucide-react';
 import type { DividendEvent } from '../../types';
 
 type SortKey = 'Book Closure Date' | 'Dividend Amount' | 'Scrip';
@@ -17,13 +17,24 @@ export function DividendDetailTable() {
     const { state: { dividendDetails, activeDividends } } = usePortfolio();
     const [useActiveOnly, setUseActiveOnly] = useState(true);
     const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'Book Closure Date', direction: 'desc' });
+    const [searchQuery, setSearchQuery] = useState('');
 
     const baseData = useActiveOnly ? activeDividends : dividendDetails;
 
     const sortedData = useMemo(() => {
         const { key, direction } = sortConfig;
 
-        return [...baseData].sort((a, b) => {
+        // If searching, search effectively across all history
+        const dataToFilter = searchQuery ? dividendDetails : baseData;
+
+        let filtered = dataToFilter;
+        if (searchQuery) {
+            filtered = dataToFilter.filter(item =>
+                item.Scrip.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+        }
+
+        return [...filtered].sort((a, b) => {
             let valA: any = a[key as keyof DividendEvent] ?? 0;
             let valB: any = b[key as keyof DividendEvent] ?? 0;
 
@@ -36,7 +47,7 @@ export function DividendDetailTable() {
             if (valA > valB) return direction === 'asc' ? 1 : -1;
             return 0;
         });
-    }, [baseData, sortConfig]);
+    }, [baseData, sortConfig, searchQuery]);
 
     const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const [key, direction] = e.target.value.split(':') as [SortKey, SortDirection];
@@ -108,9 +119,19 @@ export function DividendDetailTable() {
                 </h3>
                 <div className="flex items-center gap-3">
                     <div className="relative">
+                        <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+                        <input
+                            type="text"
+                            placeholder="Search scrip..."
+                            className="bg-card border border-border rounded-lg pl-9 pr-4 py-2 text-xs font-medium text-foreground focus:outline-none focus:border-primary w-28 sm:w-40 placeholder:text-muted-foreground transition-all focus:w-40 sm:focus:w-48 shadow-sm"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                    </div>
+                    <div className="relative">
                         <ArrowUpDown className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
                         <select
-                            className="bg-card border border-border rounded-lg pl-9 pr-6 py-2 text-xs text-foreground focus:outline-none focus:border-primary appearance-none cursor-pointer hover:bg-muted/50 transition-colors"
+                            className="bg-card border border-border rounded-lg pl-9 pr-8 py-2 text-xs font-medium text-foreground focus:outline-none focus:border-primary appearance-none cursor-pointer hover:bg-muted/50 transition-colors shadow-sm"
                             onChange={handleSortChange}
                             value={`${sortConfig.key}:${sortConfig.direction}`}
                         >

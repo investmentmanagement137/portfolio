@@ -1,9 +1,10 @@
 import { useState, useMemo } from 'react';
-import { ArrowUpDown, ArrowUpRight, ArrowDownRight, Briefcase, LayoutDashboard } from 'lucide-react';
+import { ArrowUpDown, ArrowUpRight, ArrowDownRight, Briefcase, LayoutDashboard, Search } from 'lucide-react';
 import { usePortfolio } from '../../context/PortfolioContext';
 import type { Holding } from '../../types';
-import { Card, CardContent } from '../ui/Card';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
 import { cn, formatCurrency, formatNumber } from '../../lib/utils';
+import { RatioCard } from './RatioCard';
 
 type SortKey = keyof Holding;
 type SortDirection = 'asc' | 'desc';
@@ -17,18 +18,31 @@ export function HoldingsTable() {
     const { state: { holdings, portfolioSummary } } = usePortfolio();
     const { investment, value, pl, plPercent, activeDividendTotal, scripCount, plWithCashflow, plWithCashflowPercent } = portfolioSummary;
     const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'currentValue', direction: 'desc' });
+    const [searchQuery, setSearchQuery] = useState('');
 
     const sortedHoldings = useMemo(() => {
         const { key, direction } = sortConfig;
 
-        return [...holdings].sort((a, b) => {
+        // Filter first
+        const filtered = holdings.filter(item =>
+            item.scrip.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+
+        return [...filtered].sort((a, b) => {
             const valA = a[key] ?? 0;
             const valB = b[key] ?? 0;
+
+            if (typeof valA === 'string' && typeof valB === 'string') {
+                return direction === 'asc'
+                    ? valA.localeCompare(valB)
+                    : valB.localeCompare(valA);
+            }
+
             if (valA < valB) return direction === 'asc' ? -1 : 1;
             if (valA > valB) return direction === 'asc' ? 1 : -1;
             return 0;
         });
-    }, [holdings, sortConfig]);
+    }, [holdings, sortConfig, searchQuery]);
 
     const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const [key, direction] = e.target.value.split(':') as [SortKey, SortDirection];
@@ -47,6 +61,11 @@ export function HoldingsTable() {
     return (
         <div className="space-y-6">
             <Card className="overflow-hidden border-none bg-gradient-to-br from-primary/5 via-card to-background shadow-xl">
+                <CardHeader className="justify-center border-b border-border/50 bg-muted/20">
+                    <CardTitle className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                        Profit Loss Analysis
+                    </CardTitle>
+                </CardHeader>
                 <CardContent className="p-0">
                     <div className="grid grid-cols-2 md:grid-cols-5 divide-x divide-y md:divide-y-0 border-border/50">
                         <div className="p-4 flex flex-col justify-center transition-colors hover:bg-muted/30">
@@ -79,26 +98,84 @@ export function HoldingsTable() {
                 </CardContent>
             </Card>
 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <RatioCard
+                    title="Fundamental Ratios"
+                    items={[
+                        {
+                            label: "Weighted Avg PE",
+                            value: "15.4",
+                            description: "The Price-to-Earnings (P/E) ratio measures the company's current share price relative to its per-share earnings. A weighted average accounts for the size of each holding in your portfolio.",
+                            valueColor: "text-blue-500"
+                        },
+                        {
+                            label: "PBV Ratio",
+                            value: "2.1",
+                            description: "The Price-to-Book (P/B) ratio compares the company's market value to its book value (assets minus liabilities). It tells you how much you are paying for every rupee of assets.",
+                            valueColor: "text-purple-500"
+                        },
+                        {
+                            label: "Graham Number",
+                            value: "450.0",
+                            description: "The Graham Number is a figure that measures a stock's fundamental value by taking into account the company's earnings per share and book value per share. It is considered an upper bound for the price a defensive investor should pay.",
+                            valueColor: "text-amber-500"
+                        }
+                    ]}
+                />
+                <RatioCard
+                    title="Technical Ratios"
+                    items={[
+                        {
+                            label: "Alpha",
+                            value: "1.2",
+                            description: "Alpha measures the performance of an investment against a market index or benchmark. A positive alpha of 1.2 means the portfolio has outperformed the benchmark by 1.2%.",
+                            valueColor: "text-green-500"
+                        },
+                        {
+                            label: "Beta",
+                            value: "0.85",
+                            description: "Beta measures the volatility of a stock in relation to the overall market. A beta of 0.85 means the portfolio is theoretically 15% less volatile than the market.",
+                            valueColor: "text-orange-500"
+                        }
+                    ]}
+                />
+            </div>
+
             <div className="flex items-center justify-between">
                 <h3 className="text-lg font-bold flex items-center gap-2">
                     <LayoutDashboard className="w-5 h-5 text-primary" />
                     My Portfolio ({scripCount})
                 </h3>
 
-                <div className="relative">
-                    <ArrowUpDown className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
-                    <select
-                        className="bg-card border border-border rounded-lg pl-9 pr-6 py-2 text-xs text-foreground focus:outline-none focus:border-primary appearance-none cursor-pointer hover:bg-muted/50 transition-colors"
-                        onChange={handleSortChange}
-                        value={`${sortConfig.key}:${sortConfig.direction}`}
-                    >
-                        <option value="currentValue:desc">Value (High to Low)</option>
-                        <option value="currentValue:asc">Value (Low to High)</option>
-                        <option value="pl:desc">P/L (High to Low)</option>
-                        <option value="pl:asc">P/L (Low to High)</option>
-                        <option value="scrip:asc">Scrip (A-Z)</option>
-                        <option value="quantity:desc">Quantity</option>
-                    </select>
+                <div className="flex items-center gap-3">
+                    <div className="relative">
+                        <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+                        <input
+                            type="text"
+                            placeholder="Search scrip..."
+                            className="bg-card border border-border rounded-lg pl-9 pr-4 py-2 text-xs font-medium text-foreground focus:outline-none focus:border-primary w-32 sm:w-48 placeholder:text-muted-foreground transition-all focus:w-48 sm:focus:w-56 shadow-sm"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                    </div>
+                    <div className="relative">
+                        <ArrowUpDown className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+                        <select
+                            className="bg-card border border-border rounded-lg pl-9 pr-8 py-2 text-xs font-medium text-foreground focus:outline-none focus:border-primary appearance-none cursor-pointer hover:bg-muted/50 transition-colors shadow-sm"
+                            onChange={handleSortChange}
+                            value={`${sortConfig.key}:${sortConfig.direction}`}
+                        >
+                            <option value="currentValue:desc">Value (High to Low)</option>
+                            <option value="currentValue:asc">Value (Low to High)</option>
+                            <option value="pl:desc">P/L (High to Low)</option>
+                            <option value="pl:asc">P/L (Low to High)</option>
+                            <option value="ltp:desc">LTP (High to Low)</option>
+                            <option value="ltp:asc">LTP (Low to High)</option>
+                            <option value="scrip:asc">Scrip (A-Z)</option>
+                            <option value="sector:asc">Sector (A-Z)</option>
+                            <option value="quantity:desc">Quantity</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
