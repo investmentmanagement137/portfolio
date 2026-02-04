@@ -162,13 +162,13 @@ export function Settings({ onImportSuccess }: SettingsProps) {
                             {state.brokerNo && (
                                 <div className="mt-2 px-1 animate-in fade-in slide-in-from-top-1 duration-300">
                                     <a
-                                        href={`https://tms${state.brokerNo}.nepsetms.com.np/tms/me/trade-book-history`}
+                                        href={`https://tms${state.brokerNo}.nepsetms.com.np/`}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="flex items-center gap-2 text-xs font-bold text-primary hover:text-primary/80 transition-colors w-fit group"
                                     >
                                         <ExternalLink className="w-3 h-3 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                                        Visit Broker #{state.brokerNo} TMS (Trade History)
+                                        Visit Broker #{state.brokerNo} TMS Portal
                                     </a>
                                 </div>
                             )}
