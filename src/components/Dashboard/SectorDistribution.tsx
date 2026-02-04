@@ -5,7 +5,7 @@ import { DonutChart } from '../ui/DonutChart';
 const SECTOR_COLORS = ['#F59E0B', '#10B981', '#3B82F6', '#8B5CF6', '#EC4899', '#EF4444', '#64748B'];
 
 export function SectorDistribution() {
-    const { state: { holdings } } = usePortfolio();
+    const { state: { holdings, portfolioSummary } } = usePortfolio();
 
     const sectorMap = holdings.reduce((acc, item) => {
         acc[item.sector] = (acc[item.sector] || 0) + item.currentValue;
@@ -34,6 +34,8 @@ export function SectorDistribution() {
                     dataKey="value"
                     nameKey="name"
                     colors={SECTOR_COLORS}
+                    centerLabel="Total Value"
+                    centerValue={portfolioSummary.value}
                     detailedData={sectorData}
                 />
             </CardContent>
