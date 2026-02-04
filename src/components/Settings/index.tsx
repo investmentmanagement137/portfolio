@@ -130,6 +130,38 @@ export function Settings({ onImportSuccess }: SettingsProps) {
                         </CardContent>
                     </Card>
 
+                    {/* Broker Settings */}
+                    <Card>
+                        <CardHeader className="pb-3">
+                            <CardTitle className="text-base font-medium text-muted-foreground uppercase tracking-wider">Broker Settings</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                                <div className="flex flex-col">
+                                    <span className="font-medium">Broker Number</span>
+                                    <span className="text-xs text-muted-foreground">Used for future trade tracking</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-xs font-bold text-muted-foreground">#</span>
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        max="100"
+                                        placeholder="No."
+                                        value={state.brokerNo || ''}
+                                        onChange={(e) => {
+                                            const val = e.target.value === '' ? null : parseInt(e.target.value);
+                                            if (val === null || (val >= 1 && val <= 100)) {
+                                                actions.updateBrokerNo(val);
+                                            }
+                                        }}
+                                        className="w-16 bg-background border border-border rounded px-2 py-1 text-sm font-mono font-bold focus:outline-none focus:border-primary text-center"
+                                    />
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+
                     {/* Import Data */}
                     <Card>
                         <CardHeader className="pb-3">

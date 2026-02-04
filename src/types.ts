@@ -63,6 +63,7 @@ export interface PortfolioState {
     error: string | null;
     lastUpdated: Date | null;
     rawAnalysisData: any[] | null;
+    brokerNo: number | null;
 }
 
 export interface PortfolioActions {
@@ -70,6 +71,7 @@ export interface PortfolioActions {
     reanalysePortfolio: () => Promise<void>;
     clearData: () => void;
     refreshLtp: () => Promise<void>;
+    updateBrokerNo: (no: number | null) => void;
 }
 
 export interface PortfolioContextValue {

@@ -32,6 +32,7 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
         error: null,
         lastUpdated: null,
         rawAnalysisData: null,
+        brokerNo: null,
     });
 
     const [waccRawData, setWaccRawData] = useState<any[]>([]);
@@ -44,6 +45,7 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
             const storedWacc = localStorage.getItem('portfolioWaccRaw');
             const storedHoldings = localStorage.getItem('portfolioHoldingsRaw');
             const storedLastUpdated = localStorage.getItem('portfolioLastUpdated');
+            const storedBrokerNo = localStorage.getItem('portfolioBrokerNo');
 
             if (storedAnalysis) {
                 const data = JSON.parse(storedAnalysis);
@@ -52,6 +54,7 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
             if (storedWacc) setWaccRawData(JSON.parse(storedWacc));
             if (storedHoldings) setHoldingsRawData(JSON.parse(storedHoldings));
             if (storedLastUpdated) setState(prev => ({ ...prev, lastUpdated: new Date(storedLastUpdated) }));
+            if (storedBrokerNo) setState(prev => ({ ...prev, brokerNo: parseInt(storedBrokerNo) }));
         } catch (e) {
             console.error("Failed to load local storage data", e);
         }
@@ -289,6 +292,15 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
         await uploadData(waccFile, historyFile);
     };
 
+    const updateBrokerNo = (no: number | null) => {
+        if (no === null) {
+            localStorage.removeItem('portfolioBrokerNo');
+        } else {
+            localStorage.setItem('portfolioBrokerNo', no.toString());
+        }
+        setState(prev => ({ ...prev, brokerNo: no }));
+    };
+
     const clearData = () => {
         localStorage.removeItem('portfolioAnalysis');
         localStorage.removeItem('portfolioWaccRaw');
@@ -308,13 +320,14 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
             error: null,
             lastUpdated: null,
             rawAnalysisData: null,
+            brokerNo: null,
         });
         setWaccRawData([]);
         setHoldingsRawData([]);
     };
 
     return (
-        <PortfolioContext.Provider value={{ state, actions: { uploadData, reanalysePortfolio, clearData, refreshLtp } }}>
+        <PortfolioContext.Provider value={{ state, actions: { uploadData, reanalysePortfolio, clearData, refreshLtp, updateBrokerNo } }}>
             {children}
         </PortfolioContext.Provider>
     );

@@ -103,13 +103,13 @@ export function HoldingsTable() {
                     title="Fundamental Ratios"
                     items={[
                         {
-                            label: "Weighted Avg PE",
+                            label: "Price to Earning",
                             value: "15.4",
                             description: "The Price-to-Earnings (P/E) ratio measures the company's current share price relative to its per-share earnings. A weighted average accounts for the size of each holding in your portfolio.",
                             valueColor: "text-blue-500"
                         },
                         {
-                            label: "PBV Ratio",
+                            label: "Price to BookValue",
                             value: "2.1",
                             description: "The Price-to-Book (P/B) ratio compares the company's market value to its book value (assets minus liabilities). It tells you how much you are paying for every rupee of assets.",
                             valueColor: "text-purple-500"
