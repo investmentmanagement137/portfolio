@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { ImportData } from '../Import';
+import { Timeline } from '../Timeline';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/Card';
-import { Shield, FileText, Database, ChevronRight, ArrowLeft, Trash2, RefreshCw, Sun, Moon, ExternalLink } from 'lucide-react';
+import { Shield, FileText, Database, ChevronRight, ArrowLeft, Trash2, RefreshCw, Sun, Moon, ExternalLink, History } from 'lucide-react';
 import { usePortfolio } from '../../context/PortfolioContext';
 import { useTheme } from '../../context/ThemeContext';
 import { cn } from '../../lib/utils';
@@ -14,7 +15,7 @@ export function Settings({ onImportSuccess }: SettingsProps) {
     const { actions, state } = usePortfolio();
     const { theme, setTheme } = useTheme();
     // activeSection null means "Main Menu"
-    const [activeSection, setActiveSection] = useState<'data' | 'privacy' | 'terms' | null>(null);
+    const [activeSection, setActiveSection] = useState<'data' | 'privacy' | 'terms' | 'timeline' | null>(null);
     const [isReanalysing, setIsReanalysing] = useState(false);
     const [reanalyseMsg, setReanalyseMsg] = useState<{ type: 'success' | 'error', text: string } | null>(null);
     const [showSyncToast, setShowSyncToast] = useState(false);
@@ -223,6 +224,28 @@ export function Settings({ onImportSuccess }: SettingsProps) {
                         </CardContent>
                     </Card>
 
+                    {/* Timeline Link */}
+                    <Card>
+                        <CardHeader className="pb-3">
+                            <CardTitle className="text-base font-medium text-muted-foreground uppercase tracking-wider">Portfolio History</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-1">
+                            <button
+                                onClick={() => setActiveSection('timeline')}
+                                className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 transition-colors text-left"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <History className="w-5 h-5 text-indigo-500" />
+                                    <div className="flex flex-col">
+                                        <span className="font-medium">My Timeline</span>
+                                        <span className="text-xs text-muted-foreground">View buy/sell history</span>
+                                    </div>
+                                </div>
+                                <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                            </button>
+                        </CardContent>
+                    </Card>
+
                     {/* About */}
                     <Card>
                         <CardHeader className="pb-3">
@@ -274,61 +297,67 @@ export function Settings({ onImportSuccess }: SettingsProps) {
     // Sub-Pages
     return (
         <div className="space-y-6 animate-in slide-in-from-right-4 duration-300 max-w-3xl mx-auto">
-            <button
-                onClick={() => setActiveSection(null)}
-                className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-4 font-medium transition-colors"
-            >
-                <ArrowLeft className="w-4 h-4" />
-                Back to Settings
-            </button>
+            {activeSection === 'timeline' ? (
+                <Timeline onBack={() => setActiveSection(null)} />
+            ) : (
+                <>
+                    <button
+                        onClick={() => setActiveSection(null)}
+                        className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-4 font-medium transition-colors"
+                    >
+                        <ArrowLeft className="w-4 h-4" />
+                        Back to Settings
+                    </button>
 
-            {activeSection === 'data' && (
-                <div className="space-y-6">
-                    <div className="flex flex-col gap-2">
-                        <h2 className="text-2xl font-bold tracking-tight">Data Management</h2>
-                        <p className="text-muted-foreground">Import your latest portfolio data from Meroshare.</p>
-                    </div>
-                    <ImportData onSuccess={onImportSuccess} />
-                </div>
-            )}
+                    {activeSection === 'data' && (
+                        <div className="space-y-6">
+                            <div className="flex flex-col gap-2">
+                                <h2 className="text-2xl font-bold tracking-tight">Data Management</h2>
+                                <p className="text-muted-foreground">Import your latest portfolio data from Meroshare.</p>
+                            </div>
+                            <ImportData onSuccess={onImportSuccess} />
+                        </div>
+                    )}
 
-            {activeSection === 'privacy' && (
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Privacy Policy</CardTitle>
-                        <CardDescription>Last updated: February 3, 2026</CardDescription>
-                    </CardHeader>
-                    <CardContent className="prose prose-sm dark:prose-invert max-w-none space-y-4">
-                        <p>
-                            Your privacy is critically important to us. This application operates completely on the client-side, meaning:
-                        </p>
-                        <ul className="list-disc pl-5 space-y-2">
-                            <li><strong>No Server Uploads:</strong> Your financial data (WACC, History, Holdings) is processed locally in your browser and is never uploaded to any external server.</li>
-                            <li><strong>Local Storage:</strong> Portfolio data is stored exclusively in your browser's LocalStorage for persistence across sessions.</li>
-                            <li><strong>Data Control:</strong> You have full control over your data. Clearing your browser cache or LocalStorage will wipe all application data correctly.</li>
-                        </ul>
-                        <h3 className="text-lg font-semibold mt-6">External Services</h3>
-                        <p>
-                            This application may fetch live market data (LTP) from public APIs. No personal identifiable information (PII) is transmitted during these requests.
-                        </p>
-                    </CardContent>
-                </Card>
-            )}
+                    {activeSection === 'privacy' && (
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Privacy Policy</CardTitle>
+                                <CardDescription>Last updated: February 3, 2026</CardDescription>
+                            </CardHeader>
+                            <CardContent className="prose prose-sm dark:prose-invert max-w-none space-y-4">
+                                <p>
+                                    Your privacy is critically important to us. This application operates completely on the client-side, meaning:
+                                </p>
+                                <ul className="list-disc pl-5 space-y-2">
+                                    <li><strong>No Server Uploads:</strong> Your financial data (WACC, History, Holdings) is processed locally in your browser and is never uploaded to any external server.</li>
+                                    <li><strong>Local Storage:</strong> Portfolio data is stored exclusively in your browser's LocalStorage for persistence across sessions.</li>
+                                    <li><strong>Data Control:</strong> You have full control over your data. Clearing your browser cache or LocalStorage will wipe all application data correctly.</li>
+                                </ul>
+                                <h3 className="text-lg font-semibold mt-6">External Services</h3>
+                                <p>
+                                    This application may fetch live market data (LTP) from public APIs. No personal identifiable information (PII) is transmitted during these requests.
+                                </p>
+                            </CardContent>
+                        </Card>
+                    )}
 
-            {activeSection === 'terms' && (
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Terms of Service</CardTitle>
-                    </CardHeader>
-                    <CardContent className="prose prose-sm dark:prose-invert max-w-none space-y-4">
-                        <p>By using this Portfolio Analytics tool, you agree to the following terms:</p>
-                        <ul className="list-disc pl-5 space-y-2">
-                            <li><strong>Usage:</strong> This tool is for informational purposes only and does not constitute financial advice.</li>
-                            <li><strong>Accuracy:</strong> While we strive for accuracy, the calculations are based on the data you provide and public market data, which may not always be real-time or error-free.</li>
-                            <li><strong>Liability:</strong> The developers are not liable for any financial decisions made based on the data presented in this application.</li>
-                        </ul>
-                    </CardContent>
-                </Card>
+                    {activeSection === 'terms' && (
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Terms of Service</CardTitle>
+                            </CardHeader>
+                            <CardContent className="prose prose-sm dark:prose-invert max-w-none space-y-4">
+                                <p>By using this Portfolio Analytics tool, you agree to the following terms:</p>
+                                <ul className="list-disc pl-5 space-y-2">
+                                    <li><strong>Usage:</strong> This tool is for informational purposes only and does not constitute financial advice.</li>
+                                    <li><strong>Accuracy:</strong> While we strive for accuracy, the calculations are based on the data you provide and public market data, which may not always be real-time or error-free.</li>
+                                    <li><strong>Liability:</strong> The developers are not liable for any financial decisions made based on the data presented in this application.</li>
+                                </ul>
+                            </CardContent>
+                        </Card>
+                    )}
+                </>
             )}
         </div>
     );

@@ -23,6 +23,19 @@ export interface WebhookHolding {
     Status: string;
 }
 
+export interface TransactionEvent {
+    "S.N"?: number;
+    "Contract No"?: number;
+    "Scrip": string;
+    "Type": string;
+    "Quantity": number;
+    "Rate": number;
+    "Amount": number;
+    "Capital Gain Tax"?: number;
+    "Commission"?: number;
+    "Date": string; // YYYY-MM-DD
+}
+
 export interface LtpData {
     Symbol: string;
     LTP: string;

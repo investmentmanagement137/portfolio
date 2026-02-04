@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Home, Wallet, PieChart, RefreshCw, Settings, Sun, Moon, CheckCircle2, type LucideIcon } from 'lucide-react';
+import { Home, Wallet, PieChart, RefreshCw, History as HistoryIcon, Settings, Sun, Moon, CheckCircle2, type LucideIcon } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { usePortfolio } from '../context/PortfolioContext';
 import { useTheme } from '../context/ThemeContext';
@@ -102,7 +102,7 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
             </main>
 
             <nav className="fixed bottom-0 left-0 w-full bg-card/90 backdrop-blur-lg border-t border-border z-50 safe-area-bottom transition-colors duration-300">
-                <div className="flex items-center justify-around p-2 max-w-md mx-auto">
+                <div className="flex items-center justify-around p-2 max-w-lg mx-auto">
                     <NavItem
                         icon={Home}
                         label="Home"
@@ -114,6 +114,12 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
                         label="Portfolio"
                         isActive={activeTab === 'portfolio'}
                         onClick={() => onTabChange('portfolio')}
+                    />
+                    <NavItem
+                        icon={HistoryIcon}
+                        label="Timeline"
+                        isActive={activeTab === 'timeline'}
+                        onClick={() => onTabChange('timeline')}
                     />
                     <NavItem
                         icon={PieChart}
