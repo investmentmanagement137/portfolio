@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ImportData } from '../Import';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/Card';
-import { Shield, FileText, Database, ChevronRight, ArrowLeft, Trash2, RefreshCw, Sun, Moon } from 'lucide-react';
+import { Shield, FileText, Database, ChevronRight, ArrowLeft, Trash2, RefreshCw, Sun, Moon, ExternalLink } from 'lucide-react';
 import { usePortfolio } from '../../context/PortfolioContext';
 import { useTheme } from '../../context/ThemeContext';
 import { cn } from '../../lib/utils';
@@ -159,6 +159,19 @@ export function Settings({ onImportSuccess }: SettingsProps) {
                                     />
                                 </div>
                             </div>
+                            {state.brokerNo && (
+                                <div className="mt-2 px-1 animate-in fade-in slide-in-from-top-1 duration-300">
+                                    <a
+                                        href={`https://tms${state.brokerNo}.nepsetms.com.np/tms/me/trade-book-history`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center gap-2 text-xs font-bold text-primary hover:text-primary/80 transition-colors w-fit group"
+                                    >
+                                        <ExternalLink className="w-3 h-3 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                                        Visit Broker #{state.brokerNo} TMS (Trade History)
+                                    </a>
+                                </div>
+                            )}
                         </CardContent>
                     </Card>
 

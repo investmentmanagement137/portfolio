@@ -113,12 +113,6 @@ export function HoldingsTable() {
                             value: "2.1",
                             description: "The Price-to-Book (P/B) ratio compares the company's market value to its book value (assets minus liabilities). It tells you how much you are paying for every rupee of assets.",
                             valueColor: "text-purple-500"
-                        },
-                        {
-                            label: "Graham Number",
-                            value: "450.0",
-                            description: "The Graham Number is a figure that measures a stock's fundamental value by taking into account the company's earnings per share and book value per share. It is considered an upper bound for the price a defensive investor should pay.",
-                            valueColor: "text-amber-500"
                         }
                     ]}
                 />
