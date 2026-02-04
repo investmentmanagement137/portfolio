@@ -67,6 +67,7 @@ export interface PortfolioState {
 
 export interface PortfolioActions {
     uploadData: (waccFile: File, historyFile: File, holdingsFile?: File) => Promise<void>;
+    reanalysePortfolio: () => Promise<void>;
     clearData: () => void;
     refreshLtp: () => Promise<void>;
 }

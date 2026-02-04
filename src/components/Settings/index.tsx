@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ImportData } from '../Import';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/Card';
-import { Shield, FileText, Database, ChevronRight, ArrowLeft, Trash2 } from 'lucide-react';
+import { Shield, FileText, Database, ChevronRight, ArrowLeft, Trash2, RefreshCw } from 'lucide-react';
 import { usePortfolio } from '../../context/PortfolioContext';
 import { cn } from '../../lib/utils';
 
@@ -12,6 +12,8 @@ interface SettingsProps {
 export function Settings({ onImportSuccess }: SettingsProps) {
     const { actions } = usePortfolio();
     const [activeSection, setActiveSection] = useState<'data' | 'privacy' | 'terms' | null>('data');
+    const [isReanalysing, setIsReanalysing] = useState(false);
+    const [reanalyseMsg, setReanalyseMsg] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
     // Initialize default for desktop if needed, though 'data' is fine. 
     // We'll use CSS to hide/show on mobile based on state.
@@ -85,6 +87,43 @@ export function Settings({ onImportSuccess }: SettingsProps) {
                                 <p className="text-muted-foreground">Import your latest portfolio data from Meroshare.</p>
                             </div>
                             <ImportData onSuccess={onImportSuccess} />
+
+                            <div className="pt-8 border-t border-border space-y-4">
+                                <div>
+                                    <h3 className="text-lg font-bold">Reanalyse Portfolio</h3>
+                                    <p className="text-sm text-muted-foreground">Recalculate your portfolio using the previously uploaded data. Use this if you want to refresh the analysis without re-uploading files.</p>
+                                </div>
+                                <div className="flex items-center gap-4">
+                                    <button
+                                        onClick={async () => {
+                                            if (isReanalysing) return;
+                                            setIsReanalysing(true);
+                                            setReanalyseMsg(null);
+                                            try {
+                                                await actions.reanalysePortfolio();
+                                                setReanalyseMsg({ type: 'success', text: 'Portfolio reanalysed successfully!' });
+                                                if (onImportSuccess) onImportSuccess();
+                                            } catch (err: any) {
+                                                setReanalyseMsg({ type: 'error', text: err.message || "Failed to reanalyse" });
+                                            } finally {
+                                                setIsReanalysing(false);
+                                            }
+                                        }}
+                                        disabled={isReanalysing}
+                                        className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2"
+                                    >
+                                        <RefreshCw className={cn("w-4 h-4", isReanalysing && "animate-spin")} />
+                                        {isReanalysing ? 'Analysing...' : 'Reanalyse Portfolio'}
+                                    </button>
+                                    {reanalyseMsg && (
+                                        <div className={cn("text-xs font-bold px-3 py-1 rounded-full",
+                                            reanalyseMsg.type === 'success' ? "bg-green-500/10 text-green-500" : "bg-red-500/10 text-red-500"
+                                        )}>
+                                            {reanalyseMsg.text}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
 
                             <div className="pt-8 border-t border-border">
                                 <h3 className="text-lg font-bold text-red-500 mb-2">Danger Zone</h3>

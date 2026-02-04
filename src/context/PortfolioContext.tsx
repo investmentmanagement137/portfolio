@@ -238,6 +238,19 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
                 reader.readAsText(holdingsFile);
             }
 
+            // Save raw CSVs for re-analysis
+            const waccReader = new FileReader();
+            waccReader.onload = (e) => {
+                if (e.target?.result) localStorage.setItem('portfolioWaccCSV', e.target.result as string);
+            };
+            waccReader.readAsText(waccFile);
+
+            const historyReader = new FileReader();
+            historyReader.onload = (e) => {
+                if (e.target?.result) localStorage.setItem('portfolioHistoryCSV', e.target.result as string);
+            };
+            historyReader.readAsText(historyFile);
+
             const formData = new FormData();
             formData.append('wacc_report', waccFile);
             formData.append('transaction_history', historyFile);
@@ -262,11 +275,27 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
         }
     };
 
+    const reanalysePortfolio = async () => {
+        const waccCsv = localStorage.getItem('portfolioWaccCSV');
+        const historyCsv = localStorage.getItem('portfolioHistoryCSV');
+
+        if (!waccCsv || !historyCsv) {
+            throw new Error("No cached data found. Please import your portfolio again to enable re-analysis.");
+        }
+
+        const waccFile = new File([waccCsv], "wacc.csv", { type: "text/csv" });
+        const historyFile = new File([historyCsv], "history.csv", { type: "text/csv" });
+
+        await uploadData(waccFile, historyFile);
+    };
+
     const clearData = () => {
         localStorage.removeItem('portfolioAnalysis');
         localStorage.removeItem('portfolioWaccRaw');
         localStorage.removeItem('portfolioHoldingsRaw');
         localStorage.removeItem('portfolioLastUpdated');
+        localStorage.removeItem('portfolioWaccCSV');
+        localStorage.removeItem('portfolioHistoryCSV');
 
         setState({
             holdings: [],
@@ -285,7 +314,7 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
     };
 
     return (
-        <PortfolioContext.Provider value={{ state, actions: { uploadData, clearData, refreshLtp } }}>
+        <PortfolioContext.Provider value={{ state, actions: { uploadData, reanalysePortfolio, clearData, refreshLtp } }}>
             {children}
         </PortfolioContext.Provider>
     );
