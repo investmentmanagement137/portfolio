@@ -28,6 +28,7 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
         activeDividends: [],
         portfolioSummary: { investment: 0, value: 0, pl: 0, plPercent: 0, activeDividendTotal: 0, scripCount: 0, plWithCashflow: 0, plWithCashflowPercent: 0 },
         ltpData: {},
+        nepseData: null,
         loading: false,
         error: null,
         lastUpdated: null,
@@ -72,13 +73,17 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
             const map: Record<string, number> = {};
             const data = res.data["all recent price"] || [];
 
+            let nepseEntry: any = null;
             data.forEach((item: any) => {
+                if (item.Script === "NEPSE Index") {
+                    nepseEntry = item;
+                }
                 const price = typeof item.Price === 'string'
                     ? parseFloat(item.Price.replace(/,/g, ''))
                     : item.Price;
                 map[item.Script] = isNaN(price) ? 0 : price;
             });
-            setState(prev => ({ ...prev, ltpData: map, loading: false }));
+            setState(prev => ({ ...prev, ltpData: map, nepseData: nepseEntry, loading: false }));
         } catch (error) {
             console.error("Failed to fetch LTP", error);
             setState(prev => ({ ...prev, loading: false }));
@@ -326,6 +331,7 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
             activeDividends: [],
             portfolioSummary: { investment: 0, value: 0, pl: 0, plPercent: 0, activeDividendTotal: 0, scripCount: 0, plWithCashflow: 0, plWithCashflowPercent: 0 },
             ltpData: state.ltpData,
+            nepseData: state.nepseData,
             loading: false,
             error: null,
             lastUpdated: null,

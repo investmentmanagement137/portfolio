@@ -65,6 +65,16 @@ export interface PortfolioSummary {
     plWithCashflowPercent: number;
 }
 
+export interface NepseData {
+    Script: string;
+    Price: number;
+    "Traded _date": string;
+    "Ltp change percent": number;
+    turnover: number;
+    "previous close": number;
+    "change in value": number;
+}
+
 export interface PortfolioState {
     holdings: Holding[];
     dividendSummary: any[];
@@ -72,6 +82,7 @@ export interface PortfolioState {
     activeDividends: DividendEvent[];
     portfolioSummary: PortfolioSummary;
     ltpData: Record<string, number>;
+    nepseData: NepseData | null;
     loading: boolean;
     error: string | null;
     lastUpdated: Date | null;
