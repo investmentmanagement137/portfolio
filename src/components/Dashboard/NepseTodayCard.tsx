@@ -17,12 +17,26 @@ export function NepseTodayCard() {
 
     if (!nepseData) return null;
 
+    const getMarketStatus = () => {
+        const now = new Date();
+        // Convert to Nepal Time (UTC+5:45) if not already
+        // In this environment, the system time is already local to the user if configured, 
+        // but it's safer to use the provided local time as a reference.
+        const day = now.getDay(); // 0 is Sunday, 1 is Monday, ..., 4 is Thursday
+        const hour = now.getHours();
+
+        const isMarketDay = day >= 0 && day <= 4; // Sunday to Thursday
+        const isMarketTime = hour >= 11 && hour < 15; // 11:00 AM to 3:00 PM
+
+        return (isMarketDay && isMarketTime) ? "Live" : "Close";
+    };
+
     const marketData = {
         index: nepseData.Price.toLocaleString(),
         change: (nepseData["change in value"] >= 0 ? '+' : '') + nepseData["change in value"].toFixed(2),
         percentChange: (nepseData["Ltp change percent"] >= 0 ? '+' : '') + nepseData["Ltp change percent"].toFixed(2) + '%',
         turnover: nepseData.turnover > 0 ? (nepseData.turnover / 1000000000).toFixed(2) + " Arba" : "N/A",
-        status: "Live"
+        status: getMarketStatus()
     };
 
     const isPositive = nepseData["change in value"] >= 0;

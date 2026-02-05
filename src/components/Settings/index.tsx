@@ -10,13 +10,14 @@ import { cn } from '../../lib/utils';
 interface SettingsProps {
     onImportSuccess?: () => void;
     onNavigateToTimeline?: () => void;
+    defaultSection?: 'data' | 'privacy' | 'terms' | 'timeline' | null;
 }
 
-export function Settings({ onImportSuccess, onNavigateToTimeline }: SettingsProps) {
+export function Settings({ onImportSuccess, onNavigateToTimeline, defaultSection = null }: SettingsProps) {
     const { actions, state } = usePortfolio();
     const { theme, setTheme } = useTheme();
     // activeSection null means "Main Menu"
-    const [activeSection, setActiveSection] = useState<'data' | 'privacy' | 'terms' | 'timeline' | null>(null);
+    const [activeSection, setActiveSection] = useState<'data' | 'privacy' | 'terms' | 'timeline' | null>(defaultSection);
     const [isReanalysing, setIsReanalysing] = useState(false);
     const [reanalyseMsg, setReanalyseMsg] = useState<{ type: 'success' | 'error', text: string } | null>(null);
     const [showSyncToast, setShowSyncToast] = useState(false);

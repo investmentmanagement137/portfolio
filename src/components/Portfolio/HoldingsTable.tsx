@@ -122,7 +122,7 @@ export function HoldingsTable() {
                     <div className="relative">
                         <ArrowUpDown className="w-3.5 h-3.5 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground pointer-events-none" />
                         <select
-                            className="bg-card/50 backdrop-blur-sm border border-border/40 rounded-xl pl-9 pr-8 py-2 text-xs font-bold text-foreground focus:outline-none focus:border-primary/50 appearance-none cursor-pointer hover:bg-primary/5 transition-colors shadow-sm"
+                            className="bg-card/50 backdrop-blur-sm border border-border/40 rounded-xl pl-9 pr-8 py-2 text-xs font-bold text-foreground focus:outline-none focus:border-primary/50 appearance-none cursor-pointer hover:bg-primary/5 transition-colors shadow-sm [&>option]:bg-card [&>option]:text-foreground"
                             onChange={handleSortChange}
                             value={`${sortConfig.key}:${sortConfig.direction}`}
                         >

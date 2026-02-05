@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Loader2, AlertCircle } from 'lucide-react';
+import { Loader2, AlertCircle, ShieldCheck } from 'lucide-react';
 import { usePortfolio } from '../../context/PortfolioContext';
 import { Card, CardContent } from '../ui/Card';
 import { FileDropZone } from './FileDropZone';
@@ -18,16 +18,21 @@ export function ImportData({ onSuccess }: ImportDataProps) {
     // Android often struggles with just .csv, so we include common MIME types
     const CSV_ACCEPT = ".csv,text/csv,application/vnd.ms-excel,application/csv,text/x-csv,application/x-csv,text/comma-separated-values,text/x-comma-separated-values";
 
+    const [showSuccess, setShowSuccess] = useState(false);
+
     const handleUpload = async () => {
         if (!waccFile || !historyFile) {
             setLocalError("Please select WACC and History CSV files for analysis.");
             return;
         }
         setLocalError(null);
+        setShowSuccess(false);
 
         try {
             await actions.uploadData(waccFile, historyFile, holdingsFile || undefined);
+            setShowSuccess(true);
             if (onSuccess) onSuccess();
+            // Reset files after success if desired, or keep them
         } catch (e) {
             // Error is handled in context
         }
@@ -42,9 +47,16 @@ export function ImportData({ onSuccess }: ImportDataProps) {
                 </div>
 
                 {(state.error || localError) && (
-                    <div className="mb-6 bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-xl flex items-center gap-2 text-sm">
+                    <div className="mb-6 bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-xl flex items-center gap-2 text-sm animate-in fade-in slide-in-from-top-1">
                         <AlertCircle className="w-5 h-5" />
                         {state.error || localError}
+                    </div>
+                )}
+
+                {showSuccess && !state.error && (
+                    <div className="mb-6 bg-green-500/10 border border-green-500/20 text-green-500 p-4 rounded-xl flex items-center gap-2 text-sm animate-in fade-in slide-in-from-top-1">
+                        <ShieldCheck className="w-5 h-5" />
+                        Analysis complete! Your portfolio data has been updated successfully.
                     </div>
                 )}
 
