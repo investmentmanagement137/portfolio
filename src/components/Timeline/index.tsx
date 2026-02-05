@@ -578,16 +578,16 @@ export const Timeline: React.FC = () => {
                                     <div className="w-full h-px bg-gradient-to-r from-transparent via-border/60 to-transparent dashed" />
                                 </div>
                             )}
-                            <div className="relative mb-8 group pl-12 md:pl-0 animate-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: `${groupIdx * 50}ms` }}>
+                            <div className="relative mb-8 group animate-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: `${groupIdx * 50}ms` }}>
                                 {/* Date Marker */}
-                                <div className="absolute left-0 md:left-1/2 md:-translate-x-1/2 -top-3 z-10 text-center">
-                                    <div className="bg-background/95 backdrop-blur border border-border/80 px-4 py-1.5 rounded-full text-[11px] font-mono font-bold shadow-sm flex items-center justify-center gap-2 whitespace-nowrap mx-auto w-fit ring-4 ring-background transition-transform hover:scale-105 hover:border-primary/30">
+                                <div className="mb-4 md:absolute md:left-1/2 md:-translate-x-1/2 md:-top-3 z-10">
+                                    <div className="bg-background/95 backdrop-blur border border-border/80 px-3 py-1.5 rounded-full text-[11px] font-mono font-bold shadow-sm flex items-center gap-2 w-fit">
                                         <Calendar className="w-3.5 h-3.5 text-primary/70" />
                                         <span className="text-foreground/80">{date}</span>
                                     </div>
                                 </div>
 
-                                <div className="pt-8 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-16">
+                                <div className="flex flex-col gap-3 md:grid md:grid-cols-2 md:gap-8 md:pl-12 md:pr-12">
                                     {items.map((item, idx) => {
                                         const isLeft = item.isLeftSide;
                                         const style = getStyle(item.type);
@@ -596,28 +596,20 @@ export const Timeline: React.FC = () => {
                                         return (
                                             <div
                                                 key={`${item.scrip}-${idx}`}
-                                                className={cn(
-                                                    "relative",
-                                                    // Desktop positioning
-                                                    "md:col-span-1",
-                                                    isLeft ? "md:col-start-1 md:text-right" : "md:col-start-2 md:text-left"
-                                                )}
+                                                className="relative w-full"
                                             >
-                                                {/* Dot Connector */}
+                                                {/* Dot Connector - Hidden on mobile */}
                                                 <div className={cn(
-                                                    "absolute top-8 w-3.5 h-3.5 rounded-full border-[3px] bg-background z-20 shadow-sm transition-transform group-hover:scale-125",
+                                                    "hidden md:block absolute top-8 w-3.5 h-3.5 rounded-full border-[3px] bg-background z-20 shadow-sm",
                                                     style.dotBorder,
-                                                    // Position dot on the center line
-                                                    "left-[-26px] md:left-auto", // Mobile: left aligned
                                                     isLeft ? "md:-right-[33px]" : "md:-left-[33px]"
                                                 )} />
 
                                                 {/* Card */}
                                                 <div className={cn(
-                                                    "inline-block relative overflow-hidden border rounded-[28px] p-4 shadow-2xl transition-all duration-300 active:scale-[0.98] w-full md:w-fit min-w-[320px]",
-                                                    "bg-white dark:bg-slate-900 hover:shadow-2xl", // Deep navy/slate instead of pure black
-                                                    style.borderColor,
-                                                    isLeft ? "md:mr-auto" : "md:ml-auto"
+                                                    "relative overflow-hidden border rounded-2xl p-3 shadow-lg transition-all duration-300 active:scale-[0.98] w-full",
+                                                    "bg-white dark:bg-slate-900",
+                                                    style.borderColor
                                                 )}>
                                                     {/* Header: Transaction Type Badge */}
                                                     <div className={cn(
@@ -630,15 +622,15 @@ export const Timeline: React.FC = () => {
                                                     </div>
 
                                                     {/* Scrip Mini-Card */}
-                                                    <div className="bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-5 mb-3 shadow-inner">
-                                                        <div className="text-3xl font-black tracking-tighter mb-2 text-slate-900 dark:text-white drop-shadow-sm">{item.scrip}</div>
+                                                    <div className="bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/50 rounded-xl p-3 mb-2">
+                                                        <div className="text-xl font-black tracking-tight mb-1 text-slate-900 dark:text-white">{item.scrip}</div>
 
                                                         {!item.isDividend && (
-                                                            <div className="flex items-center gap-4 text-xs font-mono bg-white dark:bg-slate-900 px-3 py-2 rounded-xl w-fit border border-slate-200 dark:border-slate-700 shadow-sm">
-                                                                <span className="font-bold text-slate-700 dark:text-slate-100 flex items-center gap-1">
-                                                                    {item.quantity.toLocaleString()} <span className="text-[9px] text-slate-400 dark:text-slate-500 uppercase tracking-tighter font-black">units</span>
+                                                            <div className="flex items-center gap-3 text-xs font-mono">
+                                                                <span className="font-bold text-slate-700 dark:text-slate-200">
+                                                                    {item.quantity.toLocaleString()} <span className="text-[9px] text-slate-400 uppercase">units</span>
                                                                 </span>
-                                                                <span className="h-3 w-[1.5px] bg-slate-200 dark:bg-slate-700"></span>
+                                                                <span className="text-slate-300 dark:text-slate-600">|</span>
                                                                 <span className="font-bold text-slate-600 dark:text-slate-300">{item.rate > 0 ? `Rs. ${item.rate.toLocaleString()}` : 'N/A'}</span>
                                                             </div>
                                                         )}
@@ -667,20 +659,18 @@ export const Timeline: React.FC = () => {
                                                     ) : null}
 
                                                     {/* Balance Section */}
-                                                    <div className="bg-white dark:bg-slate-800/80 rounded-2xl p-4 border border-slate-200 dark:border-slate-700/50 shadow-sm">
-                                                        <div className="flex items-center justify-between gap-4">
+                                                    <div className="bg-slate-50 dark:bg-slate-800/80 rounded-xl p-3 border border-slate-200 dark:border-slate-700/50">
+                                                        <div className="flex items-center justify-between gap-3">
                                                             <div className="flex flex-col">
-                                                                <span className="text-slate-500 dark:text-slate-400 uppercase tracking-widest font-black text-[9px] mb-1.5 opacity-80">Balance Before</span>
-                                                                <span className="font-mono font-black text-slate-600 dark:text-slate-300 text-sm">{item.balanceBefore?.toLocaleString() ?? 0}</span>
+                                                                <span className="text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold text-[8px] mb-0.5">Before</span>
+                                                                <span className="font-mono font-bold text-slate-600 dark:text-slate-300 text-sm">{item.balanceBefore?.toLocaleString() ?? 0}</span>
                                                             </div>
 
-                                                            <div className="h-7 w-7 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 flex items-center justify-center shadow-sm">
-                                                                <ArrowRightLeft className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
-                                                            </div>
+                                                            <ArrowRightLeft className="w-4 h-4 text-slate-400 dark:text-slate-600" />
 
                                                             <div className="flex flex-col text-right">
-                                                                <span className="text-slate-500 dark:text-slate-400 uppercase tracking-widest font-black text-[9px] mb-1.5 opacity-80">Balance After</span>
-                                                                <span className="font-mono font-black text-slate-900 dark:text-white text-base tracking-tight">{item.balance.toLocaleString()}</span>
+                                                                <span className="text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold text-[8px] mb-0.5">After</span>
+                                                                <span className="font-mono font-black text-slate-900 dark:text-white text-sm">{item.balance.toLocaleString()}</span>
                                                             </div>
                                                         </div>
                                                     </div>
