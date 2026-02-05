@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Loader2, AlertCircle, ShieldCheck } from 'lucide-react';
+import { Loader2, AlertCircle, ShieldCheck, Youtube } from 'lucide-react';
 import { usePortfolio } from '../../context/PortfolioContext';
 import { Card, CardContent } from '../ui/Card';
 import { FileDropZone } from './FileDropZone';
@@ -42,7 +42,18 @@ export function ImportData({ onSuccess }: ImportDataProps) {
         <Card className="max-w-4xl mx-auto shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-300">
             <CardContent className="p-8">
                 <div className="mb-8">
-                    <h2 className="text-xl font-bold text-foreground mb-2">Import meroshare Data</h2>
+                    <div className="flex items-center justify-between gap-4 mb-2">
+                        <h2 className="text-xl font-bold text-foreground">Import meroshare Data</h2>
+                        <a
+                            href="https://youtube.com/shorts/TlyEfA6pRnI?si=gNNW_T5D-WlF8dkB"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-red-500 bg-red-500/10 px-3 py-1.5 rounded-full hover:bg-red-500/20 transition-all border border-red-500/20 hover:scale-105 active:scale-95"
+                        >
+                            <Youtube className="w-3.5 h-3.5" />
+                            How to Import?
+                        </a>
+                    </div>
                     <p className="text-muted-foreground text-sm">Upload your Meroshare exports to update your portfolio analysis.</p>
                 </div>
 
