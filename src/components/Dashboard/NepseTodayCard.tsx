@@ -81,7 +81,7 @@ export function NepseTodayCard() {
                             <span className="text-[10px] font-bold uppercase tracking-widest">Portfolio Today</span>
                         </div>
                         <div className={cn("text-3xl font-black tracking-tighter whitespace-nowrap", state.portfolioSummary.dailyGain >= 0 ? "text-green-500" : "text-red-500")}>
-                            रु {state.portfolioSummary.dailyGain >= 0 ? '+' : '-'}{formatCurrency(Math.abs(state.portfolioSummary.dailyGain))}
+                            रु. {state.portfolioSummary.dailyGain >= 0 ? '+' : '-'}{formatCurrency(Math.abs(state.portfolioSummary.dailyGain))}
                         </div>
                     </div>
                 </div>

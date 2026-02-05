@@ -70,18 +70,18 @@ export function HoldingsTable() {
                     <div className="grid grid-cols-2 md:grid-cols-5 divide-x divide-y md:divide-y-0 border-border/40">
                         <div className="p-4 flex flex-col justify-center transition-colors hover:bg-primary/5">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Portfolio Cost</span>
-                            <div className="text-lg font-mono font-bold text-foreground whitespace-nowrap">रु {formatCurrency(investment)}</div>
+                            <div className="text-lg font-mono font-bold text-foreground whitespace-nowrap">रु. {formatCurrency(investment)}</div>
                         </div>
                         <div className="p-4 flex flex-col justify-center transition-colors hover:bg-primary/5">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Current Value</span>
-                            <div className="text-lg font-mono font-bold text-foreground whitespace-nowrap">रु {formatCurrency(value)}</div>
+                            <div className="text-lg font-mono font-bold text-foreground whitespace-nowrap">रु. {formatCurrency(value)}</div>
                         </div>
                         <div className="p-4 flex flex-col justify-center transition-colors hover:bg-primary/5">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">
                                 {state.roiType === 'annualized' ? 'Annualized Return' : 'Total Returns'}
                             </span>
                             <div className={cn("text-lg font-mono font-bold whitespace-nowrap", isProfit ? "text-green-500" : "text-red-500")}>
-                                रु {isProfit ? '+' : '-'}{formatCurrency(Math.abs(pl))}
+                                रु. {isProfit ? '+' : '-'}{formatCurrency(Math.abs(pl))}
                                 <div className="text-[10px] opacity-70 font-bold">
                                     {plPercent.toFixed(2)}%
                                 </div>
@@ -89,12 +89,12 @@ export function HoldingsTable() {
                         </div>
                         <div className="p-4 flex flex-col justify-center transition-colors hover:bg-primary/5">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Cash Dividends</span>
-                            <div className="text-lg font-mono font-bold text-amber-500 whitespace-nowrap">रु {formatCurrency(activeDividendTotal)}</div>
+                            <div className="text-lg font-mono font-bold text-amber-500 whitespace-nowrap">रु. {formatCurrency(activeDividendTotal)}</div>
                         </div>
                         <div className="p-4 flex flex-col justify-center transition-colors hover:bg-primary/5 bg-primary/5">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-primary mb-1">Returns + Cashflow</span>
                             <div className={cn("text-lg font-mono font-bold whitespace-nowrap", isCashflowProfit ? "text-green-500" : "text-red-500")}>
-                                रु {isCashflowProfit ? '+' : '-'}{formatCurrency(Math.abs(plWithCashflow))}
+                                रु. {isCashflowProfit ? '+' : '-'}{formatCurrency(Math.abs(plWithCashflow))}
                                 <div className="text-[10px] opacity-70 font-bold">{plWithCashflowPercent.toFixed(2)}%</div>
                             </div>
                         </div>
@@ -159,7 +159,7 @@ export function HoldingsTable() {
                                             </div>
                                             {state.dailyChanges[item.scrip] !== undefined && state.dailyChanges[item.scrip] !== 0 && (
                                                 <div className={cn("text-[11px] font-black flex items-center gap-1.5", state.dailyChanges[item.scrip] > 0 ? "text-green-500" : "text-red-500")}>
-                                                    Today: रु {state.dailyChanges[item.scrip] > 0 ? '+' : '-'}{formatCurrency(Math.abs(state.dailyChanges[item.scrip] * item.quantity))}
+                                                    Today: रु. {state.dailyChanges[item.scrip] > 0 ? '+' : '-'}{formatCurrency(Math.abs(state.dailyChanges[item.scrip] * item.quantity))}
                                                     <span className="opacity-70 text-[9px] bg-muted/50 px-1.5 py-0.5 rounded border border-current/20">
                                                         {((state.dailyChanges[item.scrip] / (item.ltp - state.dailyChanges[item.scrip])) * 100).toFixed(2)}%
                                                     </span>
@@ -173,7 +173,7 @@ export function HoldingsTable() {
                                 <div className="p-5 sm:w-48 flex flex-col justify-center sm:items-end transition-colors group-hover/card:bg-primary/5">
                                     <div className="text-[10px] text-muted-foreground font-black uppercase tracking-widest mb-1 opacity-70">Current Value</div>
                                     <div className="font-mono font-black text-foreground text-xl tracking-tighter">
-                                        रु {formatCurrency(item.currentValue)}
+                                        रु. {formatCurrency(item.currentValue)}
                                     </div>
                                     <div className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mt-1">
                                         LTP: <span className="text-primary">{formatNumber(item.ltp)}</span>
@@ -186,7 +186,7 @@ export function HoldingsTable() {
                                         {state.roiType === 'annualized' ? 'Ann. Return' : 'Profit/Loss'}
                                     </div>
                                     <div className="font-mono font-black text-xl tracking-tighter flex items-center gap-1">
-                                        रु {item.pl >= 0 ? '+' : '-'}{formatCurrency(Math.abs(item.pl))}
+                                        रु. {item.pl >= 0 ? '+' : '-'}{formatCurrency(Math.abs(item.pl))}
                                     </div>
                                     <div className="text-[10px] font-black uppercase tracking-wider mt-1 bg-background/50 px-2 py-0.5 rounded border border-current/20">
                                         {item.plPercent.toFixed(2)}%

@@ -66,7 +66,7 @@ export function TradingHistoryCard() {
         if (dividendCount > 0) {
             rewards.push({
                 label: 'Cash Dividends Total',
-                value: `रु ${totalCashDividend.toLocaleString('en-IN')}`,
+                value: `रु. ${totalCashDividend.toLocaleString('en-IN')}`,
                 ...iconMap['Cash Dividends Total']
             });
             rewards.push({
@@ -159,9 +159,10 @@ export function TradingHistoryCard() {
                                 <div className={`p-2.5 rounded-full ${stat.bg} ${stat.color} mb-1 group-hover/item:scale-110 transition-transform`}>
                                     <stat.icon className="w-4 h-4" />
                                 </div>
-                                <div className={`font-black tracking-tighter text-foreground text-center break-words w-full px-1 leading-tight ${String(stat.value).length > 15 ? 'text-xs' :
-                                        String(stat.value).length > 10 ? 'text-sm' :
-                                            String(stat.value).length > 8 ? 'text-base' : 'text-xl'
+                                <div className={`font-extrabold tracking-tighter text-foreground text-center break-words w-full px-1 leading-[1.1] ${String(stat.value).length > 20 ? 'text-[10px]' :
+                                    String(stat.value).length > 15 ? 'text-xs' :
+                                        String(stat.value).length > 12 ? 'text-sm' :
+                                            String(stat.value).length > 10 ? 'text-base' : 'text-lg'
                                     }`}>
                                     {stat.value}
                                 </div>
@@ -184,9 +185,10 @@ export function TradingHistoryCard() {
                                 <div className={`p-2.5 rounded-full ${stat.bg} ${stat.color} mb-1 group-hover/item:scale-110 transition-transform`}>
                                     <stat.icon className="w-4 h-4" />
                                 </div>
-                                <div className={`font-black tracking-tighter text-foreground text-center break-words w-full px-1 leading-tight ${String(stat.value).length > 15 ? 'text-xs' :
-                                        String(stat.value).length > 10 ? 'text-sm' :
-                                            String(stat.value).length > 8 ? 'text-base' : 'text-xl'
+                                <div className={`font-extrabold tracking-tighter text-foreground text-center break-words w-full px-1 leading-[1.1] ${String(stat.value).length > 20 ? 'text-[10px]' :
+                                    String(stat.value).length > 15 ? 'text-xs' :
+                                        String(stat.value).length > 12 ? 'text-sm' :
+                                            String(stat.value).length > 10 ? 'text-base' : 'text-lg'
                                     }`}>
                                     {stat.value}
                                 </div>

@@ -102,7 +102,7 @@ export function DividendDetailTable() {
                                 <span className="text-[10px] font-bold uppercase tracking-widest">Active Dividends</span>
                             </div>
                             <div className="text-2xl font-mono font-black text-foreground tracking-tighter">
-                                रु {formatCurrency(totalCurrent)}
+                                रु. {formatCurrency(totalCurrent)}
                             </div>
                         </div>
                         <div className="p-6 transition-colors hover:bg-primary/5">
@@ -111,7 +111,7 @@ export function DividendDetailTable() {
                                 <span className="text-[10px] font-bold uppercase tracking-widest">Historical Total</span>
                             </div>
                             <div className="text-2xl font-mono font-black text-foreground tracking-tighter">
-                                रु {formatCurrency(totalHistorical)}
+                                रु. {formatCurrency(totalHistorical)}
                             </div>
                         </div>
                     </div>
@@ -189,7 +189,7 @@ export function DividendDetailTable() {
                                     <div className="text-right">
                                         <div className="text-[10px] text-muted-foreground font-black uppercase tracking-widest mb-0.5 opacity-70">Payout</div>
                                         <div className="text-xl font-mono font-black text-amber-500 tracking-tighter">
-                                            रु {formatCurrency(item["Dividend Amount"])}
+                                            रु. {formatCurrency(item["Dividend Amount"])}
                                         </div>
                                     </div>
                                 </div>
@@ -211,13 +211,13 @@ export function DividendDetailTable() {
                                         <div className="flex items-center gap-1.5 text-[9px] font-black text-muted-foreground uppercase tracking-widest opacity-70">
                                             <LayoutGrid className="w-3 h-3" /> Face Value
                                         </div>
-                                        <div className="text-xs font-black text-foreground">रु {item["Face Value"]}</div>
+                                        <div className="text-xs font-black text-foreground">रु. {item["Face Value"]}</div>
                                     </div>
                                     <div className="p-4 flex flex-col gap-1">
                                         <div className="flex items-center gap-1.5 text-[9px] font-black text-muted-foreground uppercase tracking-widest opacity-70">
                                             <Filter className="w-3 h-3" /> Per Share
                                         </div>
-                                        <div className="text-xs font-black text-foreground">रु {item["Dividend Per Share"] || (item["Cash %"] * item["Face Value"] / 100).toFixed(2)}</div>
+                                        <div className="text-xs font-black text-foreground">रु. {item["Dividend Per Share"] || (item["Cash %"] * item["Face Value"] / 100).toFixed(2)}</div>
                                     </div>
                                 </div>
                             </div>
