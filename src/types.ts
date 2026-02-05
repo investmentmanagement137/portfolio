@@ -89,6 +89,7 @@ export interface PortfolioState {
     error: string | null;
     lastUpdated: Date | null;
     rawAnalysisData: any[] | null;
+    tradingHistory: any | null;
     brokerNo: number | null;
     roiType: 'simple' | 'annualized';
 }

@@ -34,6 +34,7 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
         error: null,
         lastUpdated: null,
         rawAnalysisData: null,
+        tradingHistory: null,
         brokerNo: null,
         roiType: 'simple',
     });
@@ -49,10 +50,14 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
             const storedHoldings = localStorage.getItem('portfolioHoldingsRaw');
             const storedLastUpdated = localStorage.getItem('portfolioLastUpdated');
             const storedBrokerNo = localStorage.getItem('portfolioBrokerNo');
+            const storedTradingHistory = localStorage.getItem('portfolioTradingHistory');
 
             if (storedAnalysis) {
                 const data = JSON.parse(storedAnalysis);
                 setState(prev => ({ ...prev, rawAnalysisData: data }));
+            }
+            if (storedTradingHistory) {
+                setState(prev => ({ ...prev, tradingHistory: JSON.parse(storedTradingHistory) }));
             }
             if (storedWacc) setWaccRawData(JSON.parse(storedWacc));
             if (storedHoldings) setHoldingsRawData(JSON.parse(storedHoldings));
@@ -118,7 +123,16 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
         let totalInv = 0;
         let totalVal = 0;
 
-        const webhookHoldings = state.rawAnalysisData?.[3]?.["current holdings in meroshare"];
+        // Helper to find data by key in any index of the rawAnalysisData array
+        const findDataByKey = (key: string) => {
+            if (!state.rawAnalysisData || !Array.isArray(state.rawAnalysisData)) return null;
+            for (const item of state.rawAnalysisData) {
+                if (item && item[key]) return item[key];
+            }
+            return null;
+        };
+
+        const webhookHoldings = findDataByKey("current holdings in meroshare");
 
         if (webhookHoldings && Array.isArray(webhookHoldings)) {
             webhookHoldings.forEach((item: WebhookHolding) => {
@@ -209,9 +223,10 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
 
         calculatedHoldings.sort((a, b) => b.currentValue - a.currentValue);
 
-        const dividendSummary = state.rawAnalysisData?.[0]?.["Divident Summary"] || [];
-        const dividendDetails = state.rawAnalysisData?.[1]?.["Divident Calculation"] || [];
-        const activeDividendsRaw = state.rawAnalysisData?.[4]?.["current holdings in dividents"] || [];
+        const dividendSummary = findDataByKey("Divident Summary") || [];
+        const dividendDetails = findDataByKey("Divident Calculation") || [];
+        const tradingHistory = findDataByKey("tradingHistory") || state.tradingHistory;
+        const activeDividendsRaw = findDataByKey("current holdings in dividents") || [];
 
         const activeDividends = activeDividendsRaw.map((item: any) => ({
             ...item,
@@ -232,6 +247,7 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
             dividendSummary,
             dividendDetails,
             activeDividends,
+            tradingHistory,
             portfolioSummary: {
                 investment: totalInv,
                 value: totalVal,
@@ -291,14 +307,35 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
             formData.append('transaction_history', historyFile);
 
             const response = await axios.post(WEBHOOK_URL, formData);
-            const result = Array.isArray(response.data) ? response.data : [response.data];
+            // Handle both legacy array response and new object response with tradingHistory
+            let result = [];
+            let tradingHistory = null;
+
+            if (response.data) {
+                const data = response.data;
+                // If it's an array of 1 object, use that object as the root for extraction
+                const root = Array.isArray(data) && data.length === 1 ? data[0] : data;
+
+                if (!Array.isArray(root)) {
+                    // It's a single object (unified response)
+                    result = Array.isArray(data) ? data : [data];
+                    tradingHistory = root.tradingHistory || null;
+                } else {
+                    // It's a standard multi-object array
+                    result = data;
+                }
+            }
 
             localStorage.setItem('portfolioAnalysis', JSON.stringify(result));
+            if (tradingHistory) {
+                localStorage.setItem('portfolioTradingHistory', JSON.stringify(tradingHistory));
+            }
             localStorage.setItem('portfolioLastUpdated', new Date().toISOString());
 
             setState(prev => ({
                 ...prev,
                 rawAnalysisData: result,
+                tradingHistory: tradingHistory || prev.tradingHistory,
                 lastUpdated: new Date(),
                 loading: false
             }));
@@ -359,6 +396,7 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
             error: null,
             lastUpdated: null,
             rawAnalysisData: null,
+            tradingHistory: null,
             brokerNo: null,
             roiType: 'simple',
         });
