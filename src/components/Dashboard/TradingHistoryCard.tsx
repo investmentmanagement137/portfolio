@@ -159,7 +159,12 @@ export function TradingHistoryCard() {
                                 <div className={`p-2.5 rounded-full ${stat.bg} ${stat.color} mb-1 group-hover/item:scale-110 transition-transform`}>
                                     <stat.icon className="w-4 h-4" />
                                 </div>
-                                <div className="text-xl font-black tracking-tighter text-foreground whitespace-nowrap overflow-hidden text-ellipsis w-full px-1">{stat.value}</div>
+                                <div className={`font-black tracking-tighter text-foreground text-center break-words w-full px-1 leading-tight ${String(stat.value).length > 15 ? 'text-xs' :
+                                        String(stat.value).length > 10 ? 'text-sm' :
+                                            String(stat.value).length > 8 ? 'text-base' : 'text-xl'
+                                    }`}>
+                                    {stat.value}
+                                </div>
                                 <div className="text-[9px] text-muted-foreground font-black uppercase tracking-widest opacity-70 leading-tight">{stat.label}</div>
                             </div>
                         ))}
@@ -179,7 +184,12 @@ export function TradingHistoryCard() {
                                 <div className={`p-2.5 rounded-full ${stat.bg} ${stat.color} mb-1 group-hover/item:scale-110 transition-transform`}>
                                     <stat.icon className="w-4 h-4" />
                                 </div>
-                                <div className="text-xl font-black tracking-tighter text-foreground whitespace-nowrap overflow-hidden text-ellipsis w-full px-1">{stat.value}</div>
+                                <div className={`font-black tracking-tighter text-foreground text-center break-words w-full px-1 leading-tight ${String(stat.value).length > 15 ? 'text-xs' :
+                                        String(stat.value).length > 10 ? 'text-sm' :
+                                            String(stat.value).length > 8 ? 'text-base' : 'text-xl'
+                                    }`}>
+                                    {stat.value}
+                                </div>
                                 <div className="text-[9px] text-emerald-600 font-black uppercase tracking-widest opacity-70 leading-tight">{stat.label}</div>
                             </div>
                         ))}
