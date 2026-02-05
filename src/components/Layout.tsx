@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Home, Wallet, PieChart, RefreshCw, Activity, Settings, Sun, Moon, CheckCircle2, type LucideIcon } from 'lucide-react';
+import { Home, Wallet, PieChart, RefreshCw, Settings, Sun, Moon, CheckCircle2, type LucideIcon } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { usePortfolio } from '../context/PortfolioContext';
 import { useTheme } from '../context/ThemeContext';
@@ -114,12 +114,6 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
                         label="Portfolio"
                         isActive={activeTab === 'portfolio'}
                         onClick={() => onTabChange('portfolio')}
-                    />
-                    <NavItem
-                        icon={Activity}
-                        label="Timeline"
-                        isActive={activeTab === 'timeline'}
-                        onClick={() => onTabChange('timeline')}
                     />
                     <NavItem
                         icon={PieChart}

@@ -7,7 +7,7 @@ import { Dividends } from './components/Dividends';
 import { Settings } from './components/Settings';
 import { PWAInstallPrompt } from './components/PWAInstallPrompt';
 
-import { Timeline } from './components/Timeline';
+
 
 function AppContent() {
   const [activeTab, setActiveTab] = useState(() => {
@@ -23,7 +23,6 @@ function AppContent() {
     switch (activeTab) {
       case 'home': return <Dashboard onNavigateToImport={() => setActiveTab('settings')} />;
       case 'portfolio': return <Portfolio />;
-      case 'timeline': return <Timeline />;
       case 'dividends': return <Dividends />;
       case 'settings': return <Settings onImportSuccess={() => setActiveTab('home')} onNavigateToTimeline={() => setActiveTab('timeline')} />;
       default: return <Dashboard onNavigateToImport={() => setActiveTab('settings')} />;

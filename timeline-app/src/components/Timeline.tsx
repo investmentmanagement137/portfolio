@@ -15,8 +15,8 @@ import {
     Coins,          // Dividend
     Ticket          // IPO alternative
 } from 'lucide-react';
-import { usePortfolio } from '../../context/PortfolioContext';
-import { cn } from '../../lib/utils';
+import { usePortfolio } from '../context/PortfolioContext';
+import { cn } from '../lib/utils';
 
 // Helper to get color and icon based on transaction type
 const getStyle = (type: string) => {
