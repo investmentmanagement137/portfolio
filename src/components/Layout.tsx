@@ -51,7 +51,7 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
     };
 
     return (
-        <div className="min-h-screen bg-background text-foreground font-sans pb-32 md:pb-36 transition-colors duration-300">
+        <div className="min-h-screen bg-background text-foreground font-sans pb-40 md:pb-36 transition-colors duration-300">
             {/* Sync Toast Notification */}
             {showSyncToast && (
                 <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-top-5 fade-in duration-300">
@@ -62,7 +62,7 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
                 </div>
             )}
 
-            <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-md border-b border-border px-6 py-4 flex justify-between items-center transition-colors duration-300">
+            <header className="relative z-40 bg-background border-b border-border px-6 py-5 flex justify-between items-center transition-colors duration-300">
                 <div>
                     <h1 className="text-xl font-bold tracking-tight text-foreground/90">Portfolio Analyzer</h1>
                 </div>
@@ -71,7 +71,7 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
                     {/* Theme Toggle */}
                     <button
                         onClick={toggleTheme}
-                        className="p-2 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                        className="p-2.5 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
                         title="Toggle Theme"
                     >
                         {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
@@ -101,8 +101,8 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
                 {children}
             </main>
 
-            <nav className="fixed bottom-0 left-0 w-full bg-card/90 backdrop-blur-lg border-t border-border z-50 safe-area-bottom transition-colors duration-300">
-                <div className="flex items-center justify-around p-2 max-w-lg mx-auto">
+            <nav className="fixed bottom-0 left-0 w-full bg-card/95 backdrop-blur-xl border-t border-border z-50 transition-colors duration-300 shadow-[0_-8px_30px_rgb(0,0,0,0.12)]">
+                <div className="flex items-center justify-around px-2 py-3 pb-[calc(1.25rem+env(safe-area-inset-bottom))] max-w-lg mx-auto">
                     <NavItem
                         icon={Home}
                         label="Home"

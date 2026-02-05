@@ -352,7 +352,7 @@ export const Timeline: React.FC = () => {
 
 
     return (
-        <div className="min-h-screen bg-background relative pb-20 animate-in fade-in duration-500">
+        <div className="min-h-screen bg-background relative pb-32 animate-in fade-in duration-500">
             {/* Grid Pattern Background */}
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,#00000005_70%,transparent_100%)] pointer-events-none" />
@@ -438,7 +438,7 @@ export const Timeline: React.FC = () => {
 
                     {/* Filter Scroll Area */}
                     <div className="relative -mx-4 px-4">
-                        <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar [mask-image:linear-gradient(to_right,transparent,black_12px,black_calc(100%-12px),transparent)]">
+                        <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar scroll-smooth [mask-image:linear-gradient(to_right,transparent,black_12px,black_calc(100%-12px),transparent)]">
                             {[
                                 { id: 'All', icon: LayoutGrid, label: 'All' },
                                 { id: 'Buys', icon: ArrowDownCircle, label: 'Buys' },
