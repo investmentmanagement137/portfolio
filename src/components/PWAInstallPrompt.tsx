@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Download, X } from 'lucide-react';
+import { usePortfolio } from '../context/PortfolioContext';
 
 export function PWAInstallPrompt() {
+    const { state } = usePortfolio();
     const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
     const [isVisible, setIsVisible] = useState(false);
 
@@ -31,7 +33,11 @@ export function PWAInstallPrompt() {
         }
     };
 
-    if (!isVisible) return null;
+    // Only show if visible AND user has data (scripCount > 0)
+    // We check state.holdings.length or portfolioSummary.scripCount
+    const hasData = state.portfolioSummary.scripCount > 0;
+
+    if (!isVisible || !hasData) return null;
 
     return (
         <div className="fixed bottom-20 left-1/2 -translate-x-1/2 w-[90%] max-w-sm z-50 animate-in slide-in-from-bottom-5 duration-500">

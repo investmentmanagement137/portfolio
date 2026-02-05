@@ -4,6 +4,7 @@ import { usePortfolio } from '../../context/PortfolioContext';
 import type { Holding } from '../../types';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
 import { cn, formatCurrency, formatNumber } from '../../lib/utils';
+import { ImportData } from '../Import';
 
 type SortKey = keyof Holding;
 type SortDirection = 'asc' | 'desc';
@@ -49,9 +50,7 @@ export function HoldingsTable() {
     };
 
     if (holdings.length === 0) return (
-        <div className="text-center p-8 text-muted-foreground bg-card rounded-2xl border border-border">
-            No holdings data available. Please import your portfolio.
-        </div>
+        <ImportData />
     );
 
     const isProfit = pl >= 0;

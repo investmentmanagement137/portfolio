@@ -3,6 +3,7 @@ import { usePortfolio } from '../../context/PortfolioContext';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
 import { formatCurrency, cn } from '../../lib/utils';
 import { Calendar, Tag, Banknote, Filter, History, LayoutGrid, ArrowUpDown, Search, Briefcase } from 'lucide-react';
+import { ImportData } from '../Import';
 import type { DividendEvent } from '../../types';
 
 type SortKey = 'Book Closure Date' | 'Dividend Amount' | 'Scrip';
@@ -55,6 +56,12 @@ export function DividendDetailTable() {
     };
 
     if (!baseData || baseData.length === 0) {
+        // If we are showing "Active Only" and it's empty, but we have historical data, show the filter toggle along with "No records"
+        // But if we have NO data at all (dividendDetails empty), show Import
+        if (dividendDetails.length === 0) {
+            return <ImportData />;
+        }
+
         return (
             <div className="space-y-4 text-foreground">
                 <div className="flex items-center justify-between mb-2">
