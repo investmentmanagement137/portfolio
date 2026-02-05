@@ -24,6 +24,7 @@ const getStyle = (type: string) => {
     // Brighter, more vibrant colors for dark mode to ensure text pop
     if (t.includes('purchase') || t.includes('buy')) return { color: "text-green-600 dark:text-green-400 font-bold", borderColor: "border-green-200 dark:border-green-400/30", badgeBg: "bg-green-100 dark:bg-green-400/10", dotBg: "bg-green-500", icon: ArrowDownCircle };
     if (t.includes('sales') || t.includes('sell')) return { color: "text-red-600 dark:text-red-400 font-bold", borderColor: "border-red-200 dark:border-red-400/30", badgeBg: "bg-red-100 dark:bg-red-400/10", dotBg: "bg-red-500", icon: ArrowUpCircle };
+    if (t.includes('merger')) return { color: "text-cyan-600 dark:text-cyan-400 font-bold", borderColor: "border-cyan-200 dark:border-cyan-400/30", badgeBg: "bg-cyan-100 dark:bg-cyan-400/10", dotBg: "bg-cyan-500", icon: ArrowRightLeft };
     if (t.includes('dividend')) return { color: "text-emerald-600 dark:text-emerald-300 font-bold", borderColor: "border-emerald-200 dark:border-emerald-300/30", badgeBg: "bg-emerald-100 dark:bg-emerald-300/10", dotBg: "bg-emerald-500", icon: Coins };
     if (t.includes('bonus')) return { color: "text-purple-600 dark:text-purple-300 font-bold", borderColor: "border-purple-200 dark:border-purple-300/30", badgeBg: "bg-purple-100 dark:bg-purple-300/10", dotBg: "bg-purple-500", icon: Gift };
     if (t.includes('right')) return { color: "text-orange-600 dark:text-orange-300 font-bold", borderColor: "border-orange-200 dark:border-orange-300/30", badgeBg: "bg-orange-100 dark:bg-orange-300/10", dotBg: "bg-orange-500", icon: TrendingUp };
@@ -438,7 +439,8 @@ export const Timeline: React.FC = () => {
                             { id: 'Bonus', icon: Gift, label: 'Bonus' },
                             { id: 'IPO', icon: Ticket, label: 'IPO' },
                             { id: 'Dividends', icon: Coins, label: 'Dividends' },
-                            { id: 'Auction', icon: Gavel, label: 'Auction' }
+                            { id: 'Auction', icon: Gavel, label: 'Auction' },
+                            { id: 'Merger', icon: ArrowRightLeft, label: 'Merger' }
                         ].map(filter => {
                             const Icon = filter.icon;
                             const isActive = selectedFilters.includes(filter.id);
@@ -596,9 +598,9 @@ export const Timeline: React.FC = () => {
                                         {items.map((item, idx) => {
                                             const style = getStyle(item.type);
                                             const Icon = style.icon;
-                                            // Sell and Merged go on the RIGHT, everything else on LEFT
+                                            // Sell and Merger go on the RIGHT, everything else on LEFT
                                             const typeLower = item.type.toLowerCase();
-                                            const isRightColumn = typeLower.includes('sell') || typeLower.includes('sales') || typeLower.includes('merged');
+                                            const isRightColumn = typeLower.includes('sell') || typeLower.includes('sales') || typeLower.includes('merger');
                                             const isLeftColumn = !isRightColumn;
 
                                             return (
