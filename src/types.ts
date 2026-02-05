@@ -59,6 +59,7 @@ export interface PortfolioSummary {
     value: number;
     pl: number;
     plPercent: number;
+    dailyGain: number;
     activeDividendTotal: number;
     scripCount: number;
     plWithCashflow: number;
@@ -82,6 +83,7 @@ export interface PortfolioState {
     activeDividends: DividendEvent[];
     portfolioSummary: PortfolioSummary;
     ltpData: Record<string, number>;
+    dailyChanges: Record<string, number>;
     nepseData: NepseData | null;
     loading: boolean;
     error: string | null;

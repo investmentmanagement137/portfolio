@@ -27,8 +27,8 @@ export function OverviewCards() {
                             <span className="text-xs font-bold uppercase tracking-widest opacity-70">Net Capital</span>
                         </div>
                         <div className="space-y-1">
-                            <div className="text-xl lg:text-2xl font-mono text-foreground font-bold tracking-tight">
-                                Rs. {formatCurrency(investment)}
+                            <div className="text-lg lg:text-xl font-mono text-foreground font-bold tracking-tight whitespace-nowrap">
+                                रु {formatCurrency(investment)}
                             </div>
                             <div className="text-[10px] text-muted-foreground uppercase font-medium">Invested Amount</div>
                         </div>
@@ -40,8 +40,8 @@ export function OverviewCards() {
                             <span className="text-xs font-bold uppercase tracking-widest opacity-70">Market Value</span>
                         </div>
                         <div className="space-y-1">
-                            <div className="text-xl lg:text-2xl font-mono text-foreground font-bold tracking-tight">
-                                Rs. {formatCurrency(value)}
+                            <div className="text-lg lg:text-xl font-mono text-foreground font-bold tracking-tight whitespace-nowrap">
+                                रु {formatCurrency(value)}
                             </div>
                             <div className="text-[10px] text-muted-foreground uppercase font-medium">Current Worth</div>
                         </div>
@@ -55,15 +55,18 @@ export function OverviewCards() {
                             </span>
                         </div>
                         <div className="space-y-1">
-                            <div className={cn("text-xl lg:text-2xl font-mono font-bold tracking-tight flex items-baseline gap-2", isProfit ? "text-green-500" : "text-red-500")}>
-                                {isProfit ? '+' : ''}{formatCurrency(pl)}
-                                <span className="text-xs opacity-80 font-bold">
-                                    ({plPercent.toFixed(2)}%)
-                                </span>
+                            <div className={cn("text-lg lg:text-xl font-mono font-bold tracking-tight whitespace-nowrap", isProfit ? "text-green-500" : "text-red-500")}>
+                                रु {isProfit ? '+' : '-'}{formatCurrency(Math.abs(pl))}
                             </div>
-                            <div className="text-[10px] text-muted-foreground uppercase font-medium">Over All Return</div>
+                            <div className="flex flex-col gap-0.5">
+                                <div className={cn("text-[10px] font-bold", isProfit ? "text-green-500" : "text-red-500")}>
+                                    ({plPercent.toFixed(2)}%)
+                                </div>
+                                <div className="text-[10px] text-muted-foreground uppercase font-medium tracking-tight">Over All Return</div>
+                            </div>
                         </div>
                     </div>
+
 
                     <div className="p-6 transition-colors hover:bg-muted/30">
                         <div className="flex items-center gap-2 mb-3 text-muted-foreground">
@@ -71,8 +74,8 @@ export function OverviewCards() {
                             <span className="text-xs font-bold uppercase tracking-widest opacity-70">Cash Flow</span>
                         </div>
                         <div className="space-y-1">
-                            <div className="text-xl lg:text-2xl font-mono text-amber-500 font-bold tracking-tight">
-                                Rs. {formatCurrency(activeDividendTotal)}
+                            <div className="text-lg lg:text-xl font-mono text-amber-500 font-bold tracking-tight whitespace-nowrap">
+                                रु {formatCurrency(activeDividendTotal)}
                             </div>
                             <div className="text-[10px] text-muted-foreground uppercase font-medium">Portfolio Cash Dividends</div>
                         </div>
@@ -84,11 +87,15 @@ export function OverviewCards() {
                             <span className="text-xs font-bold uppercase tracking-widest opacity-70 text-primary">Adj. Return</span>
                         </div>
                         <div className="space-y-1">
-                            <div className={cn("text-xl lg:text-2xl font-mono font-bold tracking-tight flex items-baseline gap-2", isCashflowProfit ? "text-green-500" : "text-red-500")}>
-                                {isCashflowProfit ? '+' : ''}{formatCurrency(plWithCashflow)}
-                                <span className="text-xs opacity-80 font-bold">({plWithCashflowPercent.toFixed(2)}%)</span>
+                            <div className={cn("text-lg lg:text-xl font-mono font-bold tracking-tight whitespace-nowrap", isCashflowProfit ? "text-green-500" : "text-red-500")}>
+                                रु {isCashflowProfit ? '+' : '-'}{formatCurrency(Math.abs(plWithCashflow))}
                             </div>
-                            <div className="text-[10px] text-muted-foreground uppercase font-medium">Cash Flow Adjusted Return</div>
+                            <div className="flex flex-col gap-0.5">
+                                <div className={cn("text-[10px] font-bold", isCashflowProfit ? "text-green-500" : "text-red-500")}>
+                                    ({plWithCashflowPercent.toFixed(2)}%)
+                                </div>
+                                <div className="text-[10px] text-muted-foreground uppercase font-medium tracking-tight">Cash Flow Adjusted Return</div>
+                            </div>
                         </div>
                     </div>
                 </div>

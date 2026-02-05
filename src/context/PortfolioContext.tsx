@@ -26,8 +26,9 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
         dividendSummary: [],
         dividendDetails: [],
         activeDividends: [],
-        portfolioSummary: { investment: 0, value: 0, pl: 0, plPercent: 0, activeDividendTotal: 0, scripCount: 0, plWithCashflow: 0, plWithCashflowPercent: 0 },
+        portfolioSummary: { investment: 0, value: 0, pl: 0, plPercent: 0, dailyGain: 0, activeDividendTotal: 0, scripCount: 0, plWithCashflow: 0, plWithCashflowPercent: 0 },
         ltpData: {},
+        dailyChanges: {},
         nepseData: null,
         loading: false,
         error: null,
@@ -71,6 +72,7 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
         try {
             const res = await axios.get(LTP_URL);
             const map: Record<string, number> = {};
+            const changesMap: Record<string, number> = {};
             const data = res.data["all recent price"] || [];
 
             let nepseEntry: any = null;
@@ -81,9 +83,22 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
                 const price = typeof item.Price === 'string'
                     ? parseFloat(item.Price.replace(/,/g, ''))
                     : item.Price;
+
+                const prevClose = typeof item["previous close"] === 'string'
+                    ? parseFloat(item["previous close"].replace(/,/g, ''))
+                    : (typeof item["previous close"] === 'number' ? item["previous close"] : null);
+
+                let change = 0;
+                if (!isNaN(price) && prevClose !== null && prevClose > 0) {
+                    change = price - prevClose;
+                } else {
+                    change = typeof item["change in value"] === 'number' ? item["change in value"] : 0;
+                }
+
                 map[item.Script] = isNaN(price) ? 0 : price;
+                changesMap[item.Script] = change;
             });
-            setState(prev => ({ ...prev, ltpData: map, nepseData: nepseEntry, loading: false }));
+            setState(prev => ({ ...prev, ltpData: map, dailyChanges: changesMap, nepseData: nepseEntry, loading: false }));
         } catch (error) {
             console.error("Failed to fetch LTP", error);
             setState(prev => ({ ...prev, loading: false }));
@@ -205,6 +220,12 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
 
         const activeDividendTotal = activeDividends.reduce((sum: number, item: any) => sum + (item["Dividend Amount"] || 0), 0);
 
+        // Calculate Daily Gain
+        const dailyGain = calculatedHoldings.reduce((sum, h) => {
+            const change = state.dailyChanges[h.scrip] || 0;
+            return sum + (change * h.quantity);
+        }, 0);
+
         setState(prev => ({
             ...prev,
             holdings: calculatedHoldings,
@@ -216,6 +237,7 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
                 value: totalVal,
                 pl: totalVal - totalInv,
                 plPercent: totalInv > 0 ? ((totalVal - totalInv) / totalInv) * 100 : 0,
+                dailyGain: dailyGain,
                 activeDividendTotal,
                 scripCount: calculatedHoldings.length,
                 plWithCashflow: (totalVal - totalInv) + activeDividendTotal,
@@ -329,8 +351,9 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
             dividendSummary: [],
             dividendDetails: [],
             activeDividends: [],
-            portfolioSummary: { investment: 0, value: 0, pl: 0, plPercent: 0, activeDividendTotal: 0, scripCount: 0, plWithCashflow: 0, plWithCashflowPercent: 0 },
+            portfolioSummary: { investment: 0, value: 0, pl: 0, plPercent: 0, dailyGain: 0, activeDividendTotal: 0, scripCount: 0, plWithCashflow: 0, plWithCashflowPercent: 0 },
             ltpData: state.ltpData,
+            dailyChanges: state.dailyChanges,
             nepseData: state.nepseData,
             loading: false,
             error: null,

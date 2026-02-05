@@ -1,6 +1,7 @@
 import { BarChart2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
 import { usePortfolio } from '../../context/PortfolioContext';
+import { cn, formatCurrency } from '../../lib/utils';
 
 export function NepseTodayCard() {
     const { state } = usePortfolio();
@@ -39,19 +40,26 @@ export function NepseTodayCard() {
                 </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-6">
                     <div className="space-y-1">
                         <div className="text-sm text-muted-foreground font-medium uppercase tracking-wider">NEPSE Index</div>
                         <div className="text-3xl font-black tracking-tight">{marketData.index}</div>
                     </div>
 
                     <div className="space-y-1">
-                        <div className="text-sm text-muted-foreground font-medium uppercase tracking-wider">Change</div>
+                        <div className="text-sm text-muted-foreground font-medium uppercase tracking-wider">Market Change</div>
                         <div className={`text-3xl font-black tracking-tight flex items-center gap-3 ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
                             {marketData.change}
                             <span className="text-base font-bold bg-muted/50 px-2 py-0.5 rounded">
                                 ({marketData.percentChange})
                             </span>
+                        </div>
+                    </div>
+
+                    <div className="space-y-1">
+                        <div className="text-sm text-muted-foreground font-medium uppercase tracking-wider">Portfolio Today</div>
+                        <div className={cn("text-3xl font-black tracking-tight whitespace-nowrap", state.portfolioSummary.dailyGain >= 0 ? "text-green-500" : "text-red-500")}>
+                            रु {state.portfolioSummary.dailyGain >= 0 ? '+' : '-'}{formatCurrency(Math.abs(state.portfolioSummary.dailyGain))}
                         </div>
                     </div>
                 </div>
