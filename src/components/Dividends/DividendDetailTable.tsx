@@ -1,8 +1,8 @@
 import { useState, useMemo } from 'react';
 import { usePortfolio } from '../../context/PortfolioContext';
-import { Card, CardContent } from '../ui/Card';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
 import { formatCurrency, cn } from '../../lib/utils';
-import { Calendar, Tag, Banknote, Filter, History, LayoutGrid, ArrowUpDown, Search } from 'lucide-react';
+import { Calendar, Tag, Banknote, Filter, History, LayoutGrid, ArrowUpDown, Search, Briefcase } from 'lucide-react';
 import type { DividendEvent } from '../../types';
 
 type SortKey = 'Book Closure Date' | 'Dividend Amount' | 'Scrip';
@@ -86,52 +86,58 @@ export function DividendDetailTable() {
     const totalCurrent = activeDividends.reduce((acc, curr) => acc + (curr["Dividend Amount"] || 0), 0);
 
     return (
-        <div className="space-y-4 pb-8 text-foreground">
-            <Card className="overflow-hidden border-none bg-gradient-to-br from-amber-500/10 via-card to-background shadow-xl">
+        <div className="space-y-6 pb-8 text-foreground">
+            <Card className="overflow-hidden border-none bg-gradient-to-br from-amber-500/10 via-card to-background shadow-xl relative group">
+                <div className="absolute inset-0 bg-primary/5 opacity-50 pointer-events-none" />
+                <CardHeader className="justify-center border-b border-border/40 bg-muted/20">
+                    <CardTitle className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                        Cash Dividend Summary
+                    </CardTitle>
+                </CardHeader>
                 <CardContent className="p-0">
-                    <div className="grid grid-cols-2 lg:grid-cols-2 divide-x divide-y md:divide-y-0 border-border/50">
-                        <div className="p-6 transition-colors hover:bg-muted/30">
+                    <div className="grid grid-cols-2 lg:grid-cols-2 divide-x border-border/40">
+                        <div className="p-6 transition-colors hover:bg-primary/5">
                             <div className="flex items-center gap-2 mb-2 text-muted-foreground">
                                 <Banknote className="w-4 h-4 text-amber-500" />
                                 <span className="text-[10px] font-bold uppercase tracking-widest">Active Dividends</span>
                             </div>
-                            <div className="text-2xl font-mono font-bold text-foreground">
-                                Rs. {formatCurrency(totalCurrent)}
+                            <div className="text-2xl font-mono font-black text-foreground tracking-tighter">
+                                रु {formatCurrency(totalCurrent)}
                             </div>
                         </div>
-                        <div className="p-6 transition-colors hover:bg-muted/30">
+                        <div className="p-6 transition-colors hover:bg-primary/5">
                             <div className="flex items-center gap-2 mb-2 text-muted-foreground">
                                 <History className="w-4 h-4 text-primary" />
                                 <span className="text-[10px] font-bold uppercase tracking-widest">Historical Total</span>
                             </div>
-                            <div className="text-2xl font-mono font-bold text-foreground">
-                                Rs. {formatCurrency(totalHistorical)}
+                            <div className="text-2xl font-mono font-black text-foreground tracking-tighter">
+                                रु {formatCurrency(totalHistorical)}
                             </div>
                         </div>
                     </div>
                 </CardContent>
             </Card>
 
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
-                <h3 className="text-lg font-bold flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-2">
+                <h3 className="text-lg font-bold flex items-center gap-2 tracking-tight">
                     <History className="w-5 h-5 text-primary" />
-                    Cash Dividend History
+                    Dividend Statistics
                 </h3>
                 <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
                     <div className="relative flex-grow sm:flex-grow-0">
-                        <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+                        <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
                         <input
                             type="text"
                             placeholder="Search scrip..."
-                            className="bg-card border border-border rounded-lg pl-9 pr-4 py-2 text-xs font-medium text-foreground focus:outline-none focus:border-primary w-full sm:w-40 placeholder:text-muted-foreground transition-all focus:w-full sm:focus:w-48 shadow-sm"
+                            className="bg-card/50 backdrop-blur-sm border border-border/40 rounded-xl pl-9 pr-4 py-2 text-xs font-bold text-foreground focus:outline-none focus:border-primary/50 w-full sm:w-40 placeholder:text-muted-foreground/50 transition-all focus:w-full sm:focus:w-48 shadow-sm"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
                     </div>
                     <div className="relative">
-                        <ArrowUpDown className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+                        <ArrowUpDown className="w-3.5 h-3.5 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground pointer-events-none" />
                         <select
-                            className="bg-card border border-border rounded-lg pl-9 pr-8 py-2 text-xs font-medium text-foreground focus:outline-none focus:border-primary appearance-none cursor-pointer hover:bg-muted/50 transition-colors shadow-sm"
+                            className="bg-card/50 backdrop-blur-sm border border-border/40 rounded-xl pl-9 pr-8 py-2 text-xs font-bold text-foreground focus:outline-none focus:border-primary/50 appearance-none cursor-pointer hover:bg-primary/5 transition-colors shadow-sm"
                             onChange={handleSortChange}
                             value={`${sortConfig.key}:${sortConfig.direction}`}
                         >
@@ -142,77 +148,76 @@ export function DividendDetailTable() {
                             <option value="Scrip:asc">Scrip (A-Z)</option>
                         </select>
                     </div>
-                    <div className="flex p-1 bg-muted rounded-lg border border-border shrink-0">
+                    <div className="flex p-1 bg-muted/50 backdrop-blur-sm rounded-xl border border-border/40 shrink-0">
                         <button
                             onClick={() => setUseActiveOnly(true)}
-                            className={cn("px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-md transition-all whitespace-nowrap",
-                                useActiveOnly ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-foreground")}
+                            className={cn("px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all whitespace-nowrap",
+                                useActiveOnly ? "bg-card text-primary shadow-lg border border-border/40" : "text-muted-foreground hover:text-foreground")}
                         >Active</button>
                         <button
                             onClick={() => setUseActiveOnly(false)}
-                            className={cn("px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-md transition-all whitespace-nowrap",
-                                !useActiveOnly ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-foreground")}
+                            className={cn("px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all whitespace-nowrap",
+                                !useActiveOnly ? "bg-card text-primary shadow-lg border border-border/40" : "text-muted-foreground hover:text-foreground")}
                         >History</button>
                     </div>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-3">
+            <div className="grid grid-cols-1 gap-4">
                 {sortedData.map((item, idx) => (
-                    <Card key={`${item.Scrip}-${idx}`} className="group hover:border-primary/50 transition-all duration-300 relative overflow-hidden">
-                        <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-10 transition-opacity">
-                            <Banknote className="w-12 h-12 rotate-12" />
+                    <Card key={`${item.Scrip}-${idx}`} className="overflow-hidden border-none bg-gradient-to-br from-primary/5 via-card to-background shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.01] active:scale-[0.99] group/card relative">
+                        <div className="absolute -top-6 -right-6 p-8 opacity-5 group-hover/card:opacity-10 transition-opacity">
+                            <Banknote className="w-16 h-16 rotate-12 text-primary" />
                         </div>
 
-                        <CardContent className="p-4">
-                            <div className="flex justify-between items-start mb-4">
-                                <div className="space-y-1.5">
-                                    <div className="flex items-center gap-2">
-                                        <h4 className="font-bold text-base text-primary tracking-tight">{item.Scrip}</h4>
-                                        <span className="bg-primary/10 text-primary text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-tighter">Cash Div</span>
+                        <CardContent className="p-0">
+                            <div className="flex flex-col">
+                                <div className="p-5 flex justify-between items-start border-b border-border/40 transition-colors group-hover/card:bg-primary/5">
+                                    <div className="space-y-1.5">
+                                        <div className="flex items-center gap-2">
+                                            <h4 className="font-black text-lg text-foreground tracking-tighter uppercase">{item.Scrip}</h4>
+                                            <span className="bg-primary/10 text-primary text-[9px] font-black px-2 py-0.5 rounded-full border border-primary/20 uppercase tracking-widest">CASH DIV</span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-70">
+                                            <Briefcase className="w-3 h-3 text-primary/70" />
+                                            Holdings: {item["Eligible Holdings"] || item.Holdings}
+                                            {item["Current Balance"] !== undefined && (
+                                                <span className="text-primary">• Balance: {item["Current Balance"]}</span>
+                                            )}
+                                        </div>
                                     </div>
-                                    <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-medium">
-                                        <span className="bg-muted px-1.5 py-0.5 rounded uppercase tracking-wider">Eligible: {item["Eligible Holdings"] || item.Holdings}</span>
-                                        {item["Current Balance"] !== undefined && (
-                                            <span className="bg-primary/10 px-1.5 py-0.5 rounded text-primary uppercase tracking-wider border border-primary/20">Current: {item["Current Balance"]}</span>
-                                        )}
+                                    <div className="text-right">
+                                        <div className="text-[10px] text-muted-foreground font-black uppercase tracking-widest mb-0.5 opacity-70">Payout</div>
+                                        <div className="text-xl font-mono font-black text-amber-500 tracking-tighter">
+                                            रु {formatCurrency(item["Dividend Amount"])}
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="text-right">
-                                    <div className="text-lg font-mono font-bold text-amber-500">
-                                        Rs. {formatCurrency(item["Dividend Amount"])}
-                                    </div>
-                                    <div className="text-[10px] text-muted-foreground font-medium uppercase">Total Cash</div>
-                                </div>
-                            </div>
 
-                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 pt-3 border-t border-border/50">
-                                <div className="flex items-center gap-2">
-                                    <Calendar className="w-3.5 h-3.5 text-muted-foreground" />
-                                    <div className="space-y-0.5">
-                                        <div className="text-[10px] text-muted-foreground uppercase leading-none">Book Closure</div>
-                                        <div className="text-xs font-semibold">{item["Book Closure Date"]}</div>
+                                <div className="grid grid-cols-2 md:grid-cols-4 divide-x border-border/40 bg-muted/10 group-hover/card:bg-primary/5 transition-colors">
+                                    <div className="p-4 flex flex-col gap-1">
+                                        <div className="flex items-center gap-1.5 text-[9px] font-black text-muted-foreground uppercase tracking-widest opacity-70">
+                                            <Calendar className="w-3 h-3" /> Book Close
+                                        </div>
+                                        <div className="text-xs font-black text-foreground">{item["Book Closure Date"]}</div>
                                     </div>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Tag className="w-3.5 h-3.5 text-muted-foreground" />
-                                    <div className="space-y-0.5">
-                                        <div className="text-[10px] text-muted-foreground uppercase leading-none">Percentage</div>
-                                        <div className="text-xs font-semibold">{item["Cash %"]}%</div>
+                                    <div className="p-4 flex flex-col gap-1">
+                                        <div className="flex items-center gap-1.5 text-[9px] font-black text-muted-foreground uppercase tracking-widest opacity-70">
+                                            <Tag className="w-3 h-3" /> Percentage
+                                        </div>
+                                        <div className="text-xs font-black text-foreground">{item["Cash %"]}%</div>
                                     </div>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <LayoutGrid className="w-3.5 h-3.5 text-muted-foreground" />
-                                    <div className="space-y-0.5">
-                                        <div className="text-[10px] text-muted-foreground uppercase leading-none">Face Value</div>
-                                        <div className="text-xs font-semibold">{item["Face Value"]}</div>
+                                    <div className="p-4 flex flex-col gap-1">
+                                        <div className="flex items-center gap-1.5 text-[9px] font-black text-muted-foreground uppercase tracking-widest opacity-70">
+                                            <LayoutGrid className="w-3 h-3" /> Face Value
+                                        </div>
+                                        <div className="text-xs font-black text-foreground">रु {item["Face Value"]}</div>
                                     </div>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Filter className="w-3.5 h-3.5 text-muted-foreground" />
-                                    <div className="space-y-0.5">
-                                        <div className="text-[10px] text-muted-foreground uppercase leading-none">Per Share</div>
-                                        <div className="text-xs font-semibold">{item["Dividend Per Share"] || (item["Cash %"] * item["Face Value"] / 100).toFixed(2)}</div>
+                                    <div className="p-4 flex flex-col gap-1">
+                                        <div className="flex items-center gap-1.5 text-[9px] font-black text-muted-foreground uppercase tracking-widest opacity-70">
+                                            <Filter className="w-3 h-3" /> Per Share
+                                        </div>
+                                        <div className="text-xs font-black text-foreground">रु {item["Dividend Per Share"] || (item["Cash %"] * item["Face Value"] / 100).toFixed(2)}</div>
                                     </div>
                                 </div>
                             </div>

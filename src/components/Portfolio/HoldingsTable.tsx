@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { ArrowUpDown, ArrowUpRight, ArrowDownRight, Briefcase, LayoutDashboard, Search } from 'lucide-react';
+import { ArrowUpDown, Briefcase, Search } from 'lucide-react';
 import { usePortfolio } from '../../context/PortfolioContext';
 import type { Holding } from '../../types';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
@@ -59,23 +59,24 @@ export function HoldingsTable() {
 
     return (
         <div className="space-y-6">
-            <Card className="overflow-hidden border-none bg-gradient-to-br from-primary/5 via-card to-background shadow-xl">
-                <CardHeader className="justify-center border-b border-border/50 bg-muted/20">
-                    <CardTitle className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+            <Card className="overflow-hidden border-none bg-gradient-to-br from-primary/5 via-card to-background shadow-xl relative group">
+                <div className="absolute inset-0 bg-primary/5 opacity-50 pointer-events-none" />
+                <CardHeader className="justify-center border-b border-border/40 bg-muted/20">
+                    <CardTitle className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
                         Profit Loss Analysis
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
-                    <div className="grid grid-cols-2 md:grid-cols-5 divide-x divide-y md:divide-y-0 border-border/50">
-                        <div className="p-4 flex flex-col justify-center transition-colors hover:bg-muted/30">
+                    <div className="grid grid-cols-2 md:grid-cols-5 divide-x divide-y md:divide-y-0 border-border/40">
+                        <div className="p-4 flex flex-col justify-center transition-colors hover:bg-primary/5">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Portfolio Cost</span>
                             <div className="text-lg font-mono font-bold text-foreground whitespace-nowrap">रु {formatCurrency(investment)}</div>
                         </div>
-                        <div className="p-4 flex flex-col justify-center transition-colors hover:bg-muted/30">
+                        <div className="p-4 flex flex-col justify-center transition-colors hover:bg-primary/5">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Current Value</span>
                             <div className="text-lg font-mono font-bold text-foreground whitespace-nowrap">रु {formatCurrency(value)}</div>
                         </div>
-                        <div className="p-4 flex flex-col justify-center transition-colors hover:bg-muted/30">
+                        <div className="p-4 flex flex-col justify-center transition-colors hover:bg-primary/5">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">
                                 {state.roiType === 'annualized' ? 'Annualized Return' : 'Total Returns'}
                             </span>
@@ -86,11 +87,11 @@ export function HoldingsTable() {
                                 </div>
                             </div>
                         </div>
-                        <div className="p-4 flex flex-col justify-center transition-colors hover:bg-muted/30">
+                        <div className="p-4 flex flex-col justify-center transition-colors hover:bg-primary/5">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Cash Dividends</span>
                             <div className="text-lg font-mono font-bold text-amber-500 whitespace-nowrap">रु {formatCurrency(activeDividendTotal)}</div>
                         </div>
-                        <div className="p-4 flex flex-col justify-center transition-colors hover:bg-muted/30 bg-primary/5">
+                        <div className="p-4 flex flex-col justify-center transition-colors hover:bg-primary/5 bg-primary/5">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-primary mb-1">Returns + Cashflow</span>
                             <div className={cn("text-lg font-mono font-bold whitespace-nowrap", isCashflowProfit ? "text-green-500" : "text-red-500")}>
                                 रु {isCashflowProfit ? '+' : '-'}{formatCurrency(Math.abs(plWithCashflow))}
@@ -101,27 +102,27 @@ export function HoldingsTable() {
                 </CardContent>
             </Card>
 
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <h3 className="text-lg font-bold flex items-center gap-2">
-                    <LayoutDashboard className="w-5 h-5 text-primary" />
-                    My Portfolio ({scripCount})
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-2">
+                <h3 className="text-lg font-bold flex items-center gap-2 tracking-tight">
+                    <Briefcase className="w-5 h-5 text-primary" />
+                    My Holdings ({scripCount})
                 </h3>
 
                 <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
                     <div className="relative flex-grow sm:flex-grow-0">
-                        <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+                        <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
                         <input
                             type="text"
                             placeholder="Search scrip..."
-                            className="bg-card border border-border rounded-lg pl-9 pr-4 py-2 text-xs font-medium text-foreground focus:outline-none focus:border-primary w-full sm:w-48 placeholder:text-muted-foreground transition-all focus:w-full sm:focus:w-56 shadow-sm"
+                            className="bg-card/50 backdrop-blur-sm border border-border/40 rounded-xl pl-9 pr-4 py-2 text-xs font-bold text-foreground focus:outline-none focus:border-primary/50 w-full sm:w-48 placeholder:text-muted-foreground/50 transition-all focus:w-full sm:focus:w-56 shadow-sm"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
                     </div>
                     <div className="relative">
-                        <ArrowUpDown className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+                        <ArrowUpDown className="w-3.5 h-3.5 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground pointer-events-none" />
                         <select
-                            className="bg-card border border-border rounded-lg pl-9 pr-8 py-2 text-xs font-medium text-foreground focus:outline-none focus:border-primary appearance-none cursor-pointer hover:bg-muted/50 transition-colors shadow-sm"
+                            className="bg-card/50 backdrop-blur-sm border border-border/40 rounded-xl pl-9 pr-8 py-2 text-xs font-bold text-foreground focus:outline-none focus:border-primary/50 appearance-none cursor-pointer hover:bg-primary/5 transition-colors shadow-sm"
                             onChange={handleSortChange}
                             value={`${sortConfig.key}:${sortConfig.direction}`}
                         >
@@ -139,57 +140,63 @@ export function HoldingsTable() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-3">
+            <div className="grid grid-cols-1 gap-4">
                 {sortedHoldings.map((item, idx) => (
-                    <Card key={idx} className="hover:border-primary/50 transition-colors">
-                        <CardContent className="p-4">
-                            <div className="flex justify-between items-start mb-3">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-foreground font-bold">
-                                        {item.scrip.substring(0, 3)}
+                    <Card key={idx} className="overflow-hidden border-none bg-gradient-to-br from-primary/5 via-card to-background shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.01] active:scale-[0.99] group/card">
+                        <CardContent className="p-0">
+                            <div className="flex flex-col sm:flex-row divide-y sm:divide-y-0 sm:divide-x border-border/40">
+                                {/* Scrip Info */}
+                                <div className="p-5 flex-grow flex items-center gap-4 transition-colors group-hover/card:bg-primary/5">
+                                    <div className="w-12 h-12 rounded-2xl bg-muted flex items-center justify-center text-primary font-black text-xs shadow-inner">
+                                        {item.scrip.substring(0, 4)}
                                     </div>
                                     <div>
-                                        <h4 className="font-bold text-base text-primary">{item.scrip}</h4>
+                                        <h4 className="font-black text-lg text-foreground tracking-tighter uppercase">{item.scrip}</h4>
                                         <div className="flex flex-col gap-1">
-                                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                                <Briefcase className="w-3 h-3" />
-                                                {item.quantity} units @ {item.wacc.toFixed(1)}
+                                            <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                                                <Briefcase className="w-3 h-3 text-primary/70" />
+                                                {item.quantity} units @ <span className="text-foreground">{item.wacc.toFixed(1)}</span>
                                             </div>
                                             {state.dailyChanges[item.scrip] !== undefined && state.dailyChanges[item.scrip] !== 0 && (
-                                                <div className={cn("text-[11px] font-bold flex items-center gap-1", state.dailyChanges[item.scrip] > 0 ? "text-green-500" : "text-red-500")}>
+                                                <div className={cn("text-[11px] font-black flex items-center gap-1.5", state.dailyChanges[item.scrip] > 0 ? "text-green-500" : "text-red-500")}>
                                                     Today: रु {state.dailyChanges[item.scrip] > 0 ? '+' : '-'}{formatCurrency(Math.abs(state.dailyChanges[item.scrip] * item.quantity))}
-                                                    <span className="opacity-80 text-[10px]">
-                                                        ({((state.dailyChanges[item.scrip] / (item.ltp - state.dailyChanges[item.scrip])) * 100).toFixed(2)}%)
+                                                    <span className="opacity-70 text-[9px] bg-muted/50 px-1.5 py-0.5 rounded border border-current/20">
+                                                        {((state.dailyChanges[item.scrip] / (item.ltp - state.dailyChanges[item.scrip])) * 100).toFixed(2)}%
                                                     </span>
                                                 </div>
                                             )}
                                         </div>
                                     </div>
                                 </div>
-                                <div className="text-right">
-                                    <div className="font-mono font-bold text-foreground text-sm sm:text-base">
+
+                                {/* LTP & Value info */}
+                                <div className="p-5 sm:w-48 flex flex-col justify-center sm:items-end transition-colors group-hover/card:bg-primary/5">
+                                    <div className="text-[10px] text-muted-foreground font-black uppercase tracking-widest mb-1 opacity-70">Current Value</div>
+                                    <div className="font-mono font-black text-foreground text-xl tracking-tighter">
                                         रु {formatCurrency(item.currentValue)}
                                     </div>
-                                    <div className="text-[10px] text-muted-foreground font-medium uppercase">
-                                        LTP: {formatNumber(item.ltp)}
+                                    <div className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mt-1">
+                                        LTP: <span className="text-primary">{formatNumber(item.ltp)}</span>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div className="pt-3 border-t border-border flex justify-between items-center">
-                                <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
-                                    {state.roiType === 'annualized' ? 'Ann. Return' : 'Overall Profit/Loss'}
-                                </span>
-                                <div className={cn("font-mono font-bold text-sm flex items-center gap-1", item.pl >= 0 ? 'text-green-500' : 'text-red-500')}>
-                                    {item.pl >= 0 ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-                                    रु {item.pl >= 0 ? '+' : '-'}{formatCurrency(Math.abs(item.pl))}
-                                    <span className="opacity-70 text-xs">({item.plPercent.toFixed(1)}%)</span>
+                                {/* Profit/Loss */}
+                                <div className={cn("p-5 sm:w-56 flex flex-col justify-center sm:items-end transition-colors sm:bg-primary/5", item.pl >= 0 ? "text-green-500 bg-green-500/5" : "text-red-500 bg-red-500/5")}>
+                                    <div className="text-[10px] font-black uppercase tracking-widest mb-1 opacity-70">
+                                        {state.roiType === 'annualized' ? 'Ann. Return' : 'Profit/Loss'}
+                                    </div>
+                                    <div className="font-mono font-black text-xl tracking-tighter flex items-center gap-1">
+                                        रु {item.pl >= 0 ? '+' : '-'}{formatCurrency(Math.abs(item.pl))}
+                                    </div>
+                                    <div className="text-[10px] font-black uppercase tracking-wider mt-1 bg-background/50 px-2 py-0.5 rounded border border-current/20">
+                                        {item.plPercent.toFixed(2)}%
+                                    </div>
                                 </div>
                             </div>
                         </CardContent>
                     </Card>
                 ))}
             </div>
-        </div >
+        </div>
     );
 }
