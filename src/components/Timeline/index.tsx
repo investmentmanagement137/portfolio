@@ -22,14 +22,14 @@ import { cn } from '../../lib/utils';
 const getStyle = (type: string) => {
     const t = type.toLowerCase();
     // Brighter, more vibrant colors for dark mode to ensure text pop
-    if (t.includes('purchase') || t.includes('buy')) return { color: "text-green-600 dark:text-green-400 font-bold", borderColor: "border-green-200 dark:border-green-400/30", badgeBg: "bg-green-100 dark:bg-green-400/10", dotBorder: "border-green-500", icon: ArrowDownCircle };
-    if (t.includes('sales') || t.includes('sell')) return { color: "text-red-600 dark:text-red-400 font-bold", borderColor: "border-red-200 dark:border-red-400/30", badgeBg: "bg-red-100 dark:bg-red-400/10", dotBorder: "border-red-500", icon: ArrowUpCircle };
-    if (t.includes('dividend')) return { color: "text-emerald-600 dark:text-emerald-300 font-bold", borderColor: "border-emerald-200 dark:border-emerald-300/30", badgeBg: "bg-emerald-100 dark:bg-emerald-300/10", dotBorder: "border-emerald-500", icon: Coins };
-    if (t.includes('bonus')) return { color: "text-purple-600 dark:text-purple-300 font-bold", borderColor: "border-purple-200 dark:border-purple-300/30", badgeBg: "bg-purple-100 dark:bg-purple-300/10", dotBorder: "border-purple-500", icon: Gift };
-    if (t.includes('right')) return { color: "text-orange-600 dark:text-orange-300 font-bold", borderColor: "border-orange-200 dark:border-orange-300/30", badgeBg: "bg-orange-100 dark:bg-orange-300/10", dotBorder: "border-orange-500", icon: TrendingUp };
-    if (t.includes('ipo')) return { color: "text-blue-600 dark:text-blue-300 font-bold", borderColor: "border-blue-200 dark:border-blue-300/30", badgeBg: "bg-blue-100 dark:bg-blue-300/10", dotBorder: "border-blue-500", icon: Ticket };
-    if (t.includes('auction')) return { color: "text-amber-600 dark:text-amber-300 font-bold", borderColor: "border-amber-200 dark:border-amber-300/30", badgeBg: "bg-amber-100 dark:bg-amber-300/10", dotBorder: "border-amber-500", icon: Gavel };
-    return { color: "text-slate-600 dark:text-slate-300 font-bold", borderColor: "border-slate-200 dark:border-slate-500/30", badgeBg: "bg-slate-100 dark:bg-slate-300/10", dotBorder: "border-slate-400", icon: Info };
+    if (t.includes('purchase') || t.includes('buy')) return { color: "text-green-600 dark:text-green-400 font-bold", borderColor: "border-green-200 dark:border-green-400/30", badgeBg: "bg-green-100 dark:bg-green-400/10", dotBg: "bg-green-500", icon: ArrowDownCircle };
+    if (t.includes('sales') || t.includes('sell')) return { color: "text-red-600 dark:text-red-400 font-bold", borderColor: "border-red-200 dark:border-red-400/30", badgeBg: "bg-red-100 dark:bg-red-400/10", dotBg: "bg-red-500", icon: ArrowUpCircle };
+    if (t.includes('dividend')) return { color: "text-emerald-600 dark:text-emerald-300 font-bold", borderColor: "border-emerald-200 dark:border-emerald-300/30", badgeBg: "bg-emerald-100 dark:bg-emerald-300/10", dotBg: "bg-emerald-500", icon: Coins };
+    if (t.includes('bonus')) return { color: "text-purple-600 dark:text-purple-300 font-bold", borderColor: "border-purple-200 dark:border-purple-300/30", badgeBg: "bg-purple-100 dark:bg-purple-300/10", dotBg: "bg-purple-500", icon: Gift };
+    if (t.includes('right')) return { color: "text-orange-600 dark:text-orange-300 font-bold", borderColor: "border-orange-200 dark:border-orange-300/30", badgeBg: "bg-orange-100 dark:bg-orange-300/10", dotBg: "bg-orange-500", icon: TrendingUp };
+    if (t.includes('ipo')) return { color: "text-blue-600 dark:text-blue-300 font-bold", borderColor: "border-blue-200 dark:border-blue-300/30", badgeBg: "bg-blue-100 dark:bg-blue-300/10", dotBg: "bg-blue-500", icon: Ticket };
+    if (t.includes('auction')) return { color: "text-amber-600 dark:text-amber-300 font-bold", borderColor: "border-amber-200 dark:border-amber-300/30", badgeBg: "bg-amber-100 dark:bg-amber-300/10", dotBg: "bg-amber-500", icon: Gavel };
+    return { color: "text-slate-600 dark:text-slate-300 font-bold", borderColor: "border-slate-200 dark:border-slate-500/30", badgeBg: "bg-slate-100 dark:bg-slate-300/10", dotBg: "bg-slate-400", icon: Info };
 };
 
 const SummaryCard = ({ title, value, subValue, icon: Icon, colorClass, delay }: any) => (
@@ -587,103 +587,115 @@ export const Timeline: React.FC = () => {
                                     </div>
                                 </div>
 
-                                <div className="flex flex-col gap-3 md:grid md:grid-cols-2 md:gap-8 md:pl-12 md:pr-12">
-                                    {items.map((item, idx) => {
-                                        const isLeft = item.isLeftSide;
-                                        const style = getStyle(item.type);
-                                        const Icon = style.icon;
+                                {/* Grid container with central spine */}
+                                <div className="relative">
+                                    {/* Central Spine - visible only on desktop */}
+                                    <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-border/50 -translate-x-1/2" />
 
-                                        return (
-                                            <div
-                                                key={`${item.scrip}-${idx}`}
-                                                className="relative w-full"
-                                            >
-                                                {/* Dot Connector - Hidden on mobile */}
-                                                <div className={cn(
-                                                    "hidden md:block absolute top-8 w-3.5 h-3.5 rounded-full border-[3px] bg-background z-20 shadow-sm",
-                                                    style.dotBorder,
-                                                    isLeft ? "md:-right-[33px]" : "md:-left-[33px]"
-                                                )} />
+                                    <div className="flex flex-col gap-3 md:grid md:grid-cols-2 md:gap-8">
+                                        {items.map((item, idx) => {
+                                            const style = getStyle(item.type);
+                                            const Icon = style.icon;
+                                            // Sell and Merged go on the RIGHT, everything else on LEFT
+                                            const typeLower = item.type.toLowerCase();
+                                            const isRightColumn = typeLower.includes('sell') || typeLower.includes('sales') || typeLower.includes('merged');
+                                            const isLeftColumn = !isRightColumn;
 
-                                                {/* Card */}
-                                                <div className={cn(
-                                                    "relative overflow-hidden border rounded-2xl p-3 shadow-lg transition-all duration-300 active:scale-[0.98] w-full",
-                                                    "bg-white dark:bg-slate-900",
-                                                    style.borderColor
-                                                )}>
-                                                    {/* Header: Transaction Type Badge */}
+                                            return (
+                                                <div
+                                                    key={`${item.scrip}-${idx}`}
+                                                    className={cn(
+                                                        "relative w-full",
+                                                        isLeftColumn ? "md:col-start-1 md:pr-8" : "md:col-start-2 md:pl-8"
+                                                    )}
+                                                >
+                                                    {/* Dot on the central spine - visible only on desktop */}
                                                     <div className={cn(
-                                                        "flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] w-fit mb-4",
-                                                        style.badgeBg,
-                                                        style.color
+                                                        "hidden md:block absolute top-6 w-3 h-3 rounded-full z-20 shadow-md",
+                                                        style.dotBg,
+                                                        isLeftColumn ? "md:right-0 md:translate-x-1/2" : "md:left-0 md:-translate-x-1/2"
+                                                    )} />
+
+                                                    {/* Card */}
+                                                    <div className={cn(
+                                                        "relative overflow-hidden border rounded-2xl p-3 shadow-lg transition-all duration-300 active:scale-[0.98] w-full",
+                                                        "bg-white dark:bg-slate-900",
+                                                        style.borderColor
                                                     )}>
-                                                        <Icon className="w-4 h-4" />
-                                                        {item.type}
-                                                    </div>
-
-                                                    {/* Scrip Mini-Card */}
-                                                    <div className="bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/50 rounded-xl p-3 mb-2">
-                                                        <div className="text-xl font-black tracking-tight mb-1 text-slate-900 dark:text-white">{item.scrip}</div>
-
-                                                        {!item.isDividend && (
-                                                            <div className="flex items-center gap-3 text-xs font-mono">
-                                                                <span className="font-bold text-slate-700 dark:text-slate-200">
-                                                                    {item.quantity.toLocaleString()} <span className="text-[9px] text-slate-400 uppercase">units</span>
-                                                                </span>
-                                                                <span className="text-slate-300 dark:text-slate-600">|</span>
-                                                                <span className="font-bold text-slate-600 dark:text-slate-300">{item.rate > 0 ? `Rs. ${item.rate.toLocaleString()}` : 'N/A'}</span>
-                                                            </div>
-                                                        )}
-                                                    </div>
-
-                                                    {item.isDividend ? (
+                                                        {/* Header: Transaction Type Badge */}
                                                         <div className={cn(
-                                                            "rounded-2xl p-4 border relative overflow-hidden mb-3",
-                                                            "bg-emerald-500/10 border-emerald-500/30"
+                                                            "flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] w-fit mb-4",
+                                                            style.badgeBg,
+                                                            style.color
                                                         )}>
-                                                            <div className="flex items-center justify-between mb-3">
-                                                                <span className="text-[10px] font-black text-emerald-800 dark:text-emerald-300 uppercase tracking-widest flex items-center gap-1.5">
-                                                                    Cash Dividend <span className="opacity-60 text-[9px] font-mono">({item.cashPercent}%)</span>
-                                                                </span>
-                                                                <span className="text-xl font-mono font-black text-emerald-600 dark:text-emerald-300">
-                                                                    + Rs. {item.amount.toLocaleString()}
-                                                                </span>
-                                                            </div>
-
-                                                            <div className="flex items-center justify-between text-[10px] text-emerald-700 dark:text-emerald-200 font-bold bg-emerald-500/10 dark:bg-slate-800/80 rounded-xl px-3 py-2 border border-emerald-500/20">
-                                                                <span>On {item.holdingsAtClosure?.toLocaleString() ?? 0} units</span>
-                                                                <span className="h-3 w-px bg-emerald-500/30"></span>
-                                                                <span>Rs. {item.dividendPerShare} / sh</span>
-                                                            </div>
+                                                            <Icon className="w-4 h-4" />
+                                                            {item.type}
                                                         </div>
-                                                    ) : null}
 
-                                                    {/* Balance Section */}
-                                                    <div className="bg-slate-50 dark:bg-slate-800/80 rounded-xl p-3 border border-slate-200 dark:border-slate-700/50">
-                                                        <div className="flex items-center justify-between gap-3">
-                                                            <div className="flex flex-col">
-                                                                <span className="text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold text-[8px] mb-0.5">Before</span>
-                                                                <span className="font-mono font-bold text-slate-600 dark:text-slate-300 text-sm">{item.balanceBefore?.toLocaleString() ?? 0}</span>
+                                                        {/* Scrip Mini-Card */}
+                                                        <div className="bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/50 rounded-xl p-3 mb-2">
+                                                            <div className="text-xl font-black tracking-tight mb-1 text-slate-900 dark:text-white">{item.scrip}</div>
+
+                                                            {!item.isDividend && (
+                                                                <div className="flex items-center gap-3 text-xs font-mono">
+                                                                    <span className="font-bold text-slate-700 dark:text-slate-200">
+                                                                        {item.quantity.toLocaleString()} <span className="text-[9px] text-slate-400 uppercase">units</span>
+                                                                    </span>
+                                                                    <span className="text-slate-300 dark:text-slate-600">|</span>
+                                                                    <span className="font-bold text-slate-600 dark:text-slate-300">{item.rate > 0 ? `Rs. ${item.rate.toLocaleString()}` : 'N/A'}</span>
+                                                                </div>
+                                                            )}
+                                                        </div>
+
+                                                        {item.isDividend ? (
+                                                            <div className={cn(
+                                                                "rounded-2xl p-4 border relative overflow-hidden mb-3",
+                                                                "bg-emerald-500/10 border-emerald-500/30"
+                                                            )}>
+                                                                <div className="flex items-center justify-between mb-3">
+                                                                    <span className="text-[10px] font-black text-emerald-800 dark:text-emerald-300 uppercase tracking-widest flex items-center gap-1.5">
+                                                                        Cash Dividend <span className="opacity-60 text-[9px] font-mono">({item.cashPercent}%)</span>
+                                                                    </span>
+                                                                    <span className="text-xl font-mono font-black text-emerald-600 dark:text-emerald-300">
+                                                                        + Rs. {item.amount.toLocaleString()}
+                                                                    </span>
+                                                                </div>
+
+                                                                <div className="flex items-center justify-between text-[10px] text-emerald-700 dark:text-emerald-200 font-bold bg-emerald-500/10 dark:bg-slate-800/80 rounded-xl px-3 py-2 border border-emerald-500/20">
+                                                                    <span>On {item.holdingsAtClosure?.toLocaleString() ?? 0} units</span>
+                                                                    <span className="h-3 w-px bg-emerald-500/30"></span>
+                                                                    <span>Rs. {item.dividendPerShare} / sh</span>
+                                                                </div>
                                                             </div>
+                                                        ) : null}
 
-                                                            <ArrowRightLeft className="w-4 h-4 text-slate-400 dark:text-slate-600" />
+                                                        {/* Balance Section */}
+                                                        <div className="bg-slate-50 dark:bg-slate-800/80 rounded-xl p-3 border border-slate-200 dark:border-slate-700/50">
+                                                            <div className="flex items-center justify-between gap-3">
+                                                                <div className="flex flex-col">
+                                                                    <span className="text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold text-[8px] mb-0.5">Before</span>
+                                                                    <span className="font-mono font-bold text-slate-600 dark:text-slate-300 text-sm">{item.balanceBefore?.toLocaleString() ?? 0}</span>
+                                                                </div>
 
-                                                            <div className="flex flex-col text-right">
-                                                                <span className="text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold text-[8px] mb-0.5">After</span>
-                                                                <span className="font-mono font-black text-slate-900 dark:text-white text-sm">{item.balance.toLocaleString()}</span>
+                                                                <ArrowRightLeft className="w-4 h-4 text-slate-400 dark:text-slate-600" />
+
+                                                                <div className="flex flex-col text-right">
+                                                                    <span className="text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold text-[8px] mb-0.5">After</span>
+                                                                    <span className="font-mono font-black text-slate-900 dark:text-white text-sm">{item.balance.toLocaleString()}</span>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        );
-                                    })}
+                                            );
+                                        })}
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     ))
                 )}
             </div>
-        </div >
+        </div>
     );
 };
