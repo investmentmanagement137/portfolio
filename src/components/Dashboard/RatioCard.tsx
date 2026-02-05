@@ -22,28 +22,31 @@ export function RatioCard({ title, items, className }: RatioCardProps) {
 
     return (
         <>
-            <Card className={cn("border-border/50 shadow-md", className)}>
-                <CardHeader className="p-4 pb-2">
-                    <CardTitle className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+            <Card className={cn("overflow-hidden border-none bg-gradient-to-br from-primary/5 via-card to-background shadow-xl relative group", className)}>
+                <div className="absolute inset-0 bg-primary/5 opacity-50 pointer-events-none" />
+                <CardHeader className="p-5 border-b border-border/40 bg-muted/20">
+                    <CardTitle className="text-sm font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
                         {title}
-                        <Info className="w-3 h-3" />
+                        <Info className="w-3.5 h-3.5 opacity-50" />
                     </CardTitle>
                 </CardHeader>
-                <CardContent className="p-4 pt-2">
-                    <div className="space-y-3">
+                <CardContent className="p-0">
+                    <div className="divide-y border-border/40">
                         {items.map((item, idx) => (
                             <div
                                 key={idx}
-                                className="flex justify-between items-center group cursor-pointer hover:bg-muted/50 p-2 rounded-lg transition-colors"
+                                className="flex justify-between items-center group cursor-pointer hover:bg-primary/5 p-5 transition-colors"
                                 onClick={() => setSelectedItem(item)}
                             >
-                                <div className="flex items-center gap-3">
-                                    {item.icon && <div className="text-muted-foreground group-hover:text-primary transition-colors">{item.icon}</div>}
-                                    <span className="text-sm font-medium text-foreground/80 group-hover:text-primary transition-colors">
+                                <div className="flex items-center gap-4">
+                                    <div className="p-2 rounded-lg bg-muted group-hover:bg-primary/10 transition-colors">
+                                        {item.icon && <div className="text-muted-foreground group-hover:text-primary transition-colors">{item.icon}</div>}
+                                    </div>
+                                    <span className="text-sm font-bold text-foreground/80 group-hover:text-primary transition-colors tracking-tight">
                                         {item.label}
                                     </span>
                                 </div>
-                                <span className={cn("font-mono font-bold text-lg", item.valueColor || "text-foreground")}>
+                                <span className={cn("font-mono font-black text-2xl tracking-tighter", item.valueColor || "text-foreground")}>
                                     {item.value}
                                 </span>
                             </div>

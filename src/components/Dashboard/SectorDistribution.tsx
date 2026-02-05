@@ -24,11 +24,12 @@ export function SectorDistribution() {
         : mainSectors;
 
     return (
-        <Card className="h-full">
-            <CardHeader className="pb-2">
+        <Card className="h-full overflow-hidden border-none bg-gradient-to-br from-primary/5 via-card to-background shadow-xl relative group">
+            <div className="absolute inset-0 bg-primary/5 opacity-50 pointer-events-none" />
+            <CardHeader className="p-5 border-b border-border/40 bg-muted/20">
                 <CardTitle className="text-sm font-bold uppercase tracking-widest text-muted-foreground opacity-80">Sector Distribution</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-6">
                 <DonutChart
                     data={finalData}
                     dataKey="value"

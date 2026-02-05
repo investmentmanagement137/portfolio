@@ -20,6 +20,7 @@ export function Dashboard({ onNavigateToImport }: DashboardProps) {
 
     return (
         <div className="space-y-6">
+            <NepseTodayCard />
             <OverviewCards />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -68,7 +69,6 @@ export function Dashboard({ onNavigateToImport }: DashboardProps) {
             </div>
 
             <div className="grid grid-cols-1 gap-6">
-                <NepseTodayCard />
                 <TradingHistoryCard />
             </div>
         </div>
