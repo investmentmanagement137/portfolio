@@ -15,6 +15,11 @@ export function OverviewCards() {
             <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-3xl -z-10" />
 
             <CardContent className="p-0">
+                <div className="p-4 border-b border-border/40 bg-muted/20">
+                    <h2 className="text-lg font-bold tracking-tight flex items-center gap-2">
+                        My Current Portfolio
+                    </h2>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 divide-y md:divide-y-0 md:divide-x border-border/50">
                     <div className="p-6 transition-colors hover:bg-muted/30">
                         <div className="flex items-center gap-2 mb-3 text-muted-foreground">

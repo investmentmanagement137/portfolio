@@ -4,6 +4,8 @@ import { AllocationChart } from './AllocationChart';
 import { SectorDistribution } from './SectorDistribution';
 import { WelcomeState } from './WelcomeState';
 import { usePortfolio } from '../../context/PortfolioContext';
+import { NepseTodayCard } from './NepseTodayCard';
+import { TradingHistoryCard } from './TradingHistoryCard';
 
 interface DashboardProps {
     onNavigateToImport: () => void;
@@ -63,6 +65,11 @@ export function Dashboard({ onNavigateToImport }: DashboardProps) {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <AllocationChart />
                 <SectorDistribution />
+            </div>
+
+            <div className="grid grid-cols-1 gap-6">
+                <NepseTodayCard />
+                <TradingHistoryCard />
             </div>
         </div>
     );

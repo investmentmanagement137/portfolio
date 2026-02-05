@@ -464,8 +464,8 @@ export const Timeline: React.FC = () => {
                 </div>
             </div>
 
-            {/* Stats Card Area */}
-            {summaryData && (
+            {/* Stats Card Area - Only show if actively searching or filtering */}
+            {summaryData && (searchQuery || selectedFilters[0] !== 'All' || selectedScrip) && (
                 <div className="max-w-3xl mx-auto px-4 mt-6 relative z-10 transition-all duration-500">
                     {/* Dynamic Card Logic */}
                     {isSingleScrip ? (
