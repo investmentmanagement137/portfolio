@@ -1,4 +1,4 @@
-import { History, Ticket, Gavel, ArrowRightLeft, TrendingUp, TrendingDown, Gift, Coins, ScrollText } from 'lucide-react';
+import { History, Ticket, Gavel, ArrowRightLeft, TrendingUp, TrendingDown, Gift, Coins, ScrollText, Calendar, Activity } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
 import { usePortfolio } from '../../context/PortfolioContext';
 
@@ -11,61 +11,69 @@ const iconMap: Record<string, any> = {
     "Total Buy Events": { icon: TrendingUp, color: "text-green-500", bg: "bg-green-500/10" },
     "Bonus Events": { icon: Gift, color: "text-purple-500", bg: "bg-purple-500/10" },
     "Rights Allotted": { icon: Ticket, color: "text-orange-500", bg: "bg-orange-500/10" },
+    "Cash Dividends Total": { icon: Coins, color: "text-emerald-500", bg: "bg-emerald-500/10" },
+    "Dividend Frequency": { icon: History, color: "text-emerald-500", bg: "bg-emerald-500/10" },
     "Historical Dividends": { icon: Coins, color: "text-emerald-500", bg: "bg-emerald-500/10" },
     "Total Transactions": { icon: History, color: "text-slate-500", bg: "bg-slate-500/10" },
 };
 
 export function TradingHistoryCard() {
     const { state } = usePortfolio();
-    const { tradingHistory } = state;
+    const { tradingHistory, dividendDetails } = state;
 
-    const getStats = () => {
-        if (!tradingHistory) return [];
+    // Calculate integrated dividend metrics
+    const totalCashDividend = dividendDetails?.reduce((sum, item) => sum + (item["Dividend Amount"] || 0), 0) || 0;
+    const dividendCount = dividendDetails?.length || 0;
 
-        // If it's the new object structure { allTime: { ... } }
-        if (typeof tradingHistory === 'object' && !Array.isArray(tradingHistory)) {
-            const data = (tradingHistory as any).allTime || tradingHistory;
-            const mapping = [
-                { key: 'iposAllotted', label: 'IPOs Allotted' },
-                { key: 'fposAllotted', label: 'FPOs Allotted' },
-                { key: 'auctionsAllotted', label: 'Auctions Allotted' },
-                { key: 'mergedCompanies', label: 'Merged Companies' },
-                { key: 'bonusEvents', label: 'Bonus Events' },
-                { key: 'rightShare', label: 'Rights Allotted' },
-                { key: 'totalBuyEvents', label: 'Total Buy Events' },
-                { key: 'totalSellEvents', label: 'Total Sell Events' },
-                { key: 'totalTransactions', label: 'Total Transactions' },
-            ];
+    const getStatsByCategory = () => {
+        if (!tradingHistory) return { market: [], rewards: [] };
 
-            return mapping
-                .filter(m => data[m.key] !== undefined)
-                .map(m => {
-                    const config = iconMap[m.label] || { icon: ScrollText, color: "text-slate-500", bg: "bg-slate-500/10" };
-                    return {
-                        label: m.label,
-                        value: data[m.key],
-                        ...config
-                    };
-                });
+        const data = (tradingHistory as any).allTime || tradingHistory;
+
+        const marketMapping = [
+            { key: 'iposAllotted', label: 'IPOs Allotted' },
+            { key: 'fposAllotted', label: 'FPOs Allotted' },
+            { key: 'auctionsAllotted', label: 'Auctions Allotted' },
+            { key: 'mergedCompanies', label: 'Merged Companies' },
+            { key: 'totalBuyEvents', label: 'Total Buy Events' },
+            { key: 'totalSellEvents', label: 'Total Sell Events' },
+        ];
+
+        const rewardsMapping = [
+            { key: 'bonusEvents', label: 'Bonus Events' },
+            { key: 'rightShare', label: 'Rights Allotted' },
+        ];
+
+        const mapItem = (m: any, value?: any) => {
+            const config = iconMap[m.label] || { icon: ScrollText, color: "text-slate-500", bg: "bg-slate-500/10" };
+            return {
+                label: m.label,
+                value: value !== undefined ? value : data[m.key],
+                ...config
+            };
+        };
+
+        const market = marketMapping
+            .filter(m => data[m.key] !== undefined)
+            .map(m => mapItem(m));
+
+        const rewards = rewardsMapping
+            .filter(m => data[m.key] !== undefined)
+            .map(m => mapItem(m));
+
+        // Add integrated dividend metrics to rewards
+        if (dividendCount > 0) {
+            rewards.push(mapItem({ label: 'Cash Dividends Total' }, `रु ${totalCashDividend.toLocaleString('en-IN')}`));
+            rewards.push(mapItem({ label: 'Dividend Frequency' }, `${dividendCount} Times`));
         }
 
-        // Fallback for legacy array structure
-        if (Array.isArray(tradingHistory)) {
-            return tradingHistory.map((item: any) => {
-                const config = iconMap[item.label] || { icon: ScrollText, color: "text-slate-500", bg: "bg-slate-500/10" };
-                return {
-                    ...item,
-                    ...config
-                };
-            });
-        }
-
-        return [];
+        return { market, rewards };
     };
 
-    const stats = getStats();
+    const sections = getStatsByCategory();
+    const hasData = sections.market.length > 0 || sections.rewards.length > 0;
 
-    if (stats.length === 0) {
+    if (!tradingHistory || !hasData) {
         return (
             <Card className="overflow-hidden border-none bg-gradient-to-br from-primary/5 via-card to-background shadow-xl relative mt-8">
                 <CardHeader className="p-5 border-b border-border/40 bg-muted/20">
@@ -82,27 +90,96 @@ export function TradingHistoryCard() {
         );
     }
 
+    const h = tradingHistory as any;
+
     return (
         <Card className="overflow-hidden border-none bg-gradient-to-br from-primary/5 via-card to-background shadow-xl relative group mt-8">
             <div className="absolute inset-0 bg-primary/5 opacity-50 pointer-events-none" />
             <CardHeader className="p-5 border-b border-border/40 bg-muted/20">
-                <CardTitle className="flex items-center gap-2 text-lg">
-                    <ScrollText className="w-5 h-5 text-primary" />
-                    My Trading History
-                    <span className="ml-auto text-xs font-bold uppercase tracking-widest px-2 py-0.5 rounded border bg-muted/50 border-border/40 text-muted-foreground opacity-70">All Time</span>
+                <CardTitle className="flex items-center justify-between w-full">
+                    <div className="flex items-center gap-2 text-lg">
+                        <ScrollText className="w-5 h-5 text-primary" />
+                        Investor Journey
+                    </div>
+                    {h.activeInMarket && (
+                        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 shadow-sm shadow-emerald-500/5 transition-all hover:bg-emerald-500/20">
+                            <span className="relative flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                            </span>
+                            <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Active in Market</span>
+                        </div>
+                    )}
                 </CardTitle>
             </CardHeader>
-            <CardContent className="p-6">
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                    {stats.map((stat: any, idx: number) => (
-                        <div key={idx} className="bg-card/40 backdrop-blur-sm border border-border/40 rounded-2xl p-5 hover:bg-primary/5 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-default flex flex-col items-center text-center gap-2 group/item">
-                            <div className={`p-3 rounded-full ${stat.bg} ${stat.color} mb-1 group-hover/item:scale-110 transition-transform`}>
-                                <stat.icon className="w-5 h-5" />
-                            </div>
-                            <div className="text-2xl font-black tracking-tighter text-foreground">{stat.value}</div>
-                            <div className="text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-70">{stat.label}</div>
+            <CardContent className="p-6 space-y-8">
+                {/* Identity Header */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 rounded-2xl bg-muted/30 border border-border/40 backdrop-blur-sm relative overflow-hidden group/header">
+                    <div className="absolute inset-0 bg-primary/5 translate-y-full group-hover/header:translate-y-0 transition-transform duration-500" />
+                    <div className="relative">
+                        <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1 flex items-center gap-1">
+                            <Calendar className="w-3 h-3" /> Investor Since
                         </div>
-                    ))}
+                        <div className="text-sm font-black text-foreground">{h.tradingStartDate || 'N/A'}</div>
+                    </div>
+                    <div className="relative">
+                        <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1 flex items-center gap-1">
+                            <Activity className="w-3 h-3" /> Last Activity
+                        </div>
+                        <div className="text-sm font-black text-foreground">{h.recentTradingDate || 'N/A'}</div>
+                    </div>
+                    <div className="relative">
+                        <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1 flex items-center gap-1">
+                            <History className="w-3 h-3" /> Total Events
+                        </div>
+                        <div className="text-sm font-black text-foreground">{h.totalTransactions || 0}</div>
+                    </div>
+                    <div className="relative">
+                        <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1 flex items-center gap-1">
+                            <Ticket className="w-3 h-3" /> Total IPOs
+                        </div>
+                        <div className="text-sm font-black text-foreground">{h.iposAllotted || 0}</div>
+                    </div>
+                </div>
+
+                {/* Market Activity Section */}
+                <div className="space-y-4">
+                    <div className="flex items-center gap-2">
+                        <div className="h-px flex-1 bg-border/40" />
+                        <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Market Activity</h3>
+                        <div className="h-px flex-1 bg-border/40" />
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                        {sections.market.map((stat: any, idx: number) => (
+                            <div key={idx} className="bg-card/40 backdrop-blur-sm border border-border/40 rounded-2xl p-4 hover:bg-primary/5 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-default flex flex-col items-center text-center gap-2 group/item">
+                                <div className={`p-2.5 rounded-full ${stat.bg} ${stat.color} mb-1 group-hover/item:scale-110 transition-transform`}>
+                                    <stat.icon className="w-4 h-4" />
+                                </div>
+                                <div className="text-xl font-black tracking-tighter text-foreground">{stat.value}</div>
+                                <div className="text-[9px] text-muted-foreground font-black uppercase tracking-widest opacity-70 leading-tight">{stat.label}</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Rewards & Growth Section */}
+                <div className="space-y-4">
+                    <div className="flex items-center gap-2">
+                        <div className="h-px flex-1 bg-border/40" />
+                        <h3 className="text-[10px] font-black text-emerald-600/70 uppercase tracking-[0.2em]">Rewards & Growth</h3>
+                        <div className="h-px flex-1 bg-border/40" />
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                        {sections.rewards.map((stat: any, idx: number) => (
+                            <div key={idx} className="bg-emerald-500/[0.02] backdrop-blur-sm border border-emerald-500/20 rounded-2xl p-4 hover:bg-emerald-500/10 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-default flex flex-col items-center text-center gap-2 group/item">
+                                <div className={`p-2.5 rounded-full ${stat.bg} ${stat.color} mb-1 group-hover/item:scale-110 transition-transform`}>
+                                    <stat.icon className="w-4 h-4" />
+                                </div>
+                                <div className="text-xl font-black tracking-tighter text-foreground">{stat.value}</div>
+                                <div className="text-[9px] text-emerald-600 font-black uppercase tracking-widest opacity-70 leading-tight">{stat.label}</div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </CardContent>
         </Card>
