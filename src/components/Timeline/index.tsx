@@ -360,113 +360,104 @@ export const Timeline: React.FC = () => {
             {/* Header Area */}
             <div className="relative sticky top-0 z-40 bg-background/95 backdrop-blur-xl border-b border-border/40 pb-2 shadow-sm transition-all duration-300">
                 <div className="flex flex-col gap-3 max-w-3xl mx-auto px-4 pt-4">
-                    {/* Top Row: Title & Search Compact */}
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-                        <div>
-                            <h2 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
-                                Timeline <span className="text-xs font-normal text-muted-foreground bg-muted/50 px-2 py-0.5 rounded-full">History</span>
-                            </h2>
+                    {/* Search Bar */}
+                    <div className="relative group w-full">
+                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/70 group-focus-within:text-primary transition-colors">
+                            <Search className="w-4 h-4" />
                         </div>
+                        <input
+                            type="text"
+                            placeholder="Search scrip..."
+                            value={searchQuery}
+                            onChange={(e) => {
+                                const val = e.target.value;
+                                setSearchQuery(val);
 
-                        {/* Search Bar */}
-                        <div className="relative group w-full md:w-auto md:min-w-[300px]">
-                            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/70 group-focus-within:text-primary transition-colors">
-                                <Search className="w-4 h-4" />
-                            </div>
-                            <input
-                                type="text"
-                                placeholder="Search scrip..."
-                                value={searchQuery}
-                                onChange={(e) => {
-                                    const val = e.target.value;
-                                    setSearchQuery(val);
-
-                                    // Auto-select if exact match (case insensitive)
-                                    const exactMatch = allAvailableScrips.find(s => s.toLowerCase() === val.toLowerCase());
-                                    if (exactMatch) {
-                                        setSelectedScrip(exactMatch);
-                                    } else if (selectedScrip) {
-                                        setSelectedScrip(null);
-                                    }
+                                // Auto-select if exact match (case insensitive)
+                                const exactMatch = allAvailableScrips.find(s => s.toLowerCase() === val.toLowerCase());
+                                if (exactMatch) {
+                                    setSelectedScrip(exactMatch);
+                                } else if (selectedScrip) {
+                                    setSelectedScrip(null);
+                                }
+                            }}
+                            onFocus={() => setIsDropdownOpen(true)}
+                            onBlur={() => setTimeout(() => setIsDropdownOpen(false), 200)}
+                            className="w-full pl-9 pr-9 py-2 bg-muted/30 hover:bg-muted/50 focus:bg-background border border-border/50 focus:border-primary/50 rounded-full text-sm transition-all focus:ring-2 focus:ring-primary/10"
+                        />
+                        {searchQuery && (
+                            <button
+                                onClick={() => {
+                                    setSearchQuery('');
+                                    setSelectedScrip(null);
                                 }}
-                                onFocus={() => setIsDropdownOpen(true)}
-                                onBlur={() => setTimeout(() => setIsDropdownOpen(false), 200)}
-                                className="w-full pl-9 pr-9 py-2 bg-muted/30 hover:bg-muted/50 focus:bg-background border border-border/50 focus:border-primary/50 rounded-full text-sm transition-all focus:ring-2 focus:ring-primary/10"
-                            />
-                            {searchQuery && (
-                                <button
-                                    onClick={() => {
-                                        setSearchQuery('');
-                                        setSelectedScrip(null);
-                                    }}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 hover:bg-muted/80 rounded-full transition-colors"
-                                >
-                                    <X className="w-3.5 h-3.5 text-muted-foreground" />
-                                </button>
-                            )}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 hover:bg-muted/80 rounded-full transition-colors"
+                            >
+                                <X className="w-3.5 h-3.5 text-muted-foreground" />
+                            </button>
+                        )}
 
-                            {/* Search Dropdown */}
-                            {isDropdownOpen && (
-                                <div className="absolute top-full left-0 right-0 mt-2 bg-popover border border-border rounded-xl shadow-lg max-h-[300px] overflow-y-auto no-scrollbar z-50 animate-in fade-in zoom-in-95 p-1">
-                                    {allAvailableScrips
-                                        .filter(s => s.toLowerCase().includes(searchQuery.toLowerCase()))
-                                        .map((scrip) => (
-                                            <button
-                                                key={scrip}
-                                                onClick={() => {
-                                                    setSearchQuery(scrip);
-                                                    setSelectedScrip(scrip);
-                                                    setIsDropdownOpen(false);
-                                                }}
-                                                className="w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors flex items-center justify-between"
-                                            >
-                                                <span className="font-medium">{scrip}</span>
-                                                {selectedScrip === scrip && (
-                                                    <span className="text-[10px] text-primary-foreground bg-primary px-1.5 py-0.5 rounded uppercase font-bold">Active</span>
-                                                )}
-                                            </button>
-                                        ))}
-                                    {allAvailableScrips.filter(s => s.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 && (
-                                        <div className="px-3 py-4 text-center text-sm text-muted-foreground">
-                                            No scrips found
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-                        </div>
+                        {/* Search Dropdown */}
+                        {isDropdownOpen && (
+                            <div className="absolute top-full left-0 right-0 mt-2 bg-popover border border-border rounded-xl shadow-lg max-h-[300px] overflow-y-auto no-scrollbar z-50 animate-in fade-in zoom-in-95 p-1">
+                                {allAvailableScrips
+                                    .filter(s => s.toLowerCase().includes(searchQuery.toLowerCase()))
+                                    .map((scrip) => (
+                                        <button
+                                            key={scrip}
+                                            onClick={() => {
+                                                setSearchQuery(scrip);
+                                                setSelectedScrip(scrip);
+                                                setIsDropdownOpen(false);
+                                            }}
+                                            className="w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors flex items-center justify-between"
+                                        >
+                                            <span className="font-medium">{scrip}</span>
+                                            {selectedScrip === scrip && (
+                                                <span className="text-[10px] text-primary-foreground bg-primary px-1.5 py-0.5 rounded uppercase font-bold">Active</span>
+                                            )}
+                                        </button>
+                                    ))}
+                                {allAvailableScrips.filter(s => s.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 && (
+                                    <div className="px-3 py-4 text-center text-sm text-muted-foreground">
+                                        No scrips found
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </div>
+                </div>
 
-                    {/* Filter Scroll Area */}
-                    <div className="relative -mx-4 px-4">
-                        <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar scroll-smooth [mask-image:linear-gradient(to_right,transparent,black_12px,black_calc(100%-12px),transparent)]">
-                            {[
-                                { id: 'All', icon: LayoutGrid, label: 'All' },
-                                { id: 'Buys', icon: ArrowDownCircle, label: 'Buys' },
-                                { id: 'Sells', icon: ArrowUpCircle, label: 'Sells' },
-                                { id: 'Bonus', icon: Gift, label: 'Bonus' },
-                                { id: 'IPO', icon: Ticket, label: 'IPO' },
-                                { id: 'Dividends', icon: Coins, label: 'Dividends' },
-                                { id: 'Auction', icon: Gavel, label: 'Auction' }
-                            ].map(filter => {
-                                const Icon = filter.icon;
-                                const isActive = selectedFilters.includes(filter.id);
-                                return (
-                                    <button
-                                        key={filter.id}
-                                        onClick={() => toggleFilter(filter.id)}
-                                        className={cn(
-                                            "pl-3 pr-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all border flex items-center gap-1.5 active:scale-95",
-                                            isActive
-                                                ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                                                : "bg-background border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
-                                        )}
-                                    >
-                                        <Icon className="w-3.5 h-3.5" />
-                                        {filter.label}
-                                    </button>
-                                );
-                            })}
-                        </div>
+                {/* Filter Scroll Area */}
+                <div className="relative -mx-4 px-4">
+                    <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar scroll-smooth [mask-image:linear-gradient(to_right,transparent,black_12px,black_calc(100%-12px),transparent)]">
+                        {[
+                            { id: 'All', icon: LayoutGrid, label: 'All' },
+                            { id: 'Buys', icon: ArrowDownCircle, label: 'Buys' },
+                            { id: 'Sells', icon: ArrowUpCircle, label: 'Sells' },
+                            { id: 'Bonus', icon: Gift, label: 'Bonus' },
+                            { id: 'IPO', icon: Ticket, label: 'IPO' },
+                            { id: 'Dividends', icon: Coins, label: 'Dividends' },
+                            { id: 'Auction', icon: Gavel, label: 'Auction' }
+                        ].map(filter => {
+                            const Icon = filter.icon;
+                            const isActive = selectedFilters.includes(filter.id);
+                            return (
+                                <button
+                                    key={filter.id}
+                                    onClick={() => toggleFilter(filter.id)}
+                                    className={cn(
+                                        "pl-3 pr-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all border flex items-center gap-1.5 active:scale-95",
+                                        isActive
+                                            ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                                            : "bg-background border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
+                                    )}
+                                >
+                                    <Icon className="w-3.5 h-3.5" />
+                                    {filter.label}
+                                </button>
+                            );
+                        })}
                     </div>
                 </div>
             </div>
@@ -507,7 +498,7 @@ export const Timeline: React.FC = () => {
                                 </h3>
                             </div>
 
-                            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                                 <SummaryCard
                                     title="Current Holdings"
                                     value={`Rs. ${(summaryData.currentValue / 100000).toFixed(2)}L`}
@@ -557,7 +548,8 @@ export const Timeline: React.FC = () => {
                         </div>
                     )}
                 </div>
-            )}
+            )
+            }
 
             {/* Content */}
             <div className="relative max-w-3xl mx-auto p-4 md:p-8 safe-area-bottom">
@@ -702,6 +694,6 @@ export const Timeline: React.FC = () => {
                     ))
                 )}
             </div>
-        </div>
+        </div >
     );
 };
