@@ -13,7 +13,8 @@ const iconMap: Record<string, any> = {
     "Rights Allotted": { icon: Ticket, color: "text-orange-500", bg: "bg-orange-500/10" },
     "Cash Dividends Total": { icon: Coins, color: "text-emerald-500", bg: "bg-emerald-500/10" },
     "Dividend Frequency": { icon: History, color: "text-emerald-500", bg: "bg-emerald-500/10" },
-    "Historical Dividends": { icon: Coins, color: "text-emerald-500", bg: "bg-emerald-500/10" },
+    "Recent Activity": { icon: Activity, color: "text-blue-400", bg: "bg-blue-500/10" },
+    "Trading Since": { icon: Calendar, color: "text-slate-400", bg: "bg-slate-500/10" },
     "Total Transactions": { icon: History, color: "text-slate-500", bg: "bg-slate-500/10" },
 };
 
@@ -31,40 +32,48 @@ export function TradingHistoryCard() {
         const data = (tradingHistory as any).allTime || tradingHistory;
 
         const marketMapping = [
-            { key: 'iposAllotted', label: 'IPOs Allotted' },
-            { key: 'fposAllotted', label: 'FPOs Allotted' },
-            { key: 'auctionsAllotted', label: 'Auctions Allotted' },
-            { key: 'mergedCompanies', label: 'Merged Companies' },
-            { key: 'totalBuyEvents', label: 'Total Buy Events' },
-            { key: 'totalSellEvents', label: 'Total Sell Events' },
+            { key: 'iposAllotted', label: 'IPOs Allotted', format: (val: number) => val || 0 },
+            { key: 'fposAllotted', label: 'FPOs Allotted', format: (val: number) => val || 0 },
+            { key: 'auctionsAllotted', label: 'Auctions Allotted', format: (val: number) => val || 0 },
+            { key: 'mergedCompanies', label: 'Merged Companies', format: (val: number) => val || 0 },
+            { key: 'totalBuyEvents', label: 'Total Buy Events', format: (val: number) => val || 0 },
+            { key: 'totalSellEvents', label: 'Total Sell Events', format: (val: number) => val || 0 },
         ];
 
         const rewardsMapping = [
-            { key: 'bonusEvents', label: 'Bonus Events' },
-            { key: 'rightShare', label: 'Rights Allotted' },
+            { key: 'bonusEvents', label: 'Bonus Events', format: (val: number) => val || 0 },
+            { key: 'rightShare', label: 'Rights Allotted', format: (val: number) => val || 0 },
         ];
 
-        const mapItem = (m: any, value?: any) => {
+        const mapItem = (m: any) => {
             const config = iconMap[m.label] || { icon: ScrollText, color: "text-slate-500", bg: "bg-slate-500/10" };
+            const rawValue = data[m.key];
+            const formattedValue = m.format ? m.format(rawValue) : rawValue;
             return {
                 label: m.label,
-                value: value !== undefined ? value : data[m.key],
+                value: formattedValue,
                 ...config
             };
         };
 
         const market = marketMapping
-            .filter(m => data[m.key] !== undefined)
             .map(m => mapItem(m));
 
         const rewards = rewardsMapping
-            .filter(m => data[m.key] !== undefined)
             .map(m => mapItem(m));
 
         // Add integrated dividend metrics to rewards
         if (dividendCount > 0) {
-            rewards.push(mapItem({ label: 'Cash Dividends Total' }, `रु ${totalCashDividend.toLocaleString('en-IN')}`));
-            rewards.push(mapItem({ label: 'Dividend Frequency' }, `${dividendCount} Times`));
+            rewards.push({
+                label: 'Cash Dividends Total',
+                value: `रु ${totalCashDividend.toLocaleString('en-IN')}`,
+                ...iconMap['Cash Dividends Total']
+            });
+            rewards.push({
+                label: 'Dividend Frequency',
+                value: `${dividendCount} Times`,
+                ...iconMap['Dividend Frequency']
+            });
         }
 
         return { market, rewards };
@@ -90,7 +99,8 @@ export function TradingHistoryCard() {
         );
     }
 
-    const h = tradingHistory as any;
+    const normalizedData = (tradingHistory as any).allTime || tradingHistory;
+    const root = tradingHistory as any;
 
     return (
         <Card className="overflow-hidden border-none bg-gradient-to-br from-primary/5 via-card to-background shadow-xl relative group mt-8">
@@ -101,44 +111,38 @@ export function TradingHistoryCard() {
                         <ScrollText className="w-5 h-5 text-primary" />
                         Investor Journey
                     </div>
-                    {h.activeInMarket && (
+                    {root.activeInMarket && (
                         <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 shadow-sm shadow-emerald-500/5 transition-all hover:bg-emerald-500/20">
                             <span className="relative flex h-2 w-2">
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                             </span>
-                            <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Active in Market</span>
+                            <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Active In Market</span>
                         </div>
                     )}
                 </CardTitle>
             </CardHeader>
             <CardContent className="p-6 space-y-8">
                 {/* Identity Header */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 rounded-2xl bg-muted/30 border border-border/40 backdrop-blur-sm relative overflow-hidden group/header">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 rounded-2xl bg-muted/30 border border-border/40 backdrop-blur-sm relative overflow-hidden group/header">
                     <div className="absolute inset-0 bg-primary/5 translate-y-full group-hover/header:translate-y-0 transition-transform duration-500" />
                     <div className="relative">
                         <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1 flex items-center gap-1">
                             <Calendar className="w-3 h-3" /> Investor Since
                         </div>
-                        <div className="text-sm font-black text-foreground">{h.tradingStartDate || 'N/A'}</div>
+                        <div className="text-sm font-black text-foreground">{normalizedData.tradingStartDate || 'N/A'}</div>
                     </div>
                     <div className="relative">
                         <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1 flex items-center gap-1">
                             <Activity className="w-3 h-3" /> Last Activity
                         </div>
-                        <div className="text-sm font-black text-foreground">{h.recentTradingDate || 'N/A'}</div>
+                        <div className="text-sm font-black text-foreground">{normalizedData.recentTradingDate || 'N/A'}</div>
                     </div>
                     <div className="relative">
                         <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1 flex items-center gap-1">
                             <History className="w-3 h-3" /> Total Events
                         </div>
-                        <div className="text-sm font-black text-foreground">{h.totalTransactions || 0}</div>
-                    </div>
-                    <div className="relative">
-                        <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1 flex items-center gap-1">
-                            <Ticket className="w-3 h-3" /> Total IPOs
-                        </div>
-                        <div className="text-sm font-black text-foreground">{h.iposAllotted || 0}</div>
+                        <div className="text-sm font-black text-foreground">{normalizedData.totalTransactions || 0}</div>
                     </div>
                 </div>
 
@@ -155,7 +159,7 @@ export function TradingHistoryCard() {
                                 <div className={`p-2.5 rounded-full ${stat.bg} ${stat.color} mb-1 group-hover/item:scale-110 transition-transform`}>
                                     <stat.icon className="w-4 h-4" />
                                 </div>
-                                <div className="text-xl font-black tracking-tighter text-foreground">{stat.value}</div>
+                                <div className="text-xl font-black tracking-tighter text-foreground whitespace-nowrap overflow-hidden text-ellipsis w-full px-1">{stat.value}</div>
                                 <div className="text-[9px] text-muted-foreground font-black uppercase tracking-widest opacity-70 leading-tight">{stat.label}</div>
                             </div>
                         ))}
@@ -175,7 +179,7 @@ export function TradingHistoryCard() {
                                 <div className={`p-2.5 rounded-full ${stat.bg} ${stat.color} mb-1 group-hover/item:scale-110 transition-transform`}>
                                     <stat.icon className="w-4 h-4" />
                                 </div>
-                                <div className="text-xl font-black tracking-tighter text-foreground">{stat.value}</div>
+                                <div className="text-xl font-black tracking-tighter text-foreground whitespace-nowrap overflow-hidden text-ellipsis w-full px-1">{stat.value}</div>
                                 <div className="text-[9px] text-emerald-600 font-black uppercase tracking-widest opacity-70 leading-tight">{stat.label}</div>
                             </div>
                         ))}
