@@ -237,8 +237,8 @@ export function Settings({ onImportSuccess, onNavigateToTimeline, defaultSection
                                             <Database className="w-5 h-5 text-purple-500" />
                                         </div>
                                         <div className="flex flex-col">
-                                            <span className="font-bold text-sm">Meroshare Import</span>
-                                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Update WACC and History</span>
+                                            <span className="font-bold text-sm">Meroshare & TMS Import</span>
+                                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Upload Portfolio & Trade Book</span>
                                         </div>
                                     </div>
                                     <ChevronRight className="w-4 h-4 text-muted-foreground transition-transform group-hover/btn:translate-x-1" />

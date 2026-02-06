@@ -122,7 +122,7 @@ export interface FundamentalAnalysis {
 }
 
 export interface PortfolioActions {
-    uploadData: (waccFile: File, historyFile: File, holdingsFile?: File) => Promise<void>;
+    uploadData: (waccFile: File, historyFile: File, holdingsFile?: File, tradeBookFile?: File) => Promise<void>;
     reanalysePortfolio: () => Promise<void>;
     clearData: () => void;
     refreshLtp: () => Promise<void>;

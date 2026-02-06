@@ -349,7 +349,7 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
     }, [state.rawAnalysisData, state.ltpData, waccRawData, holdingsRawData, fundamentalsMap]);
 
 
-    const uploadData = async (waccFile: File, historyFile: File, holdingsFile?: File) => {
+    const uploadData = async (waccFile: File, historyFile: File, holdingsFile?: File, tradeBookFile?: File) => {
         setState(prev => ({ ...prev, loading: true, error: null }));
 
         try {
@@ -390,6 +390,9 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
             const formData = new FormData();
             formData.append('wacc_report', waccFile);
             formData.append('transaction_history', historyFile);
+            if (tradeBookFile) {
+                formData.append('trade_book_details', tradeBookFile);
+            }
 
             const response = await axios.post(WEBHOOK_URL, formData);
             // Handle both legacy array response and new object response with tradingHistory

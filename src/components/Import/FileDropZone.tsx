@@ -7,9 +7,10 @@ interface FileDropZoneProps {
     file: File | null;
     onFileSelect: (file: File | null) => void;
     accept?: string;
+    description?: string;
 }
 
-export function FileDropZone({ label, file, onFileSelect, accept = ".csv" }: FileDropZoneProps) {
+export function FileDropZone({ label, file, onFileSelect, accept = ".csv", description }: FileDropZoneProps) {
     const inputRef = useRef<HTMLInputElement>(null);
 
     const handleDragOver = (e: React.DragEvent) => {
@@ -26,7 +27,10 @@ export function FileDropZone({ label, file, onFileSelect, accept = ".csv" }: Fil
 
     return (
         <div className="space-y-2">
-            <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">{label}</label>
+            <div className="ml-1">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground block">{label}</label>
+                {description && <span className="text-[9px] text-muted-foreground/60 tracking-wider block mt-0.5">{description}</span>}
+            </div>
             <div
                 onDragOver={handleDragOver}
                 onDrop={handleDrop}
