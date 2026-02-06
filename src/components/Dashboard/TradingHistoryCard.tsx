@@ -9,10 +9,10 @@ const iconMap: Record<string, any> = {
     "Merged Companies": { icon: ArrowRightLeft, color: "text-cyan-500", bg: "bg-cyan-500/10" },
     "Total Sell Events": { icon: TrendingDown, color: "text-red-500", bg: "bg-red-500/10" },
     "Total Buy Events": { icon: TrendingUp, color: "text-green-500", bg: "bg-green-500/10" },
-    "Bonus Events": { icon: Gift, color: "text-purple-500", bg: "bg-purple-500/10" },
-    "Rights Allotted": { icon: Ticket, color: "text-orange-500", bg: "bg-orange-500/10" },
-    "Cash Dividends Total": { icon: Coins, color: "text-emerald-500", bg: "bg-emerald-500/10" },
-    "Dividend Frequency": { icon: History, color: "text-emerald-500", bg: "bg-emerald-500/10" },
+    "Bonus Share Events": { icon: Gift, color: "text-purple-500", bg: "bg-purple-500/10" },
+    "Right share alloted": { icon: Ticket, color: "text-orange-500", bg: "bg-orange-500/10" },
+    "Total Cash Divident": { icon: Coins, color: "text-emerald-500", bg: "bg-emerald-500/10" },
+    "Cash Divident frequency": { icon: History, color: "text-emerald-500", bg: "bg-emerald-500/10" },
     "Recent Activity": { icon: Activity, color: "text-blue-400", bg: "bg-blue-500/10" },
     "Trading Since": { icon: Calendar, color: "text-slate-400", bg: "bg-slate-500/10" },
     "Total Transactions": { icon: History, color: "text-slate-500", bg: "bg-slate-500/10" },
@@ -41,8 +41,8 @@ export function TradingHistoryCard() {
         ];
 
         const rewardsMapping = [
-            { key: 'bonusEvents', label: 'Bonus Events', format: (val: number) => val || 0 },
-            { key: 'rightShare', label: 'Rights Allotted', format: (val: number) => val || 0 },
+            { key: 'bonusEvents', label: 'Bonus Share Events', format: (val: number) => val || 0 },
+            { key: 'rightShare', label: 'Right share alloted', format: (val: number) => val || 0 },
         ];
 
         const mapItem = (m: any) => {
@@ -65,14 +65,14 @@ export function TradingHistoryCard() {
         // Add integrated dividend metrics to rewards
         if (dividendCount > 0) {
             rewards.push({
-                label: 'Cash Dividends Total',
+                label: 'Total Cash Divident',
                 value: `रु. ${totalCashDividend.toLocaleString('en-IN')}`,
-                ...iconMap['Cash Dividends Total']
+                ...iconMap['Total Cash Divident']
             });
             rewards.push({
-                label: 'Dividend Frequency',
+                label: 'Cash Divident frequency',
                 value: `${dividendCount} Times`,
-                ...iconMap['Dividend Frequency']
+                ...iconMap['Cash Divident frequency']
             });
         }
 
