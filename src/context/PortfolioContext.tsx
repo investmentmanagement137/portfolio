@@ -16,6 +16,11 @@ export const usePortfolio = () => {
     return context;
 };
 
+// Add this interface locally if not in types
+// interface FundamentalMap { [key: string]: any } // Removed unused
+
+const FUNDAMENTALS_URL = 'https://investmentmanagement137.github.io/jsons/fundamentals.json';
+
 interface PortfolioProviderProps {
     children: ReactNode;
 }
@@ -37,7 +42,10 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
         tradingHistory: null,
         brokerNo: null,
         roiType: 'simple',
+        fundamentalAnalysis: undefined,
     });
+
+    const [fundamentalsMap, setFundamentalsMap] = useState<Record<string, any>>({});
 
     const [waccRawData, setWaccRawData] = useState<any[]>([]);
     const [holdingsRawData, setHoldingsRawData] = useState<any[]>([]);
@@ -110,10 +118,30 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
         }
     }, []);
 
-    // Initial LTP Fetch
+    const fetchFundamentals = useCallback(async () => {
+        try {
+            const res = await axios.get(FUNDAMENTALS_URL);
+            // Actual JSON has root key "Fundamental ratios"
+            const data = res.data["Fundamental ratios"] || (Array.isArray(res.data) ? res.data : []);
+            const map: Record<string, any> = {};
+            data.forEach((item: any) => {
+                // Keys are lowercase in JSON
+                const sym = item.symbol || item.Symbol;
+                if (sym) {
+                    map[sym] = item;
+                }
+            });
+            setFundamentalsMap(map);
+        } catch (error) {
+            console.error("Failed to fetch Fundamentals", error);
+        }
+    }, []);
+
+    // Initial Data Fetch
     useEffect(() => {
         refreshLtp();
-    }, [refreshLtp]);
+        fetchFundamentals();
+    }, [refreshLtp, fetchFundamentals]);
 
     // Recalculate Holdings when data changes
     useEffect(() => {
@@ -241,6 +269,62 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
             return sum + (change * h.quantity);
         }, 0);
 
+        // Initialize fundamental aggregators
+        let totalValueForPE = 0;
+        let totalEarnings = 0;
+        let totalInvestmentForPE = 0;
+
+        let totalValueForPB = 0;
+        let totalBookValue = 0;
+        let totalInvestmentForPB = 0;
+
+        calculatedHoldings.forEach(h => {
+            const fun = fundamentalsMap[h.scrip];
+            if (fun) {
+                // Try to resolve EPS (lowercase keys in actual JSON)
+                let eps = typeof fun["eps"] === 'number' ? fun["eps"] :
+                    typeof fun["Earnings Per Share"] === 'number' ? fun["Earnings Per Share"] : null;
+
+                // Try to resolve BV (lowercase keys in actual JSON)
+                let bv = typeof fun["book value"] === 'number' ? fun["book value"] :
+                    typeof fun["book value"] === 'string' ? fun["book value"] : // The JSON has "book value": "171" (string)
+                        typeof fun["Book Value"] === 'number' ? fun["Book Value"] : null;
+
+                // Clean logic: string parsing if needed
+                if (typeof eps === 'string') eps = parseFloat((eps as string).replace(/,/g, ''));
+                if (typeof bv === 'string') bv = parseFloat((bv as string).replace(/,/g, ''));
+
+                // PE Calculation Accumulation
+                if (eps !== null && !isNaN(eps) && eps !== 0) {
+                    totalValueForPE += h.currentValue;
+                    totalInvestmentForPE += h.investment;
+                    totalEarnings += (h.quantity * eps);
+                }
+
+                // PB Calculation Accumulation
+                if (bv !== null && !isNaN(bv) && bv !== 0) {
+                    totalValueForPB += h.currentValue;
+                    totalInvestmentForPB += h.investment;
+                    totalBookValue += (h.quantity * bv);
+                }
+            }
+        });
+
+        const weightedPE = totalEarnings !== 0 ? totalValueForPE / totalEarnings : 0;
+        const weightedPE_WACC = totalEarnings !== 0 ? totalInvestmentForPE / totalEarnings : 0;
+
+        const weightedPB = totalBookValue !== 0 ? totalValueForPB / totalBookValue : 0;
+        const weightedPB_WACC = totalBookValue !== 0 ? totalInvestmentForPB / totalBookValue : 0;
+
+        const fundamentalAnalysis = {
+            weightedPE,
+            weightedPB,
+            weightedPE_WACC,
+            weightedPB_WACC,
+            peDetails: { totalValue: totalValueForPE, totalInvestment: totalInvestmentForPE, totalEarnings },
+            pbDetails: { totalValue: totalValueForPB, totalInvestment: totalInvestmentForPB, totalBookValue }
+        };
+
         setState(prev => ({
             ...prev,
             holdings: calculatedHoldings,
@@ -258,10 +342,11 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
                 scripCount: calculatedHoldings.length,
                 plWithCashflow: (totalVal - totalInv) + activeDividendTotal,
                 plWithCashflowPercent: totalInv > 0 ? (((totalVal - totalInv) + activeDividendTotal) / totalInv) * 100 : 0
-            }
+            },
+            fundamentalAnalysis
         }));
 
-    }, [state.rawAnalysisData, state.ltpData, waccRawData, holdingsRawData]);
+    }, [state.rawAnalysisData, state.ltpData, waccRawData, holdingsRawData, fundamentalsMap]);
 
 
     const uploadData = async (waccFile: File, historyFile: File, holdingsFile?: File) => {

@@ -92,6 +92,33 @@ export interface PortfolioState {
     tradingHistory: any | null;
     brokerNo: number | null;
     roiType: 'simple' | 'annualized';
+    fundamentalAnalysis?: FundamentalAnalysis;
+}
+
+export interface FundamentalData {
+    Symbol: string;
+    "Earnings Per Share"?: number;
+    "EPS"?: number; // Fallback
+    "Book Value"?: number;
+    "Book Value per Share"?: number; // Fallback
+    [key: string]: any;
+}
+
+export interface FundamentalAnalysis {
+    weightedPE: number;
+    weightedPB: number;
+    weightedPE_WACC: number;
+    weightedPB_WACC: number;
+    peDetails: {
+        totalValue: number;
+        totalInvestment: number;
+        totalEarnings: number;
+    };
+    pbDetails: {
+        totalValue: number;
+        totalInvestment: number;
+        totalBookValue: number;
+    };
 }
 
 export interface PortfolioActions {

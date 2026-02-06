@@ -9,6 +9,12 @@ export interface RatioItem {
     description: string;
     valueColor?: string;
     icon?: React.ReactNode;
+    details?: {
+        totalValue: number;
+        totalMetric: number;
+        metricName: string;
+        waccRatio?: number;
+    };
 }
 
 interface RatioCardProps {
@@ -76,6 +82,44 @@ export function RatioCard({ title, items, className }: RatioCardProps) {
                             <p className="text-sm text-muted-foreground leading-relaxed">
                                 {selectedItem.description}
                             </p>
+
+                            {selectedItem.details && (
+                                <div className="mt-6 p-4 bg-muted/40 rounded-lg space-y-3">
+                                    <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">Calculation Breakdown</h4>
+
+                                    <div className="grid grid-cols-2 gap-4 mb-4">
+                                        <div className="space-y-1">
+                                            <div className="text-[10px] text-muted-foreground uppercase">At Market Price</div>
+                                            <div className="font-mono text-xl font-bold text-primary">
+                                                {(selectedItem.details.totalValue / selectedItem.details.totalMetric).toFixed(2)}
+                                            </div>
+                                        </div>
+                                        {selectedItem.details.waccRatio !== undefined && (
+                                            <div className="space-y-1">
+                                                <div className="text-[10px] text-muted-foreground uppercase">At WACC</div>
+                                                <div className="font-mono text-xl font-bold text-muted-foreground">
+                                                    {selectedItem.details.waccRatio.toFixed(2)}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="space-y-2 pt-2 border-t border-border/10">
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-xs font-medium text-foreground/70">{selectedItem.details.metricName}</span>
+                                            <span className="font-mono text-sm font-bold">
+                                                रु. {selectedItem.details.totalMetric.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                                            </span>
+                                        </div>
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-xs font-medium text-foreground/70">Total Market Value</span>
+                                            <span className="font-mono text-sm font-bold">
+                                                रु. {selectedItem.details.totalValue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                         <div className="mt-6 flex justify-end">
                             <button
