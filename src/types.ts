@@ -93,6 +93,7 @@ export interface PortfolioState {
     brokerNo: number | null;
     roiType: 'simple' | 'annualized';
     fundamentalAnalysis?: FundamentalAnalysis;
+    preferredDataSource: 'ask' | 'merolagani' | 'sharesansar' | 'nepsealpha' | 'nepalipaisa';
 }
 
 export interface FundamentalData {
@@ -128,6 +129,7 @@ export interface PortfolioActions {
     refreshLtp: () => Promise<void>;
     updateBrokerNo: (no: number | null) => void;
     updateRoiType: (type: 'simple' | 'annualized') => void;
+    updatePreferredDataSource: (source: 'ask' | 'merolagani' | 'sharesansar' | 'nepsealpha' | 'nepalipaisa') => void;
 }
 
 export interface PortfolioContextValue {

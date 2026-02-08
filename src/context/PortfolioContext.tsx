@@ -42,6 +42,7 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
         tradingHistory: null,
         brokerNo: null,
         roiType: 'simple',
+        preferredDataSource: 'ask', // Default
         fundamentalAnalysis: undefined,
     });
 
@@ -59,6 +60,7 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
             const storedLastUpdated = localStorage.getItem('portfolioLastUpdated');
             const storedBrokerNo = localStorage.getItem('portfolioBrokerNo');
             const storedTradingHistory = localStorage.getItem('portfolioTradingHistory');
+            const storedDataSource = localStorage.getItem('portfolioPreferredDataSource');
 
             if (storedAnalysis) {
                 const data = JSON.parse(storedAnalysis);
@@ -74,6 +76,9 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
             const storedRoiType = localStorage.getItem('portfolioRoiType');
             if (storedRoiType === 'annualized' || storedRoiType === 'simple') {
                 setState(prev => ({ ...prev, roiType: storedRoiType }));
+            }
+            if (storedDataSource) {
+                setState(prev => ({ ...prev, preferredDataSource: storedDataSource as any }));
             }
         } catch (e) {
             console.error("Failed to load local storage data", e);
@@ -463,6 +468,11 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
         setState(prev => ({ ...prev, roiType: type }));
     };
 
+    const updatePreferredDataSource = (source: 'ask' | 'merolagani' | 'sharesansar' | 'nepsealpha' | 'nepalipaisa') => {
+        localStorage.setItem('portfolioPreferredDataSource', source);
+        setState(prev => ({ ...prev, preferredDataSource: source }));
+    };
+
     const clearData = () => {
         localStorage.removeItem('portfolioAnalysis');
         localStorage.removeItem('portfolioWaccRaw');
@@ -470,6 +480,7 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
         localStorage.removeItem('portfolioLastUpdated');
         localStorage.removeItem('portfolioWaccCSV');
         localStorage.removeItem('portfolioHistoryCSV');
+        localStorage.removeItem('portfolioPreferredDataSource');
 
         setState({
             holdings: [],
@@ -487,13 +498,14 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
             tradingHistory: null,
             brokerNo: null,
             roiType: 'simple',
+            preferredDataSource: 'ask',
         });
         setWaccRawData([]);
         setHoldingsRawData([]);
     };
 
     return (
-        <PortfolioContext.Provider value={{ state, actions: { uploadData, reanalysePortfolio, clearData, refreshLtp, updateBrokerNo, updateRoiType } }}>
+        <PortfolioContext.Provider value={{ state, actions: { uploadData, reanalysePortfolio, clearData, refreshLtp, updateBrokerNo, updateRoiType, updatePreferredDataSource } }}>
             {children}
         </PortfolioContext.Provider>
     );

@@ -5,6 +5,8 @@ import type { Holding } from '../../types';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
 import { cn, formatCurrency, formatNumber } from '../../lib/utils';
 import { ImportData } from '../Import';
+import { DataSourceModal } from '../ui/DataSourceModal';
+import { getDataSourceUrl } from '../../lib/data-sources';
 
 type SortKey = keyof Holding;
 type SortDirection = 'asc' | 'desc';
@@ -47,6 +49,19 @@ export function HoldingsTable() {
     const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const [key, direction] = e.target.value.split(':') as [SortKey, SortDirection];
         setSortConfig({ key, direction });
+    };
+
+    const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
+
+    const handleSymbolClick = (symbol: string) => {
+        if (state.preferredDataSource && state.preferredDataSource !== 'ask') {
+            const url = getDataSourceUrl(state.preferredDataSource, symbol);
+            if (url) {
+                window.open(url, '_blank');
+                return;
+            }
+        }
+        setSelectedSymbol(symbol);
     };
 
     if (holdings.length === 0) return (
@@ -146,11 +161,19 @@ export function HoldingsTable() {
                             <div className="flex flex-col sm:flex-row divide-y sm:divide-y-0 sm:divide-x border-border/40">
                                 {/* Scrip Info */}
                                 <div className="p-5 flex-grow flex items-center gap-4 transition-colors group-hover/card:bg-primary/5">
-                                    <div className="w-12 h-12 rounded-2xl bg-muted flex items-center justify-center text-primary font-black text-xs shadow-inner">
+                                    <div
+                                        onClick={() => handleSymbolClick(item.scrip)}
+                                        className="w-12 h-12 rounded-2xl bg-muted flex items-center justify-center text-primary font-black text-xs shadow-inner cursor-pointer hover:bg-primary/10 transition-colors"
+                                    >
                                         {item.scrip.substring(0, 4)}
                                     </div>
                                     <div>
-                                        <h4 className="font-black text-lg text-foreground tracking-tighter uppercase">{item.scrip}</h4>
+                                        <h4
+                                            onClick={() => handleSymbolClick(item.scrip)}
+                                            className="font-black text-lg text-foreground tracking-tighter uppercase cursor-pointer hover:text-primary transition-colors"
+                                        >
+                                            {item.scrip}
+                                        </h4>
                                         <div className="flex flex-col gap-1">
                                             <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
                                                 <Briefcase className="w-3 h-3 text-primary/70" />
@@ -196,6 +219,12 @@ export function HoldingsTable() {
                     </Card>
                 ))}
             </div>
+
+            <DataSourceModal
+                isOpen={!!selectedSymbol}
+                onClose={() => setSelectedSymbol(null)}
+                symbol={selectedSymbol || ''}
+            />
         </div>
     );
 }

@@ -88,6 +88,35 @@ export function Settings({ onImportSuccess, onNavigateToTimeline, defaultSection
                                     </button>
                                 </div>
 
+                                {/* Data Source Preference */}
+                                <div className="flex items-center justify-between p-4 transition-colors hover:bg-primary/5">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-xl bg-muted/50 flex items-center justify-center shadow-inner">
+                                            <ExternalLink className="w-5 h-5 text-blue-500" />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="font-bold text-sm">Default Data Source</span>
+                                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                                                {state.preferredDataSource === 'ask' ? 'Always Ask' :
+                                                    state.preferredDataSource === 'merolagani' ? 'Merolagani' :
+                                                        state.preferredDataSource === 'sharesansar' ? 'ShareSansar' :
+                                                            state.preferredDataSource === 'nepsealpha' ? 'NepseAlpha' : 'NepaliPaisa'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <select
+                                        className="bg-card/50 backdrop-blur-sm border border-border/40 rounded-xl px-3 py-2 text-xs font-bold text-foreground focus:outline-none focus:border-primary/50 cursor-pointer shadow-sm"
+                                        value={state.preferredDataSource || 'ask'}
+                                        onChange={(e) => actions.updatePreferredDataSource(e.target.value as any)}
+                                    >
+                                        <option value="ask">Always Ask</option>
+                                        <option value="merolagani">Merolagani</option>
+                                        <option value="sharesansar">ShareSansar</option>
+                                        <option value="nepsealpha">NepseAlpha</option>
+                                        <option value="nepalipaisa">NepaliPaisa</option>
+                                    </select>
+                                </div>
+
                                 {/* ROI Toggle */}
                                 <div className="flex items-center justify-between p-4 transition-colors hover:bg-primary/5">
                                     <div className="flex items-center gap-3">
