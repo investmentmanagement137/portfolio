@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Primary Meta Tags -->
+    <title>NEPSE Index Today | Live Nepal Stock Market Index Value</title>
+    <meta name="title" content="NEPSE Index Today | Live Nepal Stock Market Index Value" />
+    <meta name="description"
+        content="Get the current NEPSE index value for today. Live tracking of Nepal Stock Exchange (NEPSE) with real-time updates. Your simple, reliable source for Nepal stock market data." />
+    <meta name="keywords"
+        content="NEPSE, NEPSE Index, Nepal Stock Exchange, NEPSE Today, Nepal Share Market, NEPSE Live, Stock Market Nepal, NEPSE Value" />
+    <meta name="author" content="Portfolio Analytics" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://yoursite.com/nepse.html" />
+    <meta property="og:title" content="NEPSE Index Today | Live Nepal Stock Market Index Value" />
+    <meta property="og:description"
+        content="Get the current NEPSE index value for today. Live tracking of Nepal Stock Exchange (NEPSE) with real-time updates." />
+    <meta property="og:image" content="https://yoursite.com/nepse-og.png" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://yoursite.com/nepse.html" />
+    <meta property="twitter:title" content="NEPSE Index Today | Live Nepal Stock Market Index Value" />
+    <meta property="twitter:description"
+        content="Get the current NEPSE index value for today. Live tracking of Nepal Stock Exchange (NEPSE)." />
+    <meta property="twitter:image" content="https://yoursite.com/nepse-og.png" />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://yoursite.com/nepse.html" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/pwa-icon-192.png" />
+
+    <!-- Inline Critical CSS -->
+    <style>
+        :root {
+            --bg-primary: #0a0f1a;
+            --bg-secondary: #111827;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --accent-primary: #6366f1;
+            --positive: #22c55e;
+            --negative: #ef4444;
+            --border-color: rgba(255, 255, 255, 0.08)
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem
+        }
+
+        main {
+            width: 100%;
+            max-width: 480px
+        }
+
+        article {
+            background: linear-gradient(145deg, var(--bg-secondary), var(--bg-primary));
+            border-radius: 1.5rem;
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5)
+        }
+
+        header {
+            margin-bottom: 1.5rem
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            margin-bottom: 0.5rem
+        }
+
+        .status {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 0.35rem 0.8rem;
+            border-radius: 9999px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color)
+        }
+
+        .status.open {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--positive);
+            border-color: rgba(34, 197, 94, 0.3);
+            animation: pulse 2s infinite
+        }
+
+        .status.closed {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--negative);
+            border-color: rgba(239, 68, 68, 0.3)
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: 0.7
+            }
+        }
+
+        .index-card {
+            padding: 1.5rem 0;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color)
+        }
+
+        .index-value-container {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem
+        }
+
+        .index-value {
+            font-size: 3.5rem;
+            font-weight: 800;
+            letter-spacing: -0.05em;
+            background: linear-gradient(135deg, var(--text-primary), var(--accent-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text
+        }
+
+        .currency {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-secondary)
+        }
+
+        .change-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-weight: 600
+        }
+
+        .change-container.positive {
+            color: var(--positive)
+        }
+
+        .change-container.negative {
+            color: var(--negative)
+        }
+
+        .change-value {
+            font-size: 1.25rem
+        }
+
+        .change-percent {
+            font-size: 0.9rem;
+            opacity: 0.85
+        }
+
+        footer {
+            margin-top: 1.5rem;
+            color: var(--text-secondary);
+            font-size: 0.75rem
+        }
+
+        footer p {
+            margin-bottom: 0.25rem
+        }
+
+        #updated-at {
+            font-family: 'SF Mono', 'Fira Code', monospace
+        }
+
+        .source {
+            opacity: 0.6
+        }
+
+        .home-link {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--accent-primary);
+            text-decoration: none;
+            border: 1px solid var(--accent-primary);
+            border-radius: 0.5rem;
+            transition: all 0.2s ease
+        }
+
+        .home-link:hover {
+            background: var(--accent-primary);
+            color: var(--bg-primary)
+        }
+
+        .faq-section {
+            margin-top: 2rem;
+            text-align: left;
+            border-top: 1px solid var(--border-color);
+            padding-top: 1.5rem
+        }
+
+        .faq-section h2 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary)
+        }
+
+        .faq-item {
+            margin-bottom: 1rem
+        }
+
+        .faq-item h3 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem
+        }
+
+        .faq-item p {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            line-height: 1.5
+        }
+    </style>
+
+    <!-- Structured Data: FinancialQuote -->
+    <script type="application/ld+json" id="structured-data">
+    {
+        "@context": "https://schema.org",
+        "@type": "FinancialQuote",
+        "name": "NEPSE Index",
+        "description": "The primary stock market index of the Nepal Stock Exchange.",
+        "price": {
+            "@type": "MonetaryAmount",
+            "currency": "NPR",
+            "value": "Loading..."
+        },
+        "priceChange": "Loading...",
+        "priceChangePercent": "Loading...",
+        "marketStatus": "Loading...",
+        "datePosted": ""
+    }
+    </script>
+
+    <!-- Structured Data: FAQPage -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "What is the NEPSE Index?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "NEPSE (Nepal Stock Exchange) Index is the benchmark stock market index of Nepal. It measures the overall performance of the Nepal Stock Exchange by tracking the stock prices of listed companies."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "What are the NEPSE trading hours?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "NEPSE is open from Sunday to Thursday, 11:00 AM to 3:00 PM Nepal Time (NPT). The market is closed on Fridays and Saturdays."
+                }
+            }
+        ]
+    }
+    </script>
+
+    <!-- Structured Data: BreadcrumbList -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://yoursite.com/"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "NEPSE Index",
+                "item": "https://yoursite.com/nepse.html"
+            }
+        ]
+    }
+    </script>
+</head>
+
+<body>
+    <main>
+        <article itemscope itemtype="https://schema.org/FinancialProduct">
+            <header>
+                <h1 itemprop="name">NEPSE Index Today</h1>
+                <p id="market-status" class="status">Loading...</p>
+            </header>
+
+            <section class="index-card">
+                <div class="index-value-container">
+                    <span id="index-value" class="index-value" itemprop="price">--</span>
+                    <span class="currency">pts</span>
+                </div>
+                <div id="change-container" class="change-container">
+                    <span id="change-value" class="change-value">--</span>
+                    <span id="change-percent" class="change-percent">(--)</span>
+                </div>
+            </section>
+
+            <section class="faq-section" aria-labelledby="faq-heading">
+                <h2 id="faq-heading">Frequently Asked Questions</h2>
+                <div class="faq-item">
+                    <h3>What is the NEPSE Index?</h3>
+                    <p>NEPSE (Nepal Stock Exchange) Index is the benchmark stock market index of Nepal. It measures the
+                        overall performance of the Nepal Stock Exchange by tracking the stock prices of listed
+                        companies.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>What are the NEPSE trading hours?</h3>
+                    <p>NEPSE is open from Sunday to Thursday, 11:00 AM to 3:00 PM Nepal Time (NPT). The market is closed
+                        on Fridays and Saturdays.</p>
+                </div>
+            </section>
+
+            <footer>
+                <p>
+                    <time id="updated-at" datetime="" itemprop="datePublished">Last updated: --</time>
+                </p>
+                <p class="source">Source: Nepal Stock Exchange</p>
+                <a href="/" class="home-link">Go to Portfolio Analytics →</a>
+            </footer>
+        </article>
+    </main>
+    <script type="module" src="/src/nepse/main.ts"></script>
+</body>
+
+</html>

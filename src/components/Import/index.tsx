@@ -118,6 +118,7 @@ export function ImportData({ onSuccess }: ImportDataProps) {
                                 file={holdingsFile}
                                 onFileSelect={setHoldingsFile}
                                 accept={CSV_ACCEPT}
+                                optional
                             />
                         </div>
                     </div>
@@ -152,6 +153,7 @@ export function ImportData({ onSuccess }: ImportDataProps) {
                                 onFileSelect={setTradeBookFile}
                                 accept={".xlsx"}
                                 description="From TMS Website (Excel)"
+                                optional
                             />
                         </div>
                     </div>
