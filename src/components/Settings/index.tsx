@@ -95,7 +95,7 @@ export function Settings({ onImportSuccess, onNavigateToTimeline, defaultSection
                                             <ExternalLink className="w-5 h-5 text-blue-500" />
                                         </div>
                                         <div className="flex flex-col">
-                                            <span className="font-bold text-sm">Default Data Source</span>
+                                            <span className="font-bold text-sm">Default Popup Website</span>
                                             <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
                                                 {state.preferredDataSource === 'ask' ? 'Always Ask' :
                                                     state.preferredDataSource === 'merolagani' ? 'Merolagani' :
