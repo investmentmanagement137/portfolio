@@ -100,7 +100,8 @@ export function Settings({ onImportSuccess, onNavigateToTimeline, defaultSection
                                                 {state.preferredDataSource === 'ask' ? 'Always Ask' :
                                                     state.preferredDataSource === 'merolagani' ? 'Merolagani' :
                                                         state.preferredDataSource === 'sharesansar' ? 'ShareSansar' :
-                                                            state.preferredDataSource === 'nepsealpha' ? 'NepseAlpha' : 'NepaliPaisa'}
+                                                            state.preferredDataSource === 'nepsealpha' ? 'NepseAlpha' :
+                                                                state.preferredDataSource === 'moneymitra' ? 'MoneyMitra' : 'NepaliPaisa'}
                                             </span>
                                         </div>
                                     </div>
@@ -114,6 +115,7 @@ export function Settings({ onImportSuccess, onNavigateToTimeline, defaultSection
                                         <option value="sharesansar">ShareSansar</option>
                                         <option value="nepsealpha">NepseAlpha</option>
                                         <option value="nepalipaisa">NepaliPaisa</option>
+                                        <option value="moneymitra">MoneyMitra</option>
                                     </select>
                                 </div>
 

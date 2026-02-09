@@ -468,7 +468,7 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
         setState(prev => ({ ...prev, roiType: type }));
     };
 
-    const updatePreferredDataSource = (source: 'ask' | 'merolagani' | 'sharesansar' | 'nepsealpha' | 'nepalipaisa') => {
+    const updatePreferredDataSource = (source: 'ask' | 'merolagani' | 'sharesansar' | 'nepsealpha' | 'nepalipaisa' | 'moneymitra') => {
         localStorage.setItem('portfolioPreferredDataSource', source);
         setState(prev => ({ ...prev, preferredDataSource: source }));
     };

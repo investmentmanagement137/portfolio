@@ -1,4 +1,4 @@
-export type DataSourceKey = 'merolagani' | 'sharesansar' | 'nepsealpha' | 'nepalipaisa' | 'ask';
+export type DataSourceKey = 'merolagani' | 'sharesansar' | 'nepsealpha' | 'nepalipaisa' | 'moneymitra' | 'ask';
 
 export interface DataSource {
     key: DataSourceKey;
@@ -26,6 +26,11 @@ export const DATA_SOURCES: DataSource[] = [
         key: 'nepalipaisa',
         name: 'NepaliPaisa',
         url: (symbol) => `https://nepalipaisa.com/company/${symbol}`
+    },
+    {
+        key: 'moneymitra',
+        name: 'MoneyMitra',
+        url: (symbol) => `https://moneymitra.com/login/?next=/guru-mantra/company/${symbol}/`
     }
 ];
 
