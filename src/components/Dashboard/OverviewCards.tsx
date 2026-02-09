@@ -6,7 +6,7 @@ import { cn, formatCurrency } from '../../lib/utils';
 
 export function OverviewCards() {
     const { state } = usePortfolio();
-    const { portfolioSummary, roiType } = state;
+    const { portfolioSummary } = state;
     const { investment, value, pl, plPercent, activeDividendTotal, plWithCashflow, plWithCashflowPercent } = portfolioSummary;
 
     const isProfit = pl >= 0;
@@ -56,7 +56,7 @@ export function OverviewCards() {
                             <div className="flex items-center gap-2 text-muted-foreground">
                                 {isProfit ? <TrendingUp className="w-4 h-4 text-green-500" /> : <TrendingDown className="w-4 h-4 text-red-500" />}
                                 <span className="text-[10px] font-bold uppercase tracking-widest">
-                                    {roiType === 'annualized' ? 'Ann. Performance' : 'Performance'}
+                                    Performance
                                 </span>
                             </div>
                             <div className="space-y-1">

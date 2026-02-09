@@ -21,6 +21,7 @@ export interface WebhookHolding {
     "Current Valuation": number;
     "Profit/Loss": number;
     Status: string;
+    "Company Name"?: string;
 }
 
 export interface TransactionEvent {
@@ -44,6 +45,7 @@ export interface LtpData {
 
 export interface Holding {
     scrip: string;
+    companyName: string;
     sector: string;
     quantity: number;
     wacc: number;
@@ -52,6 +54,8 @@ export interface Holding {
     currentValue: number;
     pl: number;
     plPercent: number;
+    plWithCashflow?: number;
+    plWithCashflowPercent?: number;
 }
 
 export interface PortfolioSummary {
@@ -90,8 +94,9 @@ export interface PortfolioState {
     lastUpdated: Date | null;
     rawAnalysisData: any[] | null;
     tradingHistory: any | null;
+    transactionHistory: TransactionEvent[] | null;
     brokerNo: number | null;
-    roiType: 'simple' | 'annualized';
+    plViewMode: 'unadjusted' | 'adjusted';
     fundamentalAnalysis?: FundamentalAnalysis;
     preferredDataSource: 'ask' | 'merolagani' | 'sharesansar' | 'nepsealpha' | 'nepalipaisa' | 'moneymitra';
 }
@@ -128,7 +133,7 @@ export interface PortfolioActions {
     clearData: () => void;
     refreshLtp: () => Promise<void>;
     updateBrokerNo: (no: number | null) => void;
-    updateRoiType: (type: 'simple' | 'annualized') => void;
+    updatePlViewMode: (mode: 'unadjusted' | 'adjusted') => void;
     updatePreferredDataSource: (source: 'ask' | 'merolagani' | 'sharesansar' | 'nepsealpha' | 'nepalipaisa' | 'moneymitra') => void;
 }
 

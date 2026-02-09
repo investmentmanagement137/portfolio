@@ -40,8 +40,9 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
         lastUpdated: null,
         rawAnalysisData: null,
         tradingHistory: null,
+        transactionHistory: null,
         brokerNo: null,
-        roiType: 'simple',
+        plViewMode: 'unadjusted',
         preferredDataSource: 'ask', // Default
         fundamentalAnalysis: undefined,
     });
@@ -61,6 +62,10 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
             const storedBrokerNo = localStorage.getItem('portfolioBrokerNo');
             const storedTradingHistory = localStorage.getItem('portfolioTradingHistory');
             const storedDataSource = localStorage.getItem('portfolioPreferredDataSource');
+            const storedLtpData = localStorage.getItem('portfolioLtpData');
+            const storedDailyChanges = localStorage.getItem('portfolioDailyChanges');
+            const storedNepseData = localStorage.getItem('portfolioNepseData');
+            const storedFundamentals = localStorage.getItem('portfolioFundamentals');
 
             if (storedAnalysis) {
                 const data = JSON.parse(storedAnalysis);
@@ -73,19 +78,28 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
             if (storedHoldings) setHoldingsRawData(JSON.parse(storedHoldings));
             if (storedLastUpdated) setState(prev => ({ ...prev, lastUpdated: new Date(storedLastUpdated) }));
             if (storedBrokerNo) setState(prev => ({ ...prev, brokerNo: parseInt(storedBrokerNo) }));
-            const storedRoiType = localStorage.getItem('portfolioRoiType');
-            if (storedRoiType === 'annualized' || storedRoiType === 'simple') {
-                setState(prev => ({ ...prev, roiType: storedRoiType }));
+            if (storedBrokerNo) setState(prev => ({ ...prev, brokerNo: parseInt(storedBrokerNo) }));
+            const storedPlViewMode = localStorage.getItem('portfolioPlViewMode');
+            if (storedPlViewMode === 'unadjusted' || storedPlViewMode === 'adjusted') {
+                setState(prev => ({ ...prev, plViewMode: storedPlViewMode }));
             }
             if (storedDataSource) {
                 setState(prev => ({ ...prev, preferredDataSource: storedDataSource as any }));
             }
+            if (storedLtpData) setState(prev => ({ ...prev, ltpData: JSON.parse(storedLtpData) }));
+            if (storedDailyChanges) setState(prev => ({ ...prev, dailyChanges: JSON.parse(storedDailyChanges) }));
+            if (storedNepseData) setState(prev => ({ ...prev, nepseData: JSON.parse(storedNepseData) }));
+            if (storedFundamentals) setFundamentalsMap(JSON.parse(storedFundamentals));
         } catch (e) {
             console.error("Failed to load local storage data", e);
         }
     }, []);
 
     const refreshLtp = useCallback(async () => {
+        if (!navigator.onLine) {
+            console.log("Offline: Skipping LTP refresh, using cached data.");
+            return;
+        }
         setState(prev => ({ ...prev, loading: true }));
         try {
             const res = await axios.get(LTP_URL);
@@ -117,6 +131,11 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
                 changesMap[item.Script] = change;
             });
             setState(prev => ({ ...prev, ltpData: map, dailyChanges: changesMap, nepseData: nepseEntry, loading: false }));
+
+            // Persist to local storage
+            localStorage.setItem('portfolioLtpData', JSON.stringify(map));
+            localStorage.setItem('portfolioDailyChanges', JSON.stringify(changesMap));
+            if (nepseEntry) localStorage.setItem('portfolioNepseData', JSON.stringify(nepseEntry));
         } catch (error) {
             console.error("Failed to fetch LTP", error);
             setState(prev => ({ ...prev, loading: false }));
@@ -124,6 +143,10 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
     }, []);
 
     const fetchFundamentals = useCallback(async () => {
+        if (!navigator.onLine) {
+            console.log("Offline: Skipping fundamentals fetch, using cached data.");
+            return;
+        }
         try {
             const res = await axios.get(FUNDAMENTALS_URL);
             // Actual JSON has root key "Fundamental ratios"
@@ -137,6 +160,7 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
                 }
             });
             setFundamentalsMap(map);
+            localStorage.setItem('portfolioFundamentals', JSON.stringify(map));
         } catch (error) {
             console.error("Failed to fetch Fundamentals", error);
         }
@@ -165,31 +189,51 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
             return null;
         };
 
+        const activeDividendsRaw = findDataByKey("current holdings in dividents") || [];
+        const activeDividends = activeDividendsRaw.map((item: any) => ({
+            ...item,
+            Holdings: item.Holdings || item["Eligible Holdings"] || 0
+        }));
+
+        const dividendMap: Record<string, number> = {};
+        activeDividends.forEach((d: any) => {
+            if (d.Scrip) {
+                dividendMap[d.Scrip] = (dividendMap[d.Scrip] || 0) + (d["Dividend Amount"] || 0);
+            }
+        });
+
         const webhookHoldings = findDataByKey("current holdings in meroshare");
 
         if (webhookHoldings && Array.isArray(webhookHoldings)) {
             webhookHoldings.forEach((item: WebhookHolding) => {
                 const scrip = item.Scrip;
+                const companyName = item["Company Name"] || scrip;
                 const qty = item["Current Balance"];
                 const wacc = item.WACC;
                 const sector = item.Sector || "Unknown";
                 const ltp = state.ltpData[scrip] || item.LTP || 0;
                 const investment = item["Total Investment"] || (qty * wacc);
                 const currentValue = qty * ltp;
+                const pl = currentValue - investment;
+                const cashDividends = dividendMap[scrip] || 0;
+                const plWithCashflow = pl + cashDividends;
 
                 totalInv += investment;
                 totalVal += currentValue;
 
                 calculatedHoldings.push({
                     scrip,
+                    companyName,
                     sector,
                     quantity: qty,
                     wacc,
                     investment,
                     ltp,
                     currentValue,
-                    pl: currentValue - investment,
-                    plPercent: investment > 0 ? ((currentValue - investment) / investment) * 100 : 0
+                    pl,
+                    plPercent: investment > 0 ? (pl / investment) * 100 : 0,
+                    plWithCashflow,
+                    plWithCashflowPercent: investment > 0 ? (plWithCashflow / investment) * 100 : 0
                 });
             });
         }
@@ -199,6 +243,7 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
 
             list.forEach((item: any) => {
                 const scrip = item.script || item.scrip || item.symbol;
+                const companyName = item.companyName || scrip;
                 const qty = parseFloat(item.currentBalance || item.balance || item.quantity);
                 const wacc = parseFloat(item.wacc || item.cost || item.purchasePrice || 0);
                 const sector = item.sector || "Unknown";
@@ -207,26 +252,33 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
                     const ltp = state.ltpData[scrip] || parseFloat(item.lastTransactionPrice) || 0;
                     const investment = qty * wacc;
                     const currentValue = qty * ltp;
+                    const pl = currentValue - investment;
+                    const cashDividends = dividendMap[scrip] || 0;
+                    const plWithCashflow = pl + cashDividends;
 
                     totalInv += investment;
                     totalVal += currentValue;
 
                     calculatedHoldings.push({
                         scrip,
+                        companyName,
                         sector,
                         quantity: qty,
                         wacc,
                         investment,
                         ltp,
                         currentValue,
-                        pl: currentValue - investment,
-                        plPercent: investment > 0 ? ((currentValue - investment) / investment) * 100 : 0
+                        pl,
+                        plPercent: investment > 0 ? (pl / investment) * 100 : 0,
+                        plWithCashflow,
+                        plWithCashflowPercent: investment > 0 ? (plWithCashflow / investment) * 100 : 0
                     });
                 }
             });
         } else if (waccRawData.length > 0) {
             waccRawData.forEach((row: any) => {
                 const scrip = row["Scrip Name"];
+                const companyName = row["Company Name"] || scrip;
                 const qty = parseFloat(row["WACC Calculated Quantity"]);
                 const wacc = parseFloat(row["WACC Rate"]);
                 const sector = row["Sector"] || "Unknown";
@@ -235,20 +287,26 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
                     const ltp = state.ltpData[scrip] || 0;
                     const investment = qty * wacc;
                     const currentValue = qty * ltp;
+                    const pl = currentValue - investment;
+                    const cashDividends = dividendMap[scrip] || 0;
+                    const plWithCashflow = pl + cashDividends;
 
                     totalInv += investment;
                     totalVal += currentValue;
 
                     calculatedHoldings.push({
                         scrip,
+                        companyName,
                         sector,
                         quantity: qty,
                         wacc,
                         investment,
                         ltp,
                         currentValue,
-                        pl: currentValue - investment,
-                        plPercent: investment > 0 ? ((currentValue - investment) / investment) * 100 : 0
+                        pl,
+                        plPercent: investment > 0 ? (pl / investment) * 100 : 0,
+                        plWithCashflow,
+                        plWithCashflowPercent: investment > 0 ? (plWithCashflow / investment) * 100 : 0
                     });
                 }
             });
@@ -259,13 +317,9 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
         const dividendSummary = findDataByKey("Divident Summary") || [];
         const dividendDetails = findDataByKey("Divident Calculation") || [];
         const tradingHistory = findDataByKey("tradingHistory") || state.tradingHistory;
-        const activeDividendsRaw = findDataByKey("current holdings in dividents") || [];
+        const transactionHistory = findDataByKey("reconciled transaction history");
 
-        const activeDividends = activeDividendsRaw.map((item: any) => ({
-            ...item,
-            Holdings: item.Holdings || item["Eligible Holdings"] || 0
-        }));
-
+        // activeDividends already calculated above
         const activeDividendTotal = activeDividends.reduce((sum: number, item: any) => sum + (item["Dividend Amount"] || 0), 0);
 
         // Calculate Daily Gain
@@ -284,6 +338,7 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
         let totalInvestmentForPB = 0;
 
         calculatedHoldings.forEach(h => {
+            // ... existing logic ...
             const fun = fundamentalsMap[h.scrip];
             if (fun) {
                 // Try to resolve EPS (lowercase keys in actual JSON)
@@ -337,6 +392,7 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
             dividendDetails,
             activeDividends,
             tradingHistory,
+            transactionHistory,
             portfolioSummary: {
                 investment: totalInv,
                 value: totalVal,
@@ -355,6 +411,10 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
 
 
     const uploadData = async (waccFile: File, historyFile: File, holdingsFile?: File, tradeBookFile?: File) => {
+        if (!navigator.onLine) {
+            setState(prev => ({ ...prev, error: "You are offline. Cannot analyze portfolio." }));
+            throw new Error("You are offline. Cannot analyze portfolio.");
+        }
         setState(prev => ({ ...prev, loading: true, error: null }));
 
         try {
@@ -463,9 +523,9 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
         setState(prev => ({ ...prev, brokerNo: no }));
     };
 
-    const updateRoiType = (type: 'simple' | 'annualized') => {
-        localStorage.setItem('portfolioRoiType', type);
-        setState(prev => ({ ...prev, roiType: type }));
+    const updatePlViewMode = (mode: 'unadjusted' | 'adjusted') => {
+        localStorage.setItem('portfolioPlViewMode', mode);
+        setState(prev => ({ ...prev, plViewMode: mode }));
     };
 
     const updatePreferredDataSource = (source: 'ask' | 'merolagani' | 'sharesansar' | 'nepsealpha' | 'nepalipaisa' | 'moneymitra') => {
@@ -481,6 +541,10 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
         localStorage.removeItem('portfolioWaccCSV');
         localStorage.removeItem('portfolioHistoryCSV');
         localStorage.removeItem('portfolioPreferredDataSource');
+        localStorage.removeItem('portfolioLtpData');
+        localStorage.removeItem('portfolioDailyChanges');
+        localStorage.removeItem('portfolioNepseData');
+        localStorage.removeItem('portfolioFundamentals');
 
         setState({
             holdings: [],
@@ -496,8 +560,9 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
             lastUpdated: null,
             rawAnalysisData: null,
             tradingHistory: null,
+            transactionHistory: null,
             brokerNo: null,
-            roiType: 'simple',
+            plViewMode: 'unadjusted',
             preferredDataSource: 'ask',
         });
         setWaccRawData([]);
@@ -505,7 +570,7 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
     };
 
     return (
-        <PortfolioContext.Provider value={{ state, actions: { uploadData, reanalysePortfolio, clearData, refreshLtp, updateBrokerNo, updateRoiType, updatePreferredDataSource } }}>
+        <PortfolioContext.Provider value={{ state, actions: { uploadData, reanalysePortfolio, clearData, refreshLtp, updateBrokerNo, updatePlViewMode, updatePreferredDataSource } }}>
             {children}
         </PortfolioContext.Provider>
     );

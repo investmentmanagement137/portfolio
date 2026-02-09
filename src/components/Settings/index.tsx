@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { ImportData } from '../Import';
-// Timeline import removed
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/Card';
 import { Shield, FileText, Database, ChevronRight, ArrowLeft, Trash2, RefreshCw, Sun, Moon, ExternalLink, History } from 'lucide-react';
 import { usePortfolio } from '../../context/PortfolioContext';
 import { useTheme } from '../../context/ThemeContext';
+import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 import { cn } from '../../lib/utils';
 
 interface SettingsProps {
@@ -21,8 +21,10 @@ export function Settings({ onImportSuccess, onNavigateToTimeline, defaultSection
     const [isReanalysing, setIsReanalysing] = useState(false);
     const [reanalyseMsg, setReanalyseMsg] = useState<{ type: 'success' | 'error', text: string } | null>(null);
     const [showSyncToast, setShowSyncToast] = useState(false);
+    const isOnline = useNetworkStatus();
 
     const handleSync = async () => {
+        if (!isOnline) return;
         setShowSyncToast(true);
         setTimeout(() => setShowSyncToast(false), 3000);
         await actions.refreshLtp();
@@ -30,6 +32,10 @@ export function Settings({ onImportSuccess, onNavigateToTimeline, defaultSection
 
     const handleReanalyse = async () => {
         if (isReanalysing) return;
+        if (!isOnline) {
+            setReanalyseMsg({ type: 'error', text: "You are offline. Cannot reanalyse." });
+            return;
+        }
         setIsReanalysing(true);
         setReanalyseMsg(null);
         try {
@@ -53,6 +59,113 @@ export function Settings({ onImportSuccess, onNavigateToTimeline, defaultSection
                 </div>
 
                 <div className="grid gap-6">
+                    {/* Data & History */}
+                    <Card className="overflow-hidden border-none bg-gradient-to-br from-primary/5 via-card to-background shadow-xl relative group">
+                        <div className="absolute inset-0 bg-primary/5 opacity-50 pointer-events-none" />
+                        <CardHeader className="justify-center border-b border-border/40 bg-muted/20 py-4">
+                            <CardTitle className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Data & History</CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-0">
+                            <div className="divide-y border-border/40">
+                                <button
+                                    onClick={() => setActiveSection('data')}
+                                    className="w-full flex items-center justify-between p-4 transition-colors hover:bg-primary/5 text-left group/btn"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-xl bg-muted/50 flex items-center justify-center shadow-inner">
+                                            <Database className="w-5 h-5 text-purple-500" />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="font-bold text-sm">Meroshare & TMS Import</span>
+                                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Upload Portfolio & Trade Book</span>
+                                        </div>
+                                    </div>
+                                    <ChevronRight className="w-4 h-4 text-muted-foreground transition-transform group-hover/btn:translate-x-1" />
+                                </button>
+                                <button
+                                    onClick={() => onNavigateToTimeline?.()}
+                                    className="w-full flex items-center justify-between p-4 transition-colors hover:bg-primary/5 text-left group/btn"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-xl bg-muted/50 flex items-center justify-center shadow-inner">
+                                            <History className="w-5 h-5 text-indigo-500" />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="font-bold text-sm">Transaction Timeline</span>
+                                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Buy/Sell history log</span>
+                                        </div>
+                                    </div>
+                                    <ChevronRight className="w-4 h-4 text-muted-foreground transition-transform group-hover/btn:translate-x-1" />
+                                </button>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    {/* Quick Actions */}
+                    <Card className="overflow-hidden border-none bg-gradient-to-br from-primary/5 via-card to-background shadow-xl relative group">
+                        <div className="absolute inset-0 bg-primary/5 opacity-50 pointer-events-none" />
+                        <CardHeader className="justify-center border-b border-border/40 bg-muted/20 py-4">
+                            <CardTitle className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Quick Actions</CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-0">
+                            <div className="divide-y border-border/40">
+                                {/* Reanalyse */}
+                                <button
+                                    onClick={handleReanalyse}
+                                    disabled={isReanalysing || !isOnline}
+                                    className={cn(
+                                        "w-full flex items-center justify-between p-4 transition-colors text-left group/btn",
+                                        !isOnline ? "hover:bg-transparent cursor-not-allowed opacity-70" : "hover:bg-primary/5"
+                                    )}
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-xl bg-muted/50 flex items-center justify-center shadow-inner">
+                                            <RefreshCw className={cn("w-5 h-5 text-blue-500", isReanalysing && "animate-spin")} />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="font-bold text-sm">
+                                                {!isOnline ? 'Reanalyse (Offline)' : isReanalysing ? 'Analysing...' : 'Reanalyse Portfolio'}
+                                            </span>
+                                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Recalculate with saved data</span>
+                                            {reanalyseMsg && (
+                                                <span className={cn("text-[10px] font-black mt-1 uppercase tracking-widest",
+                                                    reanalyseMsg.type === 'success' ? "text-green-500" : "text-red-500"
+                                                )}>
+                                                    {reanalyseMsg.text}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <ChevronRight className="w-4 h-4 text-muted-foreground transition-transform group-hover/btn:translate-x-1" />
+                                </button>
+
+                                {/* Sync Data */}
+                                <button
+                                    onClick={handleSync}
+                                    disabled={state.loading || !isOnline}
+                                    className={cn(
+                                        "w-full flex items-center justify-between p-4 transition-colors text-left group/btn",
+                                        !isOnline ? "hover:bg-transparent cursor-not-allowed opacity-70" : "hover:bg-primary/5"
+                                    )}
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-xl bg-muted/50 flex items-center justify-center shadow-inner">
+                                            <RefreshCw className={cn("w-5 h-5 text-green-500", state.loading && "animate-spin")} />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="font-bold text-sm">
+                                                {!isOnline ? 'Sync Live Prices (Offline)' : 'Sync Live Prices'}
+                                            </span>
+                                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Fetch latest LTP from market</span>
+                                            {showSyncToast && <span className="text-[10px] text-green-500 font-black mt-1 uppercase tracking-widest">Syncing started...</span>}
+                                        </div>
+                                    </div>
+                                    <ChevronRight className="w-4 h-4 text-muted-foreground transition-transform group-hover/btn:translate-x-1" />
+                                </button>
+                            </div>
+                        </CardContent>
+                    </Card>
+
                     {/* Appearance & Preferences */}
                     <Card className="overflow-hidden border-none bg-gradient-to-br from-primary/5 via-card to-background shadow-xl relative group">
                         <div className="absolute inset-0 bg-primary/5 opacity-50 pointer-events-none" />
@@ -119,87 +232,34 @@ export function Settings({ onImportSuccess, onNavigateToTimeline, defaultSection
                                     </select>
                                 </div>
 
-                                {/* ROI Toggle */}
+                                {/* Profit Loss in Portfolio Toggle */}
                                 <div className="flex items-center justify-between p-4 transition-colors hover:bg-primary/5">
                                     <div className="flex items-center gap-3">
                                         <div className="w-10 h-10 rounded-xl bg-muted/50 flex items-center justify-center shadow-inner">
                                             <div className="w-5 h-5 flex items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-black text-xs">%</div>
                                         </div>
                                         <div className="flex flex-col">
-                                            <span className="font-bold text-sm">ROI Display</span>
-                                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{state.roiType === 'annualized' ? 'Annualized Return' : 'Simple Return'}</span>
+                                            <span className="font-bold text-sm">Profit loss in Portfolio</span>
+                                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                                                {state.plViewMode === 'adjusted' ? 'cash divident adjusted' : 'cash divident not adjusted'}
+                                            </span>
                                         </div>
                                     </div>
                                     <button
-                                        onClick={() => actions.updateRoiType(state.roiType === 'simple' ? 'annualized' : 'simple')}
+                                        onClick={() => actions.updatePlViewMode(state.plViewMode === 'unadjusted' ? 'adjusted' : 'unadjusted')}
                                         className={cn(
                                             "relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-300 focus-visible:outline-none shadow-inner",
-                                            state.roiType === 'annualized' ? "bg-primary" : "bg-zinc-200 border border-zinc-300"
+                                            state.plViewMode === 'adjusted' ? "bg-primary" : "bg-zinc-200 border border-zinc-300"
                                         )}
                                     >
                                         <span
                                             className={cn(
                                                 "inline-block h-4 w-4 transform rounded-full bg-white shadow-lg ring-1 ring-black/5 transition-transform duration-300",
-                                                state.roiType === 'annualized' ? "translate-x-6" : "translate-x-1"
+                                                state.plViewMode === 'adjusted' ? "translate-x-6" : "translate-x-1"
                                             )}
                                         />
                                     </button>
                                 </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    {/* Quick Actions */}
-                    <Card className="overflow-hidden border-none bg-gradient-to-br from-primary/5 via-card to-background shadow-xl relative group">
-                        <div className="absolute inset-0 bg-primary/5 opacity-50 pointer-events-none" />
-                        <CardHeader className="justify-center border-b border-border/40 bg-muted/20 py-4">
-                            <CardTitle className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Quick Actions</CardTitle>
-                        </CardHeader>
-                        <CardContent className="p-0">
-                            <div className="divide-y border-border/40">
-                                {/* Reanalyse */}
-                                <button
-                                    onClick={handleReanalyse}
-                                    disabled={isReanalysing}
-                                    className="w-full flex items-center justify-between p-4 transition-colors hover:bg-primary/5 text-left group/btn"
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-xl bg-muted/50 flex items-center justify-center shadow-inner">
-                                            <RefreshCw className={cn("w-5 h-5 text-blue-500", isReanalysing && "animate-spin")} />
-                                        </div>
-                                        <div className="flex flex-col">
-                                            <span className="font-bold text-sm">{isReanalysing ? 'Analysing...' : 'Reanalyse Portfolio'}</span>
-                                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Recalculate with saved data</span>
-                                            {reanalyseMsg && (
-                                                <span className={cn("text-[10px] font-black mt-1 uppercase tracking-widest",
-                                                    reanalyseMsg.type === 'success' ? "text-green-500" : "text-red-500"
-                                                )}>
-                                                    {reanalyseMsg.text}
-                                                </span>
-                                            )}
-                                        </div>
-                                    </div>
-                                    <ChevronRight className="w-4 h-4 text-muted-foreground transition-transform group-hover/btn:translate-x-1" />
-                                </button>
-
-                                {/* Sync Data */}
-                                <button
-                                    onClick={handleSync}
-                                    disabled={state.loading}
-                                    className="w-full flex items-center justify-between p-4 transition-colors hover:bg-primary/5 text-left group/btn"
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-xl bg-muted/50 flex items-center justify-center shadow-inner">
-                                            <RefreshCw className={cn("w-5 h-5 text-green-500", state.loading && "animate-spin")} />
-                                        </div>
-                                        <div className="flex flex-col">
-                                            <span className="font-bold text-sm">Sync Live Prices</span>
-                                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Fetch latest LTP from market</span>
-                                            {showSyncToast && <span className="text-[10px] text-green-500 font-black mt-1 uppercase tracking-widest">Syncing started...</span>}
-                                        </div>
-                                    </div>
-                                    <ChevronRight className="w-4 h-4 text-muted-foreground transition-transform group-hover/btn:translate-x-1" />
-                                </button>
                             </div>
                         </CardContent>
                     </Card>
@@ -248,48 +308,6 @@ export function Settings({ onImportSuccess, onNavigateToTimeline, defaultSection
                                     </a>
                                 </div>
                             )}
-                        </CardContent>
-                    </Card>
-
-                    {/* Data & History */}
-                    <Card className="overflow-hidden border-none bg-gradient-to-br from-primary/5 via-card to-background shadow-xl relative group">
-                        <div className="absolute inset-0 bg-primary/5 opacity-50 pointer-events-none" />
-                        <CardHeader className="justify-center border-b border-border/40 bg-muted/20 py-4">
-                            <CardTitle className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Data & History</CardTitle>
-                        </CardHeader>
-                        <CardContent className="p-0">
-                            <div className="divide-y border-border/40">
-                                <button
-                                    onClick={() => setActiveSection('data')}
-                                    className="w-full flex items-center justify-between p-4 transition-colors hover:bg-primary/5 text-left group/btn"
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-xl bg-muted/50 flex items-center justify-center shadow-inner">
-                                            <Database className="w-5 h-5 text-purple-500" />
-                                        </div>
-                                        <div className="flex flex-col">
-                                            <span className="font-bold text-sm">Meroshare & TMS Import</span>
-                                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Upload Portfolio & Trade Book</span>
-                                        </div>
-                                    </div>
-                                    <ChevronRight className="w-4 h-4 text-muted-foreground transition-transform group-hover/btn:translate-x-1" />
-                                </button>
-                                <button
-                                    onClick={() => onNavigateToTimeline?.()}
-                                    className="w-full flex items-center justify-between p-4 transition-colors hover:bg-primary/5 text-left group/btn"
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-xl bg-muted/50 flex items-center justify-center shadow-inner">
-                                            <History className="w-5 h-5 text-indigo-500" />
-                                        </div>
-                                        <div className="flex flex-col">
-                                            <span className="font-bold text-sm">Transaction Timeline</span>
-                                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Buy/Sell history log</span>
-                                        </div>
-                                    </div>
-                                    <ChevronRight className="w-4 h-4 text-muted-foreground transition-transform group-hover/btn:translate-x-1" />
-                                </button>
-                            </div>
                         </CardContent>
                     </Card>
 

@@ -3,6 +3,8 @@ import { Home, Wallet, PieChart, RefreshCw, Settings, Sun, Moon, CheckCircle2, t
 import { cn } from '../lib/utils';
 import { usePortfolio } from '../context/PortfolioContext';
 import { useTheme } from '../context/ThemeContext';
+import { useNetworkStatus } from '../hooks/useNetworkStatus';
+import { OfflineIndicator } from './OfflineIndicator';
 
 interface NavItemProps {
     icon: LucideIcon;
@@ -39,12 +41,14 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
     const { state, actions } = usePortfolio();
     const { theme, setTheme } = useTheme();
     const [showSyncToast, setShowSyncToast] = useState(false);
+    const isOnline = useNetworkStatus();
 
     const toggleTheme = () => {
         setTheme(theme === 'dark' ? 'light' : 'dark');
     };
 
     const handleSync = async () => {
+        if (!isOnline) return;
         setShowSyncToast(true);
         setTimeout(() => setShowSyncToast(false), 3000); // Hide after 3s
         await actions.refreshLtp();
@@ -61,6 +65,8 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
                     </div>
                 </div>
             )}
+
+            <OfflineIndicator />
 
             <header className="relative z-40 bg-background border-b border-border px-6 py-5 flex justify-between items-center transition-colors duration-300">
                 <div>
@@ -80,17 +86,21 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
                     {state.rawAnalysisData && (
                         <button
                             onClick={handleSync}
-                            disabled={state.loading}
+                            disabled={state.loading || !isOnline}
                             className={cn(
                                 "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium border transition-all active:scale-95",
-                                state.loading
-                                    ? "bg-yellow-500/10 border-yellow-500/20 text-yellow-500 cursor-not-allowed"
-                                    : "bg-green-500/10 border-green-500/20 text-green-500 hover:bg-green-500/20 active:bg-green-500/30"
+                                !isOnline
+                                    ? "bg-muted text-muted-foreground border-border cursor-not-allowed opacity-70"
+                                    : state.loading
+                                        ? "bg-yellow-500/10 border-yellow-500/20 text-yellow-500 cursor-not-allowed"
+                                        : "bg-green-500/10 border-green-500/20 text-green-500 hover:bg-green-500/20 active:bg-green-500/30"
                             )}
-                            title="Sync Market Prices"
+                            title={!isOnline ? "Offline - Cannot sync" : "Sync Market Prices"}
                         >
                             <RefreshCw className={cn("w-3 h-3", state.loading && "animate-spin")} />
-                            <span className="hidden sm:inline">Sync Price</span>
+                            <span className="hidden sm:inline">
+                                {!isOnline ? "Offline" : "Sync Price"}
+                            </span>
                         </button>
                     )}
                 </div>

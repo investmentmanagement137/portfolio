@@ -16,7 +16,11 @@ interface SortConfig {
     direction: SortDirection;
 }
 
-export function HoldingsTable() {
+interface HoldingsTableProps {
+    onSelectScrip: (scrip: string) => void;
+}
+
+export function HoldingsTable({ onSelectScrip }: HoldingsTableProps) {
     const { state, state: { holdings, portfolioSummary } } = usePortfolio();
     const { investment, value, pl, plPercent, activeDividendTotal, scripCount, plWithCashflow, plWithCashflowPercent } = portfolioSummary;
     const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'currentValue', direction: 'desc' });
@@ -27,7 +31,8 @@ export function HoldingsTable() {
 
         // Filter first
         const filtered = holdings.filter(item =>
-            item.scrip.toLowerCase().includes(searchQuery.toLowerCase())
+            item.scrip.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (item.companyName && item.companyName.toLowerCase().includes(searchQuery.toLowerCase()))
         );
 
         return [...filtered].sort((a, b) => {
@@ -68,8 +73,13 @@ export function HoldingsTable() {
         <ImportData />
     );
 
-    const isProfit = pl >= 0;
+
     const isCashflowProfit = plWithCashflow >= 0;
+
+    // Determine current P/L to display based on setting
+    const displayPl = state.plViewMode === 'adjusted' ? plWithCashflow : pl;
+    const displayPlPercent = state.plViewMode === 'adjusted' ? plWithCashflowPercent : plPercent;
+    const isDisplayProfit = displayPl >= 0;
 
     return (
         <div className="space-y-6">
@@ -92,12 +102,12 @@ export function HoldingsTable() {
                         </div>
                         <div className="p-4 flex flex-col justify-center transition-colors hover:bg-primary/5">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">
-                                {state.roiType === 'annualized' ? 'Annualized Return' : 'Total Returns'}
+                                {state.plViewMode === 'adjusted' ? 'Profit/Loss (Adj.)' : 'Profit/Loss'}
                             </span>
-                            <div className={cn("text-lg font-mono font-bold whitespace-nowrap", isProfit ? "text-green-500" : "text-red-500")}>
-                                रु. {isProfit ? '+' : '-'}{formatCurrency(Math.abs(pl))}
+                            <div className={cn("text-lg font-mono font-bold whitespace-nowrap", isDisplayProfit ? "text-green-500" : "text-red-500")}>
+                                रु. {isDisplayProfit ? '+' : '-'}{formatCurrency(Math.abs(displayPl))}
                                 <div className="text-[10px] opacity-70 font-bold">
-                                    {plPercent.toFixed(2)}%
+                                    {displayPlPercent.toFixed(2)}%
                                 </div>
                             </div>
                         </div>
@@ -127,8 +137,8 @@ export function HoldingsTable() {
                         <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
                         <input
                             type="text"
-                            placeholder="Search scrip..."
-                            className="bg-card/50 backdrop-blur-sm border border-border/40 rounded-xl pl-9 pr-4 py-2 text-xs font-bold text-foreground focus:outline-none focus:border-primary/50 w-full sm:w-48 placeholder:text-muted-foreground/50 transition-all focus:w-full sm:focus:w-56 shadow-sm"
+                            placeholder="Search company or scrip..."
+                            className="bg-card/50 backdrop-blur-sm border border-border/40 rounded-xl pl-9 pr-4 py-2 text-xs font-bold text-foreground focus:outline-none focus:border-primary/50 w-full sm:w-64 placeholder:text-muted-foreground/50 transition-all focus:w-full sm:focus:w-72 shadow-sm"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
@@ -147,6 +157,7 @@ export function HoldingsTable() {
                             <option value="ltp:desc">LTP (High to Low)</option>
                             <option value="ltp:asc">LTP (Low to High)</option>
                             <option value="scrip:asc">Scrip (A-Z)</option>
+                            <option value="companyName:asc">Company Name (A-Z)</option>
                             <option value="sector:asc">Sector (A-Z)</option>
                             <option value="quantity:desc">Quantity</option>
                         </select>
@@ -160,39 +171,59 @@ export function HoldingsTable() {
                         <CardContent className="p-0">
                             <div className="flex flex-col sm:flex-row divide-y sm:divide-y-0 sm:divide-x border-border/40">
                                 {/* Scrip Info */}
-                                <div className="p-5 flex-grow flex items-center gap-4 transition-colors group-hover/card:bg-primary/5">
-                                    <div
-                                        onClick={() => handleSymbolClick(item.scrip)}
-                                        className="w-12 h-12 rounded-2xl bg-muted flex items-center justify-center text-primary font-black text-xs shadow-inner cursor-pointer hover:bg-primary/10 transition-colors"
-                                    >
-                                        {item.scrip.substring(0, 4)}
-                                    </div>
-                                    <div>
-                                        <h4
-                                            onClick={() => handleSymbolClick(item.scrip)}
-                                            className="font-black text-lg text-foreground tracking-tighter uppercase cursor-pointer hover:text-primary transition-colors"
-                                        >
-                                            {item.scrip}
-                                        </h4>
-                                        <div className="flex flex-col gap-1">
-                                            <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-                                                <Briefcase className="w-3 h-3 text-primary/70" />
-                                                {item.quantity} units @ <span className="text-foreground">{item.wacc.toFixed(1)}</span>
-                                            </div>
-                                            {state.dailyChanges[item.scrip] !== undefined && state.dailyChanges[item.scrip] !== 0 && (
-                                                <div className={cn("text-[11px] font-black flex items-center gap-1.5", state.dailyChanges[item.scrip] > 0 ? "text-green-500" : "text-red-500")}>
-                                                    Today: रु. {state.dailyChanges[item.scrip] > 0 ? '+' : '-'}{formatCurrency(Math.abs(state.dailyChanges[item.scrip] * item.quantity))}
-                                                    <span className="opacity-70 text-[9px] bg-muted/50 px-1.5 py-0.5 rounded border border-current/20">
-                                                        {((state.dailyChanges[item.scrip] / (item.ltp - state.dailyChanges[item.scrip])) * 100).toFixed(2)}%
-                                                    </span>
+                                <div
+                                    className="p-5 flex-grow flex items-center gap-4 transition-colors group-hover/card:bg-primary/5 min-w-0 cursor-pointer hover:bg-primary/10"
+                                    onClick={() => handleSymbolClick(item.scrip)}
+                                >
+                                    <div className="min-w-0 flex-1">
+                                        <div className="flex flex-col gap-0.5">
+                                            <h4
+                                                className="font-bold text-lg text-foreground tracking-tight transition-colors truncate pr-2 group-hover/card:text-primary"
+                                                title={item.companyName}
+                                            >
+                                                {item.companyName}
+                                            </h4>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-[10px] font-black bg-primary/10 text-primary px-1.5 py-0.5 rounded uppercase tracking-wider">
+                                                    {item.scrip}
+                                                </span>
+                                                <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                                                    <Briefcase className="w-3 h-3 text-primary/70" />
+                                                    {item.quantity} Units
                                                 </div>
-                                            )}
+                                            </div>
                                         </div>
+
+                                        {state.dailyChanges[item.scrip] !== undefined && state.dailyChanges[item.scrip] !== 0 && (
+                                            <div className={cn("mt-2 text-[11px] font-black flex items-center gap-1.5", state.dailyChanges[item.scrip] > 0 ? "text-green-500" : "text-red-500")}>
+                                                Today: रु. {state.dailyChanges[item.scrip] > 0 ? '+' : '-'}{formatCurrency(Math.abs(state.dailyChanges[item.scrip] * item.quantity))}
+                                                <span className="opacity-70 text-[9px] bg-muted/50 px-1.5 py-0.5 rounded border border-current/20">
+                                                    {((state.dailyChanges[item.scrip] / (item.ltp - state.dailyChanges[item.scrip])) * 100).toFixed(2)}%
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Purchase Price (Investment) */}
+                                <div
+                                    className="p-5 sm:w-48 flex flex-col justify-center sm:items-end transition-colors group-hover/card:bg-primary/5 cursor-pointer hover:bg-primary/10"
+                                    onClick={() => onSelectScrip(item.scrip)}
+                                >
+                                    <div className="text-[10px] text-muted-foreground font-black uppercase tracking-widest mb-1 opacity-70">Investment</div>
+                                    <div className="font-mono font-black text-foreground text-xl tracking-tighter">
+                                        रु. {formatCurrency(item.investment)}
+                                    </div>
+                                    <div className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mt-1">
+                                        WACC: <span className="text-foreground">{formatNumber(item.wacc)}</span>
                                     </div>
                                 </div>
 
                                 {/* LTP & Value info */}
-                                <div className="p-5 sm:w-48 flex flex-col justify-center sm:items-end transition-colors group-hover/card:bg-primary/5">
+                                <div
+                                    className="p-5 sm:w-48 flex flex-col justify-center sm:items-end transition-colors group-hover/card:bg-primary/5 cursor-pointer hover:bg-primary/10"
+                                    onClick={() => onSelectScrip(item.scrip)}
+                                >
                                     <div className="text-[10px] text-muted-foreground font-black uppercase tracking-widest mb-1 opacity-70">Current Value</div>
                                     <div className="font-mono font-black text-foreground text-xl tracking-tighter">
                                         रु. {formatCurrency(item.currentValue)}
@@ -203,15 +234,18 @@ export function HoldingsTable() {
                                 </div>
 
                                 {/* Profit/Loss */}
-                                <div className={cn("p-5 sm:w-56 flex flex-col justify-center sm:items-end transition-colors sm:bg-primary/5", item.pl >= 0 ? "text-green-500 bg-green-500/5" : "text-red-500 bg-red-500/5")}>
+                                <div
+                                    className={cn("p-5 sm:w-56 flex flex-col justify-center sm:items-end transition-colors sm:bg-primary/5 cursor-pointer hover:opacity-80", (state.plViewMode === 'adjusted' ? (item.plWithCashflow ?? item.pl) : item.pl) >= 0 ? "text-green-500 bg-green-500/5" : "text-red-500 bg-red-500/5")}
+                                    onClick={() => onSelectScrip(item.scrip)}
+                                >
                                     <div className="text-[10px] font-black uppercase tracking-widest mb-1 opacity-70">
-                                        {state.roiType === 'annualized' ? 'Ann. Return' : 'Profit/Loss'}
+                                        {state.plViewMode === 'adjusted' ? 'Profit/Loss (Adj.)' : 'Profit/Loss'}
                                     </div>
                                     <div className="font-mono font-black text-xl tracking-tighter flex items-center gap-1">
-                                        रु. {item.pl >= 0 ? '+' : '-'}{formatCurrency(Math.abs(item.pl))}
+                                        रु. {(state.plViewMode === 'adjusted' ? (item.plWithCashflow ?? item.pl) : item.pl) >= 0 ? '+' : '-'}{formatCurrency(Math.abs(state.plViewMode === 'adjusted' ? (item.plWithCashflow ?? item.pl) : item.pl))}
                                     </div>
                                     <div className="text-[10px] font-black uppercase tracking-wider mt-1 bg-background/50 px-2 py-0.5 rounded border border-current/20">
-                                        {item.plPercent.toFixed(2)}%
+                                        {(state.plViewMode === 'adjusted' ? (item.plWithCashflowPercent ?? item.plPercent) : item.plPercent).toFixed(2)}%
                                     </div>
                                 </div>
                             </div>
