@@ -205,19 +205,6 @@ export function HoldingsTable({ onSelectScrip }: HoldingsTableProps) {
                                     </div>
                                 </div>
 
-                                {/* Purchase Price (Investment) */}
-                                <div
-                                    className="p-5 sm:w-48 flex flex-col justify-center sm:items-end transition-colors group-hover/card:bg-primary/5 cursor-pointer hover:bg-primary/10"
-                                    onClick={() => onSelectScrip(item.scrip)}
-                                >
-                                    <div className="text-[10px] text-muted-foreground font-black uppercase tracking-widest mb-1 opacity-70">Investment</div>
-                                    <div className="font-mono font-black text-foreground text-xl tracking-tighter">
-                                        रु {formatCurrency(item.investment)}
-                                    </div>
-                                    <div className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mt-1">
-                                        WACC: <span className="text-foreground">{formatNumber(item.wacc)}</span>
-                                    </div>
-                                </div>
 
                                 {/* LTP & Value info */}
                                 <div

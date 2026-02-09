@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { ArrowLeft, TrendingUp, TrendingDown, Wallet, PieChart, DollarSign, Calendar, History, Activity } from 'lucide-react';
+import { SubpageHeader } from '../ui/SubpageHeader';
 import { usePortfolio } from '../../context/PortfolioContext';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
 import { cn, formatCurrency, formatNumber } from '../../lib/utils';
@@ -53,6 +54,18 @@ export function ScripDetails({ scrip, onBack }: ScripDetailsProps) {
 
     return (
         <div className="space-y-10 md:space-y-8 animate-in fade-in slide-in-from-right-4 duration-500 pb-12">
+            <SubpageHeader
+                onBack={onBack}
+                title={holding.companyName}
+                rightElement={
+                    <div className="hidden sm:flex items-center gap-2">
+                        <span className="px-2.5 py-1 rounded-lg bg-primary/10 text-primary font-mono font-black text-xs border border-primary/20">
+                            {scrip}
+                        </span>
+                    </div>
+                }
+            />
+
             {/* Hero Section */}
             <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-card via-card to-background border border-border/40 shadow-2xl">
                 {/* Decorative Background Elements */}
@@ -65,38 +78,33 @@ export function ScripDetails({ scrip, onBack }: ScripDetailsProps) {
                 <div className="relative p-6 md:p-10">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                         <div className="space-y-4">
-                            <button
-                                onClick={onBack}
-                                className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors group"
-                            >
-                                <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-                                Back to Portfolio
-                            </button>
                             <div>
-                                <h2 className="text-3xl md:text-4xl font-black tracking-tight text-foreground truncate max-w-2xl">
+                                <h2 className="text-3xl md:text-5xl font-black tracking-tight text-foreground leading-[1.1]">
                                     {holding.companyName}
                                 </h2>
-                                <div className="flex items-center gap-3 mt-2">
-                                    <span className="px-2.5 py-1 rounded-lg bg-primary/10 text-primary font-mono font-black text-sm border border-primary/20">
+                                <div className="flex items-center gap-3 mt-4">
+                                    <span className="text-xs font-black text-primary uppercase tracking-[0.2em] bg-primary/10 border border-primary/20 px-3 py-1.5 rounded-lg font-mono">
                                         {scrip}
                                     </span>
-                                    <span className="text-muted-foreground/40 font-light">•</span>
-                                    <span className="text-sm font-bold text-muted-foreground uppercase tracking-widest bg-muted/40 px-2 py-1 rounded-md">
+                                    <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest bg-muted/40 px-3 py-1.5 rounded-lg">
                                         {holding.sector}
                                     </span>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="flex flex-row md:flex-col items-baseline md:items-end gap-3 md:gap-1 p-4 md:p-0 rounded-2xl bg-muted/20 md:bg-transparent border border-border/40 md:border-none">
-                            <div className="text-sm font-black text-muted-foreground uppercase tracking-[0.2em] mb-1">Last Traded Price</div>
-                            <div className="flex items-center gap-3">
-                                <div className="text-4xl md:text-5xl font-black tracking-tighter text-foreground font-mono">
-                                    रु. {formatNumber(ltp)}
+                        <div className="flex flex-col items-start md:items-end gap-2 p-6 md:p-0 rounded-3xl bg-muted/20 md:bg-transparent border border-border/40 md:border-none backdrop-blur-sm md:backdrop-blur-0">
+                            <div className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] mb-1 opacity-70">Last Traded Price</div>
+                            <div className="flex flex-wrap items-baseline gap-3">
+                                <div className="flex items-baseline gap-1.5">
+                                    <span className="text-2xl md:text-3xl font-black text-muted-foreground/60 font-display">रु</span>
+                                    <span className="text-5xl md:text-7xl font-black tracking-tighter text-foreground font-mono leading-none">
+                                        {formatNumber(ltp)}
+                                    </span>
                                 </div>
                                 {dailyChange !== 0 && (
                                     <div className={cn(
-                                        "flex flex-col items-center px-3 py-1.5 rounded-xl border font-black text-xs transition-all",
+                                        "flex flex-col items-center px-4 py-2 rounded-2xl border font-black text-sm transition-all shadow-lg",
                                         dailyChange > 0
                                             ? "bg-green-500/10 text-green-500 border-green-500/20 shadow-[0_0_15px_rgba(34,197,94,0.1)]"
                                             : "bg-red-500/10 text-red-500 border-red-500/20 shadow-[0_0_15px_rgba(239,68,68,0.1)]"

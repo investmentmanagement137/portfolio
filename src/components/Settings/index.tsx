@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { ImportData } from '../Import';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/Card';
-import { Shield, FileText, Database, ChevronRight, ArrowLeft, Trash2, RefreshCw, Sun, Moon, ExternalLink, History } from 'lucide-react';
+import { Shield, FileText, Database, ChevronRight, Trash2, RefreshCw, Sun, Moon, ExternalLink, History } from 'lucide-react';
 import { usePortfolio } from '../../context/PortfolioContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 import { cn } from '../../lib/utils';
+import { SubpageHeader } from '../ui/SubpageHeader';
 
 interface SettingsProps {
     onImportSuccess?: () => void;
@@ -384,20 +385,18 @@ export function Settings({ onImportSuccess, onNavigateToTimeline, defaultSection
             {/* Timeline section removed */}
             {activeSection !== 'timeline' && (
                 <>
-                    <button
-                        onClick={() => setActiveSection(null)}
-                        className="flex items-center gap-2 text-muted-foreground hover:text-primary mb-4 font-black uppercase tracking-widest text-[10px] transition-all group"
-                    >
-                        <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
-                        Back to Settings
-                    </button>
+                    <SubpageHeader
+                        onBack={() => setActiveSection(null)}
+                        title={
+                            activeSection === 'data' ? 'Data Management' :
+                                activeSection === 'privacy' ? 'Privacy Policy' :
+                                    activeSection === 'terms' ? 'Terms of Service' : 'Settings'
+                        }
+                        subtitle="Settings"
+                    />
 
                     {activeSection === 'data' && (
                         <div className="space-y-6">
-                            <div className="flex flex-col gap-2">
-                                <h2 className="text-2xl font-black tracking-tight uppercase">Data Management</h2>
-                                <p className="text-muted-foreground font-bold">Import your latest portfolio data from Meroshare.</p>
-                            </div>
                             <ImportData onSuccess={onImportSuccess} />
                         </div>
                     )}

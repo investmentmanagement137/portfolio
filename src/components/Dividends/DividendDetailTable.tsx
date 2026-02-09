@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { usePortfolio } from '../../context/PortfolioContext';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
 import { formatCurrency, cn } from '../../lib/utils';
-import { Calendar, Tag, Banknote, Filter, History, LayoutGrid, ArrowUpDown, Search, Briefcase } from 'lucide-react';
+import { Calendar, Tag, Banknote, Filter, History, LayoutGrid, ArrowUpDown, Search, Briefcase, Coins, TrendingUp } from 'lucide-react';
 import { ImportData } from '../Import';
 import type { DividendEvent } from '../../types';
 
@@ -48,7 +48,7 @@ export function DividendDetailTable() {
             if (valA > valB) return direction === 'asc' ? 1 : -1;
             return 0;
         });
-    }, [baseData, sortConfig, searchQuery]);
+    }, [baseData, sortConfig, searchQuery, dividendDetails]);
 
     const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const [key, direction] = e.target.value.split(':') as [SortKey, SortDirection];
@@ -114,7 +114,7 @@ export function DividendDetailTable() {
                         </div>
                         <div className="p-6 transition-colors hover:bg-primary/5">
                             <div className="flex items-center gap-2 mb-2 text-muted-foreground">
-                                <History className="w-4 h-4 text-primary" />
+                                <Coins className="w-4 h-4 text-primary" />
                                 <span className="text-[10px] font-bold uppercase tracking-widest">Historical Total</span>
                             </div>
                             <div className="text-2xl font-mono font-black text-foreground tracking-tighter">
@@ -127,7 +127,7 @@ export function DividendDetailTable() {
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-2">
                 <h3 className="text-lg font-bold flex items-center gap-2 tracking-tight">
-                    <History className="w-5 h-5 text-primary" />
+                    <TrendingUp className="w-5 h-5 text-primary" />
                     Dividend Statistics
                 </h3>
                 <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
