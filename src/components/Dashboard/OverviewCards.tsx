@@ -31,7 +31,7 @@ export function OverviewCards() {
                             </div>
                             <div className="space-y-1">
                                 <div className="text-xl lg:text-2xl font-mono text-foreground font-bold tracking-tighter whitespace-nowrap">
-                                    रु. {formatCurrency(investment)}
+                                    रु {formatCurrency(investment)}
                                 </div>
                                 <div className="text-[10px] text-muted-foreground uppercase font-medium tracking-tight opacity-70">Invested Amount</div>
                             </div>
@@ -45,7 +45,7 @@ export function OverviewCards() {
                             </div>
                             <div className="space-y-1">
                                 <div className="text-xl lg:text-2xl font-mono text-foreground font-bold tracking-tighter whitespace-nowrap">
-                                    रु. {formatCurrency(value)}
+                                    रु {formatCurrency(value)}
                                 </div>
                                 <div className="text-[10px] text-muted-foreground uppercase font-medium tracking-tight opacity-70">Current Worth</div>
                             </div>
@@ -61,7 +61,7 @@ export function OverviewCards() {
                             </div>
                             <div className="space-y-1">
                                 <div className={cn("text-xl lg:text-2xl font-mono font-bold tracking-tighter whitespace-nowrap", isProfit ? "text-green-500" : "text-red-500")}>
-                                    रु. {isProfit ? '+' : '-'}{formatCurrency(Math.abs(pl))}
+                                    रु {isProfit ? '+' : '-'}{formatCurrency(Math.abs(pl))}
                                 </div>
                                 <div className="flex flex-col gap-0.5">
                                     <div className={cn("text-[10px] font-bold", isProfit ? "text-green-500" : "text-red-500")}>
@@ -80,7 +80,7 @@ export function OverviewCards() {
                             </div>
                             <div className="space-y-1">
                                 <div className="text-xl lg:text-2xl font-mono text-amber-500 font-bold tracking-tighter whitespace-nowrap">
-                                    रु. {formatCurrency(activeDividendTotal)}
+                                    रु {formatCurrency(activeDividendTotal)}
                                 </div>
                                 <div className="text-[10px] text-muted-foreground uppercase font-medium tracking-tight opacity-70">Cash Dividends</div>
                             </div>
@@ -94,7 +94,7 @@ export function OverviewCards() {
                             </div>
                             <div className="space-y-1">
                                 <div className={cn("text-xl lg:text-2xl font-mono font-bold tracking-tighter whitespace-nowrap", isCashflowProfit ? "text-green-500" : "text-red-500")}>
-                                    रु. {isCashflowProfit ? '+' : '-'}{formatCurrency(Math.abs(plWithCashflow))}
+                                    रु {isCashflowProfit ? '+' : '-'}{formatCurrency(Math.abs(plWithCashflow))}
                                 </div>
                                 <div className="flex flex-col gap-0.5">
                                     <div className={cn("text-[10px] font-bold", isCashflowProfit ? "text-green-500" : "text-red-500")}>

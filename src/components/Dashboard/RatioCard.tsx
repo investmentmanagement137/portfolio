@@ -108,13 +108,13 @@ export function RatioCard({ title, items, className }: RatioCardProps) {
                                         <div className="flex justify-between items-center">
                                             <span className="text-xs font-medium text-foreground/70">{selectedItem.details.metricName}</span>
                                             <span className="font-mono text-sm font-bold">
-                                                रु. {selectedItem.details.totalMetric.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                                                रु {selectedItem.details.totalMetric.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
                                             </span>
                                         </div>
                                         <div className="flex justify-between items-center">
                                             <span className="text-xs font-medium text-foreground/70">Total Market Value</span>
                                             <span className="font-mono text-sm font-bold">
-                                                रु. {selectedItem.details.totalValue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                                                रु {selectedItem.details.totalValue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
                                             </span>
                                         </div>
                                     </div>

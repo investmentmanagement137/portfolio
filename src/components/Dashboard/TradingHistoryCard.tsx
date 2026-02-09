@@ -66,7 +66,7 @@ export function TradingHistoryCard() {
         if (dividendCount > 0) {
             rewards.push({
                 label: 'Total Cash Divident',
-                value: `रु. ${totalCashDividend.toLocaleString('en-IN')}`,
+                value: `रु ${totalCashDividend.toLocaleString('en-IN')}`,
                 ...iconMap['Total Cash Divident']
             });
             rewards.push({
