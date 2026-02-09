@@ -52,7 +52,7 @@ export function ScripDetails({ scrip, onBack }: ScripDetailsProps) {
     const dailyChangeAmount = dailyChange * quantity;
 
     return (
-        <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500 pb-12">
+        <div className="space-y-10 md:space-y-8 animate-in fade-in slide-in-from-right-4 duration-500 pb-12">
             {/* Hero Section */}
             <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-card via-card to-background border border-border/40 shadow-2xl">
                 {/* Decorative Background Elements */}
@@ -117,7 +117,7 @@ export function ScripDetails({ scrip, onBack }: ScripDetailsProps) {
             </div>
 
             {/* Performance Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-6">
                 {[
                     {
                         label: 'Gross Investment',

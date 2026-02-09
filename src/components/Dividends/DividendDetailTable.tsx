@@ -170,7 +170,7 @@ export function DividendDetailTable() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 gap-6">
                 {sortedData.map((item, idx) => (
                     <Card key={`${item.Scrip}-${idx}`} className="overflow-hidden border-none bg-gradient-to-br from-primary/5 via-card to-background shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.01] active:scale-[0.99] group/card relative">
                         <div className="absolute -top-6 -right-6 p-8 opacity-5 group-hover/card:opacity-10 transition-opacity">
