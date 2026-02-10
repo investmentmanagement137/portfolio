@@ -1,4 +1,4 @@
-const LTP_URL = 'https://raw.githubusercontent.com/investmentmanagement137/jsons/main/recentltp.json';
+const LTP_URL = 'https://ltp-ashen.vercel.app/ltp.json';
 
 interface NepseEntry {
     Script: string;

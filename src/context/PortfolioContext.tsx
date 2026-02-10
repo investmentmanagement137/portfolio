@@ -4,7 +4,7 @@ import Papa from 'papaparse';
 import type { PortfolioContextValue, PortfolioState, Holding, WebhookHolding } from '../types';
 
 const WEBHOOK_URL = 'https://n8np.puribijay.com.np/webhook/51bef67d-e017-4fc8-92ca-896d8b6c329aa';
-const LTP_URL = 'https://raw.githubusercontent.com/investmentmanagement137/jsons/main/recentltp.json';
+const LTP_URL = 'https://ltp-ashen.vercel.app/ltp.json';
 
 const PortfolioContext = createContext<PortfolioContextValue | null>(null);
 
