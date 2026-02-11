@@ -19,8 +19,6 @@ export const usePortfolio = () => {
 // Add this interface locally if not in types
 // interface FundamentalMap { [key: string]: any } // Removed unused
 
-const FUNDAMENTALS_URL = 'https://investmentmanagement137.github.io/jsons/fundamentals.json';
-
 interface PortfolioProviderProps {
     children: ReactNode;
 }
@@ -105,12 +103,23 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
             const res = await axios.get(LTP_URL);
             const map: Record<string, number> = {};
             const changesMap: Record<string, number> = {};
+            const fundamentals: Record<string, any> = {};
             const data = res.data["all recent price"] || [];
 
             let nepseEntry: any = null;
             data.forEach((item: any) => {
                 if (item.Script === "NEPSE Index") {
-                    nepseEntry = item;
+                    // Safe parsing for NEPSE Index fields
+                    const priceVal = typeof item.Price === 'string' ? parseFloat(item.Price.replace(/,/g, '')) : item.Price;
+                    const changeVal = typeof item["change in value"] === 'number' ? item["change in value"] : parseFloat(item["change in value"]) || 0;
+                    const percentVal = typeof item["Ltp change percent"] === 'number' ? item["Ltp change percent"] : parseFloat(item["Ltp change percent"]) || 0;
+
+                    nepseEntry = {
+                        ...item,
+                        Price: priceVal,
+                        "change in value": changeVal,
+                        "Ltp change percent": percentVal
+                    };
                 }
                 const price = typeof item.Price === 'string'
                     ? parseFloat(item.Price.replace(/,/g, ''))
@@ -129,12 +138,23 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
 
                 map[item.Script] = isNaN(price) ? 0 : price;
                 changesMap[item.Script] = change;
+
+                // Extract fundamentals (eps and bv) from LTP data
+                if (item.eps !== undefined || item.bv !== undefined) {
+                    fundamentals[item.Script] = {
+                        eps: item.eps,
+                        bv: item.bv
+                    };
+                }
             });
+
+            setFundamentalsMap(fundamentals);
             setState(prev => ({ ...prev, ltpData: map, dailyChanges: changesMap, nepseData: nepseEntry, loading: false }));
 
             // Persist to local storage
             localStorage.setItem('portfolioLtpData', JSON.stringify(map));
             localStorage.setItem('portfolioDailyChanges', JSON.stringify(changesMap));
+            localStorage.setItem('portfolioFundamentals', JSON.stringify(fundamentals));
             if (nepseEntry) localStorage.setItem('portfolioNepseData', JSON.stringify(nepseEntry));
         } catch (error) {
             console.error("Failed to fetch LTP", error);
@@ -142,35 +162,10 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
         }
     }, []);
 
-    const fetchFundamentals = useCallback(async () => {
-        if (!navigator.onLine) {
-            console.log("Offline: Skipping fundamentals fetch, using cached data.");
-            return;
-        }
-        try {
-            const res = await axios.get(FUNDAMENTALS_URL);
-            // Actual JSON has root key "Fundamental ratios"
-            const data = res.data["Fundamental ratios"] || (Array.isArray(res.data) ? res.data : []);
-            const map: Record<string, any> = {};
-            data.forEach((item: any) => {
-                // Keys are lowercase in JSON
-                const sym = item.symbol || item.Symbol;
-                if (sym) {
-                    map[sym] = item;
-                }
-            });
-            setFundamentalsMap(map);
-            localStorage.setItem('portfolioFundamentals', JSON.stringify(map));
-        } catch (error) {
-            console.error("Failed to fetch Fundamentals", error);
-        }
-    }, []);
-
     // Initial Data Fetch
     useEffect(() => {
         refreshLtp();
-        fetchFundamentals();
-    }, [refreshLtp, fetchFundamentals]);
+    }, [refreshLtp]);
 
     // Recalculate Holdings when data changes
     useEffect(() => {
@@ -341,14 +336,15 @@ export const PortfolioProvider: React.FC<PortfolioProviderProps> = ({ children }
             // ... existing logic ...
             const fun = fundamentalsMap[h.scrip];
             if (fun) {
-                // Try to resolve EPS (lowercase keys in actual JSON)
+                // Try to resolve EPS (check new format first, then fallback to old)
                 let eps = typeof fun["eps"] === 'number' ? fun["eps"] :
                     typeof fun["Earnings Per Share"] === 'number' ? fun["Earnings Per Share"] : null;
 
-                // Try to resolve BV (lowercase keys in actual JSON)
-                let bv = typeof fun["book value"] === 'number' ? fun["book value"] :
-                    typeof fun["book value"] === 'string' ? fun["book value"] : // The JSON has "book value": "171" (string)
-                        typeof fun["Book Value"] === 'number' ? fun["Book Value"] : null;
+                // Try to resolve BV (check new format first, then fallback to old)
+                let bv = typeof fun["bv"] === 'number' ? fun["bv"] :
+                    typeof fun["book value"] === 'number' ? fun["book value"] :
+                        typeof fun["book value"] === 'string' ? fun["book value"] : // The JSON has "book value": "171" (string)
+                            typeof fun["Book Value"] === 'number' ? fun["Book Value"] : null;
 
                 // Clean logic: string parsing if needed
                 if (typeof eps === 'string') eps = parseFloat((eps as string).replace(/,/g, ''));

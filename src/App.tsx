@@ -9,6 +9,7 @@ import { PWAInstallPrompt } from './components/PWAInstallPrompt';
 
 
 
+
 function AppContent() {
   const [activeTab, setActiveTab] = useState(() => {
     return localStorage.getItem('activeTab') || 'home';
